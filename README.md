@@ -1,64 +1,62 @@
-# 🚗 AutoServis – Web i Mobilna Aplikacija
-## 📌 Opis projekta
+# 🚗 Auto Servis – Web aplikacija
 
-Ova aplikacija omogućuje praćenje poslovanja autoservisa, uključujući evidenciju vozila, zakazivanje termina, rezervaciju zamjenskih vozila i komunikaciju s korisnicima. Cilj je pružiti transparentnost korisnicima i olakšati organizaciju posla zaposlenicima servisa.
+Aplikacija za upravljanje poslovanjem auto-servisa koja omogućuje **digitalnu prijavu vozila, zakazivanje termina, praćenje statusa popravaka, upravljanje zamjenskim vozilima** te generiranje i izvoz izvještaja u više formata.
 
-## ✨ Funkcionalnosti
+---
 
-- Online prijava korisnika i registracija putem OAuth2 (Google, GitHub…).
+## 📋 Sadržaj
+- [Opis projekta](#opis-projekta)
+- [Funkcionalnosti](#funkcionalnosti)
+- [Tehnologije](#tehnologije)
+- [Licenca](#licenca)
 
-- Evidencija zaprimljenih vozila i statusa popravka u realnom vremenu.
+---
 
-- Odabir servisera i slobodnog termina.
+## 🧩 Opis projekta
+Današnje poslovanje auto-servisa zahtijeva transparentnost i digitalizaciju procesa prijave, praćenja i isporuke vozila.  
+Ova web aplikacija omogućuje korisnicima **online prijavu i praćenje statusa popravka vozila u stvarnom vremenu**, dok servisno osoblje ima alat za **upravljanje terminima, zamjenskim vozilima i izvještajima**.
 
-- Rezervacija zamjenskog vozila.
+Sustav omogućuje i:
+- automatsko generiranje PDF obrazaca za primopredaju vozila,  
+- obavijesti putem e-maila kod potvrde termina ili odgode,  
+- prikaz lokacije servisa putem Google Maps servisa,  
+- autentifikaciju putem vanjskog **OAuth2 servisa** (npr. Google Login).
 
-- Automatska potvrda i podsjetnici putem e-maila.
+---
 
-- Generiranje PDF obrazaca prilikom predaje i preuzimanja vozila.
+## ⚙️ Funkcionalnosti
+### Korisnici:
+- registracija i prijava (OAuth2),
+- prijava vozila i zakazivanje termina,
+- praćenje statusa popravka,
+- mogućnost rezervacije zamjenskog vozila,
+- preuzimanje potvrda u PDF/XML/XLSX formatu.
 
-- Upravljanje korisnicima, serviserima i podacima o servisu (administrator).
+### Serviseri:
+- pregled i potvrda dodijeljenih prijava,
+- unos radnih naloga i evidencija zamjena dijelova,
+- označavanje statusa popravka.
 
-- Pregled i potvrda dodijeljenih prijava (serviser).
+### Administrator:
+- upravljanje korisnicima, ulogama i serviserima,
+- pregled statistika i izvještaja,
+- izvoz podataka i analiza zauzeća resursa.
 
-- Pregled statusa vozila i povijesti popravaka (korisnik).
+---
 
-- Statistika poslovanja (broj vozila, trajanje popravaka, zauzeće zamjenskih vozila).
+## 🧰 Tehnologije
 
-- Izvoz podataka u PDF, XML i XLSX formatu.
+| Sloj | Tehnologije |
+|------|--------------|
+| **Frontend** | React (Vite, TypeScript), React Router, TanStack Query, Material UI |
+| **Backend** | Spring Boot (Web, Security, JPA, Validation, Springdoc OpenAPI) |
+| **Baza podataka** | PostgreSQL + Flyway (migracije) |
+| **Autentifikacija** | OAuth2 (npr. Google) |
+| **DevOps / alati** | Docker Compose, GitHub Actions (CI/CD), GitHub Wiki |
 
-- Integracija s Google Maps za prikaz lokacije servisa.
+---
 
-- Responzivan dizajn, prilagođen za različite uređaje.
+## 🧾 Licenca
 
-## 🛠️ Tehnologije
-
-Backend: Spring Boot (Java), Spring Data JPA, Spring Security (OAuth2)
-
-Frontend: Android Studio (Java/Kotlin) / ili Web frontend (React/HTML/CSS)
-
-Baza: PostgreSQL / MySQL
-
-Izvještaji: iText / Apache POI / JAXB
-
-Integracije: Google Maps API, Mail sender
-
-## 📂 Struktura projekta  
-/backend        -> Spring Boot aplikacija  
-/frontend       -> Android aplikacija ili web klijent  
-/database       -> SQL skripte i migracije  
-/docs           -> dokumentacija i primjeri izvještaja  
-
-## 📊 Statistika i izvještaji
-
-Voditelj servisa ima uvid u broj zaprimljenih vozila, trajanje popravaka, raspoložive termine i zauzeće zamjenskih vozila.  Podaci se mogu izvoziti u PDF, XML i XLSX formatu.
-
-👥 Uloge korisnika
-
-Administrator – upravlja sustavom, korisnicima i serviserima.
-
-Serviser – vidi dodijeljene prijave, bilježi i potvrđuje radnje.
-
-Registrirani korisnik – prijavljuje vozilo, prati status, rezervira vozilo.
-
-Neregistrirani korisnik – vidi osnovne informacije o servisu.
+Ovaj projekt je izrađen u edukativne svrhe u sklopu kolegija Programsko inženjerstvo.
+Sav kod i dokumentacija podložni su akademskim pravilima o autorskom radu.
