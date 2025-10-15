@@ -4,14 +4,6 @@ Aplikacija za upravljanje poslovanjem auto-servisa koja omogućuje **digitalnu p
 
 ---
 
-## 📋 Sadržaj
-- [Opis projekta](#opis-projekta)
-- [Funkcionalnosti](#funkcionalnosti)
-- [Tehnologije](#tehnologije)
-- [Licenca](#licenca)
-
----
-
 ## 🧩 Opis projekta
 Današnje poslovanje auto-servisa zahtijeva transparentnost i digitalizaciju procesa prijave, praćenja i isporuke vozila.  
 Ova web aplikacija omogućuje korisnicima **online prijavu i praćenje statusa popravka vozila u stvarnom vremenu**, dok servisno osoblje ima alat za **upravljanje terminima, zamjenskim vozilima i izvještajima**.
