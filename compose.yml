@@ -12,3 +12,12 @@ services:
       - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
+
+  backendserver:
+    build:
+      context: ./backend/server
+      dockerfile: backend.Dockerfile
+    image: backend-service:latest
+    ports:
+      - "127.0.0.2:8080:8080"
+    restart: unless-stopped
