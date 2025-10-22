@@ -11,3 +11,5 @@ CREATE TABLE users(
     UNIQUE(email)
 );
 
+
+INSERT INTO KORISNIK(email,userIme,userPrezime,userRole) VALUES ('lvesko3@gmail.com','Leon','Vesic','developer'),('ivanklobucar6@gmail.com','Ivan','Klobucar','developer'),('antonio.valec@gmail.com','Antonio','Valec','developer')
