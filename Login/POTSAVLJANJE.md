@@ -22,3 +22,6 @@ GOOGLE_CLIENT_SECRET=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
 ```
 
 Ili samo direktno u application.properties zamjenite vrijednosti sa stvarnima
+
+
+
