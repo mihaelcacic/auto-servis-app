@@ -6,6 +6,8 @@ CREATE TABLE users(
     userIme VARCHAR(75) NOT NULL,
     userPrezime VARCHAR(75) NOT NULL,
     brojTelefona VARCHAR(30) NOT NULL,
+    userRole VARCHAR(40) NOT NULL,
     PRIMARY key(userID),
     UNIQUE(email)
 );
+
