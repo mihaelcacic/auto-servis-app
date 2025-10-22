@@ -8,8 +8,10 @@ CREATE TABLE users(
     brojTelefona VARCHAR(30) NOT NULL,
     userRole VARCHAR(40) NOT NULL,
     PRIMARY key(userID),
-    UNIQUE(email)
+    UNIQUE(email),
+    UNIQUE(brojTelefona)
 );
 
 
 INSERT INTO KORISNIK(email,userIme,userPrezime,userRole) VALUES ('lvesko3@gmail.com','Leon','Vesic','developer'),('ivanklobucar6@gmail.com','Ivan','Klobucar','developer'),('antonio.valec@gmail.com','Antonio','Valec','developer')
+
