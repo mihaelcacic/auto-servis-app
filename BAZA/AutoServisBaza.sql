@@ -3,70 +3,89 @@ CREATE DATABASE AutoServisBaza;
 CREATE TABLE Korisnik
 (
   idKorisnik INT NOT NULL,
-  imeKorisnik VARCHAR(75) NOT NULL,
-  prezimeKorisnik VARCHAR(75) NOT NULL,
-  email VARCHAR(150) NOT NULL,
-  brojTelefona VARCHAR(75) NOT NULL,
+  email VARCHAR(75) NOT NULL,
+  uloga VARCHAR(30) NOT NULL,
   PRIMARY KEY (idKorisnik),
-  UNIQUE (email),
+  UNIQUE (email)
+);
+
+CREATE TABLE Klijent
+(
+  brojTelefona VARCHAR(75) NOT NULL,
+  imeKlijent VARCHAR(100) NOT NULL,
+  prezimeKlijent VARCHAR(100) NOT NULL,
+  idKorisnik INT NOT NULL,
+  PRIMARY KEY (idKorisnik),
+  FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
   UNIQUE (brojTelefona)
 );
 
-CREATE TABLE Vozilo
+CREATE TABLE Admin
 (
-  registracija VARCHAR(30) NOT NULL,
-  model VARCHAR(100) NOT NULL,
-  vrstaKvara VARCHAR(250) NOT NULL,
+  imeAdmin VARCHAR(100) NOT NULL,
+  prezimeAdmin VARCHAR(100) NOT NULL,
   idKorisnik INT NOT NULL,
-  PRIMARY KEY (registracija),
-  FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik)
-);
-
-CREATE TABLE ZamjenskoVozilo
-(
-  idZamjensko INT NOT NULL,
-  model VARCHAR(150) NOT NULL,
-  datumPreuzimanja DATE,
-  datumVraćanja INT,
-  idKorisnik INT NOT NULL,
-  PRIMARY KEY (idZamjensko),
+  PRIMARY KEY (idKorisnik),
   FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik)
 );
 
 CREATE TABLE Serviser
 (
-  idServiser INT NOT NULL,
-  imeServiser VARCHAR(75) NOT NULL,
-  prezimeServiser VARCHAR(75) NOT NULL,
-  status VARCHAR(50) NOT NULL,
-  PRIMARY KEY (idServiser)
+  imeServiser VARCHAR(100) NOT NULL,
+  prezimeServiser VARCHAR(100) NOT NULL,
+  pozicija VARCHAR(75) NOT NULL,
+  idKorisnik INT NOT NULL,
+  PRIMARY KEY (idKorisnik),
+  FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik)
+);
+
+CREATE TABLE Vozilo
+(
+  idVozilo INT NOT NULL,
+  registracija VARCHAR(50) NOT NULL,
+  model VARCHAR(100) NOT NULL,
+  status VARCHAR(300) NOT NULL,
+  vrstaKvara VARCHAR(300) NOT NULL,
+  idKorisnik INT NOT NULL,
+  PRIMARY KEY (idVozilo),
+  FOREIGN KEY (idKorisnik) REFERENCES Klijent(),
+  UNIQUE (idVozilo),
+  UNIQUE (registracija)
+);
+
+CREATE TABLE ZamjenskoVozilo
+(
+  idVozilo INT NOT NULL,
+  model VARCHAR(100) NOT NULL,
+  datumPreuzimanja DATE,
+  datumVracanja DATE,
+  idKorisnik INT NOT NULL,
+  PRIMARY KEY (idVozilo),
+  FOREIGN KEY (idKorisnik) REFERENCES Klijent()
+);
+
+CREATE TABLE AzuriraStatus
+(
+  datumAzuriranja DATE NOT NULL,
+  idKorisnik INT NOT NULL,
+  idVozilo INT NOT NULL,
+  FOREIGN KEY (idKorisnik) REFERENCES Serviser(),
+  FOREIGN KEY (idVozilo) REFERENCES Vozilo(idVozilo)
 );
 
 CREATE TABLE Termin
 (
   idTermin INT NOT NULL,
   datumVrijemeTermin DATE NOT NULL,
-  dostupnost VARCHAR(50) NOT NULL,
-  registracija VARCHAR(30) NOT NULL,
+  dostupnost INT NOT NULL,
+  idVozilo INT NOT NULL,
   idKorisnik INT NOT NULL,
-  idServiser INT NOT NULL,
+  idKorisnik INT NOT NULL,
   PRIMARY KEY (idTermin),
-  FOREIGN KEY (registracija) REFERENCES Vozilo(registracija),
-  FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
-  FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser)
+  FOREIGN KEY (idVozilo) REFERENCES Vozilo(idVozilo),
+  FOREIGN KEY (idKorisnik) REFERENCES Serviser(),
+  FOREIGN KEY (idKorisnik) REFERENCES Klijent()
 );
-
-CREATE TABLE AžuriraStatus
-(
-  vrijemeAžuriranja DATE NOT NULL,
-  idServiser INT NOT NULL,
-  registracija VARCHAR(30) NOT NULL,
-  FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser),
-  FOREIGN KEY (registracija) REFERENCES Vozilo(registracija)
-);
-
-
-INSERT INTO KORISNIK(email,userIme,userPrezime,userRole) VALUES ('lvesko3@gmail.com','Leon','Vesic','developer'),('ivanklobucar6@gmail.com','Ivan','Klobucar','developer'),('antonio.valec04@gmail.com','Antonio','Valec','developer')
 
 
 
