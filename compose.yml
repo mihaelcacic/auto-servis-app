@@ -15,7 +15,7 @@ services:
 
   backendserver:
     build:
-      context: ./backend/server
+      context: backend-docker/server
       dockerfile: backend.Dockerfile
     image: backend-service:latest
     ports:
