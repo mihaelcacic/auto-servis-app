@@ -26,12 +26,6 @@ public final class EnvConfigLoader {
      * If DOCKER_ENV=true environment variable is present, this method does nothing
      * and the application will rely on runtime environment variables injected
      * by Docker Compose.
-     *
-     * Mapping rules:
-     *  - WEB_PORT or PORT -> server.port
-     *  - WEB_HOST or HOST -> server.address
-     *  - APP_NAME -> spring.application.name
-     *  - other keys are added as-is so they can be read with @Value("${KEY}") or env.getProperty("KEY")
      */
     public static void configure(SpringApplication app) {
         String dockerEnv = System.getenv("DOCKER_ENV");
@@ -42,9 +36,6 @@ public final class EnvConfigLoader {
             return;
         }
 
-        // Try multiple candidate locations for the local env file:
-        // 1) current working directory (useful when running mvn inside backend/)
-        // 2) repo-style backend/.env.dev.local (useful when running from repo root)
         Path[] candidates = new Path[] {
             Paths.get(".env.dev.local"),
             Paths.get("backend", ".env.dev.local")

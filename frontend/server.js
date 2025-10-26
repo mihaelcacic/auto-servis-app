@@ -2,8 +2,6 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
-// TODO: set the server socket and do the same in nginx
-
 // In Docker: vars already injected by compose, no need to load file
 // Local dev: load frontend/.env.dev.local
 if (!process.env.DOCKER_ENV)

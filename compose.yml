@@ -1,10 +1,10 @@
 services:
   frontend:
     environment:
-      - DOCKER_ENV=true
-      - HOST_FRONTEND=0.0.0.0
-      - PORT_FRONTEND=3000
-      - HOST_DEV_FRONTEND_LOCALHOST=127.0.0.1
+      - DOCKER_ENV=${DOCKER_ENV}
+      - HOST_FRONTEND=${HOST_FRONTEND}
+      - PORT_FRONTEND=${PORT_FRONTEND}
+      - HOST_DEV_FRONTEND_LOCALHOST=${HOST_DEV_FRONTEND_LOCALHOST}
     build:
       context: ./frontend
       dockerfile: frontend.Dockerfile
@@ -17,10 +17,10 @@ services:
 
   backend:
     environment:
-      - DOCKER_ENV=true
-      - SERVER_ADDRESS=0.0.0.0
-      - SERVER_PORT=8080
-      - SPRING_APPLICATION_NAME=backend
+      - DOCKER_ENV=${DOCKER_ENV}
+      - SERVER_ADDRESS=${SERVER_ADDRESS}
+      - SERVER_PORT=${SERVER_PORT}
+      - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
     build:
       context: ./backend
       dockerfile: backend.dockerfile
