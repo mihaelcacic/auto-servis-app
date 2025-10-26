@@ -9,7 +9,9 @@ WORKDIR /app
 COPY target/backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the port your Spring Boot application runs on (default is 8080)
-EXPOSE 8080
+ARG PORT=3000
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,25 +1,32 @@
 services:
-  backendserver:
-    build:
-      context: ./backend
-      dockerfile: backend.dockerfile
-    image: backend-service:latest
-    container_name: backend-service
-    ports:
-      - "127.0.0.2:8080:8080"
-
   frontend:
-    env_file:
-      - .env.dev
     environment:
       - DOCKER_ENV=true
+      - HOST_FRONTEND=0.0.0.0
+      - PORT_FRONTEND=3000
+      - HOST_DEV_FRONTEND_LOCALHOST=127.0.0.1
     build:
       context: ./frontend
       dockerfile: frontend.Dockerfile
       args:
-        - PORT=${WEB_PORT}
-    image: web-service:latest
-    container_name: frontend-service
+        - PORT=${PORT_FRONTEND}
+    image: frontend-service:latest
     ports:
-      - "${LOCAL_DEV_HOST}:${WEB_PORT}:${WEB_PORT}"
+      - "${HOST_DEV_FRONTEND_LOCALHOST}:${PORT_FRONTEND}:${PORT_FRONTEND}"
+    restart: unless-stopped
+
+  backend:
+    environment:
+      - DOCKER_ENV=true
+      - SERVER_ADDRESS=0.0.0.0
+      - SERVER_PORT=8080
+      - SPRING_APPLICATION_NAME=backend
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+      args:
+        - PORT=${PORT_BACKEND}
+    image: backend-service:latest
+    ports:
+      - "${HOST_DEV_BACKEND_LOCALHOST}:${PORT_BACKEND}:${PORT_BACKEND}"
     restart: unless-stopped

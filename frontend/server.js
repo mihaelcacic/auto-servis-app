@@ -11,8 +11,8 @@ if (!process.env.DOCKER_ENV)
 
 const appName = process.env.APP_NAME;
 
-const host = process.env.WEB_HOST;
-const port = process.env.WEB_PORT;
+const host = process.env.HOST_FRONTEND;
+const port = process.env.PORT_FRONTEND;
 
 // health check
 app.get("/health", (req, res) => {
@@ -25,7 +25,7 @@ app.listen(port, host, () => {
   console.log(`Environment: ${process.env.DOCKER_ENV ? "Docker" : "Local"}`);
   console.log(
     `Health check available at http://${
-      process.env.DOCKER_ENV ? process.env.LOCAL_DEV_HOST : host
+      process.env.DOCKER_ENV ? process.env.HOST_DEV_FRONTEND_LOCALHOST : host
     }:${port}/health`
   );
 });
