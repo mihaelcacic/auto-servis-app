@@ -63,9 +63,9 @@ public final class EnvConfigLoader {
             for (String name : props.stringPropertyNames()) {
                 String value = props.getProperty(name);
 
-                if ("WEB_PORT".equals(name) || "PORT".equals(name)) {
+                if ("PORT_BACKEND".equals(name) || "PORT".equals(name)) {
                     defaults.put("server.port", value);
-                } else if ("WEB_HOST".equals(name) || "HOST".equals(name)) {
+                } else if ("HOST_BACKEND".equals(name) || "HOST".equals(name)) {
                     defaults.put("server.address", value);
                 } else if ("APP_NAME".equals(name)) {
                     defaults.put("spring.application.name", value);
