@@ -1,16 +1,15 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
-
+import { Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home/Home'
-import LoginSignup from './pages/LoginSignup/LoginSignup'
 import Services from './pages/Services/Services'
 import Appointments from './pages/Appointments/Appointments'
-import Navbar from './components/Navbar/Navbar'
+import LoginSignup from './pages/LoginSignup/LoginSignup'
+import Footer from './components/Footer/Footer'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
       <div style={{padding:12}}>
         <Routes>
@@ -20,6 +19,6 @@ export default function App() {
           <Route path="/appointments" element={<Appointments />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </>
   )
 }
