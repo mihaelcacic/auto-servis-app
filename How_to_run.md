@@ -4,7 +4,8 @@ Simple guide to get the frontend running in a Docker container.
 
 ## What you need
 
-- Docker Desktop installed and RUNNING!!! on Windows
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and RUNNING!!! on Windows
+- Installed extension: [ms-azuretools.vscode-docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 
 ## Steps
 
@@ -26,13 +27,21 @@ You'll see a line that says `services:` with `frontend:` or `backend:` below it.
 
 VS Code will build and start the container automatically.
 
+PS. there are 2 backend services, backend-run and backend-run-build. If you made a change in backend source code, run backend-run-build only once, after that you can run backend-run how many times you want untill you create another change in source code
+
+If you create a change in source code, it will not be aplied by backend-run and you will be running container based of old code from before.
+
+PS. Unfortunately, there is no way of starting both frontend and backend services at once with one click, you will have to click both seperatelly. Atleast yet.
+
 ### 3) Open in your browser
 
 Once the container is running, open your browser and go to:
 
 **http://127.0.0.1:3000/health** for `frontend:` or
 
-**http://127.0.0.3:8080/health** for `backend:` if you haven't change env's inside .env
+**http://127.0.0.2:8080/health** for `backend:`
+
+(If you haven't change env's inside .env)
 
 You should see "OK" - this means the service is running!
 
@@ -57,7 +66,7 @@ When done send a kill signal in terminal
 
 ## Run backend
 
-Position yourself in backend driectory/folder inside _CMD_
+Position yourself in backend directory/folder inside _CMD_
 
 Run: mvnw.cmd spring-boot:run
 
