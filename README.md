@@ -48,7 +48,7 @@ Sustav omogućuje i:
 
 | Sloj | Tehnologije |
 |------|--------------|
-| **Frontend** | React (Vite, TypeScript), React Router, TanStack Query, Material UI |
+| **Frontend** | React (Vite, JS), React Router, TanStack Query, Material UI |
 | **Backend** | Spring Boot (Web, Security, JPA, Validation, Springdoc OpenAPI) |
 | **Baza podataka** | PostgreSQL + Flyway (migracije) |
 | **Autentifikacija** | OAuth2 (npr. Google) |
