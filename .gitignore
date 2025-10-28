@@ -2,7 +2,7 @@
 node_modules/
 dist/
 build/
-.env
+backend/.env
 npm-debug.log*
 
 # === Java / Spring Boot ===
