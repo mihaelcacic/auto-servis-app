@@ -61,16 +61,33 @@ public final class EnvConfigLoader {
             Map<String, Object> defaults = new HashMap<>();
 
             for (String name : props.stringPropertyNames()) {
-                String value = props.getProperty(name);
+                String raw = props.getProperty(name);
+                if (raw == null) continue;
+                String value = raw.trim();
+                // strip optional surrounding quotes that sometimes appear in .env files
+                if (value.length() >= 2 && ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'")))) {
+                    value = value.substring(1, value.length() - 1);
+                }
 
-                if ("PORT_BACKEND".equals(name) || "PORT".equals(name)) {
+                String key = name.trim().toUpperCase();
+
+                // Accept a few common port/host keys used in env files
+                if (key.equals("PORT_BACKEND") || key.equals("PORT") || key.equals("SERVER_PORT") || key.equals("WEB_PORT")) {
                     defaults.put("server.port", value);
-                } else if ("HOST_BACKEND".equals(name) || "HOST".equals(name)) {
+                    // also set as a system property so it takes precedence over application.properties
+                    System.setProperty("server.port", value);
+                    System.out.println("EnvConfigLoader: mapped " + name + "=" + value + " -> server.port (and system property set)");
+                } else if (key.equals("HOST_BACKEND") || key.equals("HOST") || key.equals("SERVER_ADDRESS") || key.equals("WEB_HOST") || key.equals("HOSTNAME")) {
                     defaults.put("server.address", value);
-                } else if ("APP_NAME".equals(name)) {
+                    // ensure server.address is visible to Spring as a system property too
+                    System.setProperty("server.address", value);
+                    System.out.println("EnvConfigLoader: mapped " + name + "=" + value + " -> server.address (and system property set)");
+                } else if (key.equals("APP_NAME") || key.equals("SPRING_APPLICATION_NAME")) {
                     defaults.put("spring.application.name", value);
+                    System.out.println("EnvConfigLoader: mapped " + name + "=" + value + " -> spring.application.name");
                 } else {
                     defaults.put(name, value);
+                    System.out.println("EnvConfigLoader: kept " + name + "=" + value);
                 }
             }
 

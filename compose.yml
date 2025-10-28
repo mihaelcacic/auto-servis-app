@@ -18,8 +18,8 @@ services:
   backend-run:
     environment:
       - DOCKER_ENV=${DOCKER_ENV}
-      - SERVER_ADDRESS=${SERVER_ADDRESS}
-      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_ADDRESS=${HOST_BACKEND}
+      - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
     build:
       context: ./backend
@@ -35,8 +35,8 @@ services:
   backend-run-build:
     environment:
       - DOCKER_ENV=${DOCKER_ENV}
-      - SERVER_ADDRESS=${SERVER_ADDRESS}
-      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_ADDRESS=${HOST_BACKEND}
+      - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
     build:
       context: ./backend
