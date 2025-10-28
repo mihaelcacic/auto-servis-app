@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box, Container, Typography, Stack, Link } from '@mui/material'
-
+import { Box, Container, Typography, Stack, Link as MuiLink } from '@mui/material'
+import { NavLink } from 'react-router-dom'
 
 export default function Footer(){
     return (
@@ -13,9 +13,10 @@ export default function Footer(){
                     </Box>
 
                     <Stack direction="row" spacing={2} alignItems="center">
-                        <Link href="/services" underline="hover" color="text.primary">Services</Link>
-                        <Link href="/appointments" underline="hover" color="text.primary">Appointments</Link>
-                        <Link href="/login" underline="hover" color="text.primary">Login</Link>
+                        <MuiLink component={NavLink} to="/" underline="none">Home</MuiLink>
+                        <MuiLink component={NavLink} to="/services" underline="none">Services</MuiLink>
+                        <MuiLink component={NavLink} to="/appointments" underline="none">Appointments</MuiLink>
+                        <MuiLink component={NavLink} to="/login" underline="none">Login</MuiLink>
                     </Stack>
                 </Stack>
 
