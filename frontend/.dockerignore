@@ -1,0 +1,14 @@
+
+# not taking in docker dependencies
+.dockerignore
+frontend.Dockerfile
+
+# not taking git dependencies
+.git/
+.gitignore
+
+# not used in creation of immage
+nodemodules/
+
+# env files
+.env.dev.local

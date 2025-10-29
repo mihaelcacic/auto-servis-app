@@ -2,7 +2,7 @@
 node_modules/
 dist/
 build/
-.env
+backend/.env
 npm-debug.log*
 
 # === Java / Spring Boot ===
@@ -23,3 +23,6 @@ Thumbs.db
 *.tmp
 *.bak
 *.zip
+
+# selfexplanatory:
+.env
