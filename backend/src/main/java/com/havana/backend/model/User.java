@@ -1,27 +1,45 @@
 package com.havana.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
+@Table(name = "users")
+@Data
 @NoArgsConstructor
-@Table(name = "Korisnik")
+@AllArgsConstructor
+@Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String firstName;
-    @Column(nullable = false)
-    private String lastName;
+
     @Column(nullable = false, unique = true)
     private String email;
-    @Column
+
+    @Column(nullable = true, name = "firstname")
+    private String firstName;
+
+    @Column(nullable = true, name = "lastname")
+    private String lastName;
+
+    @Column(name = "pictureurl")
     private String pictureUrl;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    // Relationships
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vehicle> vehicles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
 }

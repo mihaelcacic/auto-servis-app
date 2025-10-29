@@ -27,31 +27,41 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String picture = oAuth2User.getAttribute("picture");
 
         // Razdvajanje imena i prezimena ako postoji
-        String firstName;
-        String lastName;
-        if (name != null) {
-            String[] parts = name.split(" ", 2);
-            firstName = parts[0];
-            if (parts.length > 1) lastName = parts[1];
-            else {
+        String firstName = oAuth2User.getAttribute("given_name");
+        String lastName = oAuth2User.getAttribute("family_name");
+
+        if (firstName == null || lastName == null) {
+            String fullName = oAuth2User.getAttribute("name");
+            if (fullName != null) {
+                String[] parts = fullName.split(" ", 2);
+                firstName = parts[0];
+                if (parts.length > 1) lastName = parts[1];
+                else lastName = "";
+            } else {
+                firstName = "";
                 lastName = "";
             }
-        } else {
-            lastName = "";
-            firstName = "";
         }
 
-        userRepository.findByEmail(email).orElseGet(() -> {
-            User user = new User();
-            user.setEmail(email);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPictureUrl(picture);
-            return userRepository.save(user);
+        String finalFirstName = firstName;
+        String finalLastName = lastName;
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setFirstName(finalFirstName);
+            newUser.setLastName(finalLastName);
+            newUser.setPictureUrl(picture);
+            return userRepository.save(newUser);
         });
+
+        // update user info if changed
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPictureUrl(picture);
+
+        userRepository.save(user);
 
         return oAuth2User;
     }
-
 
 }
