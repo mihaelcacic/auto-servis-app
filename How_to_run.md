@@ -27,19 +27,15 @@ You'll see a line that says `services:` with `frontend:` or `backend:` below it.
 
 VS Code will build and start the container automatically.
 
-PS. there are 2 backend services, backend-run and backend-run-build. If you made a change in backend source code, run backend-run-build only once, after that you can run backend-run how many times you want untill you create another change in source code
-
-If you create a change in source code, it will not be aplied by backend-run and you will be running container based of old code from before.
-
 PS. Unfortunately, there is no way of starting both frontend and backend services at once with one click, you will have to click both seperatelly. Atleast yet.
 
 ### 3) Open in your browser
 
 Once the container is running, open your browser and go to:
 
-**http://127.0.0.1:3000/health** for `frontend:` or
+**http://localhost:3000/health** for `frontend:` or
 
-**http://127.0.0.2:8080/health** for `backend:`
+**http://localhost:8080/health** for `backend:`
 
 (If you haven't change env's inside .env)
 
