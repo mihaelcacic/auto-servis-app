@@ -1,5 +1,6 @@
 package com.havana.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,10 +23,12 @@ public class Vehicle {
     // Relationships
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "car_model_id", nullable = false)
+    @JsonIgnore
     private CarModel carModel;
 }
 
