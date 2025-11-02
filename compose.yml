@@ -12,38 +12,21 @@ services:
         - PORT=${PORT_FRONTEND}
     image: frontend-service:latest
     ports:
-      - "${HOST_DEV_FRONTEND_LOCALHOST}:${PORT_FRONTEND}:${PORT_FRONTEND}"
+      - "${PORT_FRONTEND}:${PORT_FRONTEND}"
     restart: unless-stopped
 
-  backend-run:
+  backend:
     environment:
       - DOCKER_ENV=${DOCKER_ENV}
-      - SERVER_ADDRESS=${SERVER_ADDRESS}
-      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_ADDRESS=${HOST_BACKEND}
+      - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
     build:
       context: ./backend
       dockerfile: backend.dockerfile
       args:
         - PORT=${PORT_BACKEND}
-      target: backend-run
-    image: backend-run:latest
+    image: backend:latest
     ports:
-      - "${HOST_DEV_BACKEND_LOCALHOST}:${PORT_BACKEND}:${PORT_BACKEND}"
-    restart: unless-stopped
-
-  backend-run-build:
-    environment:
-      - DOCKER_ENV=${DOCKER_ENV}
-      - SERVER_ADDRESS=${SERVER_ADDRESS}
-      - SERVER_PORT=${SERVER_PORT}
-      - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
-    build:
-      context: ./backend
-      dockerfile: backend.dockerfile
-      args:
-        - PORT=${PORT_BACKEND}
-    image: backend-run-build:latest
-    ports:
-      - "${HOST_DEV_BACKEND_LOCALHOST}:${PORT_BACKEND}:${PORT_BACKEND}"
+      - "${PORT_BACKEND}:${PORT_BACKEND}"
     restart: unless-stopped

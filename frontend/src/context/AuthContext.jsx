@@ -1,77 +1,50 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+// src/context/AuthContext.js
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-function parseJwt(token) {
-  if (!token) return null
-  try {
-    return JSON.parse(atob(token.split('.')[1]))
-  } catch {
-    return null
-  }
-}
-
-const AuthContext = createContext(null)
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [fetchAttempted, setFetchAttempted] = useState(false);
 
-  useEffect(() => {
-    const raw = localStorage.getItem('user')
-    if (raw) setUser(JSON.parse(raw))
-  }, [])
+    useEffect(() => {
+        if (fetchAttempted) return; // prevent double fetches
+        setFetchAttempted(true);
 
-  const login = (credentialResponse) => {
-    // credentialResponse may be either the credential object (from
-    // the GoogleLogin component) containing an ID token at
-    // credentialResponse.credential, or a token response from
-    // useGoogleLogin which contains an access_token. Handle both.
-    const id_token = credentialResponse?.credential
-    if (id_token) {
-      const payload = parseJwt(id_token)
-      if (payload) {
-        const u = {
-          name: payload.name,
-          email: payload.email,
-          picture: payload.picture,
-          sub: payload.sub,
-          id_token
-        }
-        setUser(u)
-        localStorage.setItem('user', JSON.stringify(u))
-      }
-      return
-    }
-
-    const accessToken = credentialResponse?.access_token
-    if (accessToken) {
-      // fetch basic profile info from Google's userinfo endpoint
-      fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`)
-        .then(res => res.json())
-        .then(profile => {
-          const u = {
-            name: profile.name,
-            email: profile.email,
-            picture: profile.picture,
-            sub: profile.sub,
-            access_token: accessToken
-          }
-          setUser(u)
-          localStorage.setItem('user', JSON.stringify(u))
+        fetch("http://localhost:8080/api/user", {
+            credentials: "include",
         })
-        .catch(err => {
-          console.error('Failed to load Google profile', err)
-        })
-    }
-  }
+            .then((res) => {
+                if (res.status === 401) throw new Error("Not logged in");
+                return res.json();
+            })
+            .then((data) => setUser(data))
+            .catch(() => setUser(null))
+            .finally(() => setLoading(false));
+    }, [fetchAttempted]);
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem('user')
-    // optionally call backend to revoke session / token
-  }
+    const login = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>
+    const logout = () => {
+        fetch("http://localhost:8080/logout", {
+            method: "POST",
+            credentials: "include",
+        }).finally(() => {
+            setUser(null);
+            window.location.href = "/";
+        });
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
-  return useContext(AuthContext)
+    return useContext(AuthContext);
 }

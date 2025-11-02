@@ -17,7 +17,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
 import GoogleIcon from '@mui/icons-material/Google';
-import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext';
 
 
@@ -162,22 +161,17 @@ export default function Navbar() {
   );
 }
 
-// mali wrapper za Google login gumb da koristi MUI stil 
-function GoogleSignInButton({ onSuccess }) {
-  const login = useGoogleLogin({
-    onSuccess: tokenResponse => onSuccess(tokenResponse),
-    onError: () => console.error('Google login failed')
-  });
-
+function GoogleSignInButton() {
+  const { login } = useAuth();
   return (
     <Button
       variant="outlined"
       startIcon={<GoogleIcon />}
-      onClick={() => login()}
+      onClick={login}
       sx={{
         bgcolor: 'background.paper',
         color: 'text.primary',
-        borderColor: 'divider'
+        borderColor: 'divider',
       }}
     >
       Sign in
