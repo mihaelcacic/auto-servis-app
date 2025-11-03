@@ -4,7 +4,8 @@ services:
       - DOCKER_ENV=${DOCKER_ENV}
       - HOST_FRONTEND=${HOST_FRONTEND}
       - PORT_FRONTEND=${PORT_FRONTEND}
-      - HOST_DEV_FRONTEND_LOCALHOST=${HOST_DEV_FRONTEND_LOCALHOST}
+      - HOST_BACKEND=${HOST_BACKEND}
+      - PORT_BACKEND=${PORT_BACKEND}
     build:
       context: ./frontend
       dockerfile: frontend.Dockerfile
@@ -12,7 +13,7 @@ services:
         - PORT=${PORT_FRONTEND}
     image: frontend-service:latest
     ports:
-      - "${PORT_FRONTEND}:${PORT_FRONTEND}"
+      - "${PORT_FRONTEND}:${PORT_NGINX_FRONTEND}"
     restart: unless-stopped
 
   backend:
