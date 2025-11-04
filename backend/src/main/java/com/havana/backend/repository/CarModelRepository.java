@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface CarModelRepository extends JpaRepository<CarModel, Long> {
-    List<CarModel> findByBrand(String brand);
+    List<CarModel> findByBrandIgnoreCase(String brand);
     @Query("SELECT DISTINCT c.brand FROM CarModel c")
     List<String> findAllBrands();
 }
