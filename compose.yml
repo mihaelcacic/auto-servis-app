@@ -27,9 +27,9 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/automat
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
+      - FRONTEND_URL=${FRONTEND_URL}
     build:
       context: ./backend
       dockerfile: backend.dockerfile
