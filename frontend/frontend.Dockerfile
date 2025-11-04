@@ -1,6 +1,6 @@
 
 # Multi-stage build: build the Vite app with Node, serve with nginx in production
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 

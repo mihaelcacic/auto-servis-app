@@ -1,6 +1,8 @@
 package com.havana.backend.configuration;
 
 import com.havana.backend.service.CustomOAuth2UserService;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,10 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
+
     private final CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
@@ -32,10 +38,10 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .defaultSuccessUrl("http://localhost:5173/", true)
+                        .defaultSuccessUrl(frontendUrl, true)
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:5173/")
+                        .logoutSuccessUrl(frontendUrl)
                         .deleteCookies("JSESSIONID")
                 );
 
@@ -46,7 +52,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));

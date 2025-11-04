@@ -12,7 +12,7 @@ services:
         - PORT=${PORT_FRONTEND}
     image: frontend-service:latest
     ports:
-      - "${PORT_FRONTEND}:${PORT_FRONTEND}"
+      - "${PORT_FRONTEND}:${PORT_NGINX_FRONTEND}"
     restart: unless-stopped
 
   backend:
@@ -21,6 +21,12 @@ services:
       - SERVER_ADDRESS=${HOST_BACKEND}
       - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/automat
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
     build:
       context: ./backend
       dockerfile: backend.dockerfile
