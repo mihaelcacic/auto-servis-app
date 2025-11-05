@@ -3,7 +3,7 @@ CREATE DATABASE AutoServisBaza;
 CREATE TABLE Klijent
 (
   imeKlijent VARCHAR(100) NOT NULL,
-  prezimeKlijent VARCHAR(100) NOT NULL,
+  prezimeKlijent VARCHAR(100) NOT NULL DEFAULT '',
   idKlijent INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(75) NOT NULL,
   UNIQUE (email)
@@ -12,7 +12,7 @@ CREATE TABLE Klijent
 CREATE TABLE Admin
 (
   imeAdmin VARCHAR(100) NOT NULL,
-  prezimeAdmin VARCHAR(100) NOT NULL,
+  prezimeAdmin VARCHAR(100) NOT NULL DEFAULT '',
   idAdmin INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(100) NOT NULL,
   UNIQUE (email)
@@ -21,7 +21,7 @@ CREATE TABLE Admin
 CREATE TABLE Serviser
 (
   imeServiser VARCHAR(100) NOT NULL,
-  prezimeServiser VARCHAR(100) NOT NULL,
+  prezimeServiser VARCHAR(100) NOT NULL DEFAULT '',
   voditeljServisa BOOLEAN NOT NULL DEFAULT FALSE,
   idServiser INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(100) NOT NULL,
@@ -31,7 +31,8 @@ CREATE TABLE Serviser
 CREATE TABLE Model
 (
   idModel INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  modelNaziv VARCHAR(500) NOT NULL,
+  modelNaziv VARCHAR(200) NOT NULL,
+  markaNaziv VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Vozilo
@@ -76,7 +77,7 @@ CREATE TABLE Nalog
   FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser)
 );
 
-INSERT INTO Model (nazivModela, marka) VALUES
+INSERT INTO Model (nazivModela, markaNaziv) VALUES
 ('Golf 7', 'Volkswagen'),
 ('Corsa', 'Opel'),
 ('Focus', 'Ford'),
@@ -92,20 +93,15 @@ VALUES
 ('2025-11-01', NULL, 4, 4),
 ('2025-10-28', '2025-11-02', 5, 5);
 
-INSERT INTO Vozilo (registracija, modelId)
-VALUES
-('ZG-1234-AB', 1),
-('ST-5678-CD', 2),
-('RI-4321-EF', 3),
-('KA-9876-GH', 4),
-('OS-5555-IJ', 5);
 
 INSERT INTO Usluga (uslugaNaziv) VALUES
 ('Zamjena ulja'),
 ('Balansiranje guma'),
 ('Servis kočnica'),
 ('Dijagnostika motora'),
-('Promjena filtera zraka');
+('Promjena filtera zraka'),
+('Ostalo');
+
 
 INSERT INTO Admin (imeAdmin, prezimeAdmin, email)
 VALUES
@@ -114,7 +110,7 @@ VALUES
 ('Ivan', 'Klobučar', 'ivan.klobucar@gmail.com'),
 ('Mihael','Čačić','mihael.cacic@gmail.com'),
 ('Mark', 'Volf', 'mark.volf@gmail.com'),
-('Filip', 'Vučkovič', 'filip.vuckovic@gmail.com'),
+('Filip', 'Vučković', 'filip.vuckovic@gmail.com'),
 ('Kristian', 'Vranješ', 'kristijan.vranjes@gmail.com');
 
 INSERT INTO Serviser (imeServiser, prezimeServiser, email, voditeljServisa)
