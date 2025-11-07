@@ -35,9 +35,10 @@ services:
     build:
       context: ./backend
       dockerfile: backend.dockerfile
+      target: backend-service
       args:
         - PORT=${PORT_BACKEND}
-    image: backend:latest
+    image: backend-service:latest
     ports:
       - "${PORT_BACKEND}:${PORT_BACKEND}"
     restart: unless-stopped
