@@ -1,6 +1,6 @@
-CREATE DATABASE AutoServisBaza;
+CREATE DATABASE bregmotors;
 
-\c AutoServisBaza
+\c bregmotors
 
 CREATE TABLE Klijent
 (
@@ -8,7 +8,6 @@ CREATE TABLE Klijent
   prezimeKlijent VARCHAR(100) NOT NULL DEFAULT '',
   idKlijent INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(75) NOT NULL,
-  PRIMARY KEY (idKlijent),
   UNIQUE (email)
 );
 
@@ -17,10 +16,18 @@ CREATE TABLE Serviser
 (
   imeServiser VARCHAR(100) NOT NULL,
   prezimeServiser VARCHAR(100) NOT NULL DEFAULT '',
-  voditeljServisa INT(75) NOT NULL,
+  voditeljServisa BOOLEAN NOT NULL DEFAULT FALSE,
   idServiser INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(100) NOT NULL,
-  PRIMARY KEY (idServiser),
+  UNIQUE (email)
+);
+
+CREATE TABLE Admin
+(
+  imeAdmin VARCHAR(100) NOT NULL,
+  prezimeAdmin VARCHAR(100) NOT NULL,
+  idAdmin INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email VARCHAR(100) NOT NULL,
   UNIQUE (email)
 );
 
@@ -29,8 +36,7 @@ CREATE TABLE Model
   idModel INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   modelNaziv VARCHAR(100) NOT NULL,
   markaNaziv VARCHAR(100) NOT NULL,
-  godinaProizv INT NOT NULL,
-  PRIMARY KEY (idModel)
+  godinaProizv INT NOT NULL
 );
 
 CREATE TABLE Vozilo
@@ -38,7 +44,6 @@ CREATE TABLE Vozilo
   idVozilo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   registracija VARCHAR(50) NOT NULL,
   idModel INT NOT NULL,
-  PRIMARY KEY (idVozilo),
   FOREIGN KEY (idModel) REFERENCES Model(idModel),
   UNIQUE (idVozilo),
   UNIQUE (registracija)
@@ -49,33 +54,31 @@ CREATE TABLE ZamjenskoVozilo
   idZamjVozilo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   datumPreuzimanja DATE,
   datumVracanja DATE,
-  modelId INT NOT NULL,
-  PRIMARY KEY (idVozilo),
-  FOREIGN KEY (modelId) REFERENCES Model(idModel)
+  idModel INT NOT NULL,
+  FOREIGN KEY (idModel) REFERENCES Model(idModel)
 );
 
-CREATE TABLE idUsluga
+CREATE TABLE Usluge
 (
-  uslugaId INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  uslugaNaziv VARCHAR(500) NOT NULL,
-  PRIMARY KEY (uslugaId)
+  idUsluga INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  uslugaNaziv VARCHAR(500) NOT NULL
 );
 
 CREATE TABLE Nalog
 (
   idNalog INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   datumVrijemeTermin DATE NOT NULL,
+  datumVrijemeZavršenPopravak DATE,
   status INT NOT NULL,
   datumVrijemeAzuriranja DATE NOT NULL,
   idVozilo INT NOT NULL,
   idKlijent INT NOT NULL,
-  uslugaId INT NOT NULL,
+  idUsluga INT NOT NULL,
   idServiser INT NOT NULL,
-  idVozilo INT NOT NULL,
-  PRIMARY KEY (idNalog),
+  idZamjVozilo INT NOT NULL,
   FOREIGN KEY (idVozilo) REFERENCES Vozilo(idVozilo),
   FOREIGN KEY (idKlijent) REFERENCES Klijent(idKlijent),
-  FOREIGN KEY (uslugaId) REFERENCES idUsluga(uslugaId),
+  FOREIGN KEY (idUsluga) REFERENCES Usluge(idUsluga),
   FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser),
-  FOREIGN KEY (idVozilo) REFERENCES ZamjenskoVozilo(idZamjVozilo)
+  FOREIGN KEY (idZamjVozilo) REFERENCES ZamjenskoVozilo(idZamjVozilo)
 );
