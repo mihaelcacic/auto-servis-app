@@ -37,9 +37,9 @@ CREATE TABLE Vozilo
 (
   idVozilo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   registracija VARCHAR(50) NOT NULL,
-  modelId INT NOT NULL,
+  idModel INT NOT NULL,
   PRIMARY KEY (idVozilo),
-  FOREIGN KEY (modelId) REFERENCES Model(idModel),
+  FOREIGN KEY (idModel) REFERENCES Model(idModel),
   UNIQUE (idVozilo),
   UNIQUE (registracija)
 );
