@@ -1,4 +1,4 @@
-\c AutoServisBaza
+\c bregmotors
 
 INSERT INTO Model (modelNaziv, markaNaziv, godinaProizv) VALUES
 ('Golf 7', 'Volkswagen', 2017),
