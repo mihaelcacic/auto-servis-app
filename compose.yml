@@ -4,7 +4,8 @@ services:
       - DOCKER_ENV=${DOCKER_ENV}
       - HOST_FRONTEND=${HOST_FRONTEND}
       - PORT_FRONTEND=${PORT_FRONTEND}
-      - HOST_DEV_FRONTEND_LOCALHOST=${HOST_DEV_FRONTEND_LOCALHOST}
+      - HOST_BACKEND=${HOST_BACKEND}
+      - PORT_BACKEND=${PORT_BACKEND}
     build:
       context: ./frontend
       dockerfile: frontend.Dockerfile
@@ -14,6 +15,8 @@ services:
     ports:
       - "${PORT_FRONTEND}:${PORT_NGINX_FRONTEND}"
     restart: unless-stopped
+    networks:
+      - appnet
 
   backend:
     environment:
@@ -21,12 +24,14 @@ services:
       - SERVER_ADDRESS=${HOST_BACKEND}
       - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/automat
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
       - FRONTEND_URL=${FRONTEND_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     build:
       context: ./backend
       dockerfile: backend.dockerfile
@@ -36,3 +41,9 @@ services:
     ports:
       - "${PORT_BACKEND}:${PORT_BACKEND}"
     restart: unless-stopped
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
