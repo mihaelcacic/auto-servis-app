@@ -74,4 +74,8 @@ public class NalogService {
     public List<Nalog> getNaloziZaKlijenta(Integer klijentId) {
         return nalogRepository.findByKlijent_IdKlijent(klijentId);
     }
+
+    public List<Nalog> getSviNalozi() {
+        return nalogRepository.findAll();
+    }
 }

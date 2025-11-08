@@ -69,7 +69,7 @@ CREATE TABLE Nalog
 (
     idNalog INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     datumVrijemeTermin TIMESTAMP NOT NULL,
-    datumVrijemeZavršenPopravak TIMESTAMP,
+    datumVrijemeZavrsenPopravak TIMESTAMP,
     status INT NOT NULL,
     datumVrijemeAzuriranja TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     idKlijent INT NOT NULL,

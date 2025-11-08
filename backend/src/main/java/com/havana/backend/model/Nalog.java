@@ -19,7 +19,7 @@ public class Nalog {
     @Column(name = "datumvrijemetermin", nullable = false)
     private LocalDateTime datumVrijemeTermin;
 
-    @Column(name = "datumvrijemezavršenpopravak")
+    @Column(name = "datumvrijemezavrsenpopravak")
     private LocalDateTime datumVrijemeZavrsenPopravak;
 
     @Column(name = "status", nullable = false)

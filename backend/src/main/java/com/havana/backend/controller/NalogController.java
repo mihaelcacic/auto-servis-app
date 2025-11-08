@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/nalog")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class NalogController {
 
     private final NalogService nalogService;
 
-    @PostMapping("/")
+    @PostMapping("/nalog")
     public ResponseEntity<?> createNalog(@RequestBody NalogRecord nalog) {
         boolean uspjeh = nalogService.createNewNalog(nalog);
         if(uspjeh)
@@ -28,7 +28,7 @@ public class NalogController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Nalog pogrešan."));
     }
 
-    @GetMapping("/{klijentId}")
+    @GetMapping("/nalog/{klijentId}")
     public ResponseEntity<?> getNaloziZaKlijenta(@PathVariable Integer klijentId) {
         List<Nalog> nalozi = nalogService.getNaloziZaKlijenta(klijentId);
 
@@ -38,5 +38,17 @@ public class NalogController {
         }
 
         return ResponseEntity.ok(nalozi);
+    }
+
+    @GetMapping("/nalozi")
+    public ResponseEntity<?> getSviNalozi() {
+        List<Nalog> sviNalozi = nalogService.getSviNalozi();
+
+        if (sviNalozi.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Nema nijedan nalog."));
+        }
+
+        return ResponseEntity.ok(sviNalozi);
     }
 }
