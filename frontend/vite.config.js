@@ -33,14 +33,10 @@ const port = parseInt(
 );
 
 // Proxy target for /api in dev. When running in Docker, prefer the backend service name.
-const apiTarget = DOCKER_ENV
-  ? `http://${
-      process.env.BACKEND_HOST || process.env.HOST_BACKEND || "backend-run"
-    }:${process.env.PORT_BACKEND || "8080"}`
-  : process.env.VITE_API_TARGET || "http://localhost:8080";
+const BACKEND_URL = `${BACKEND_URL}` || "http://localhost:8080";
 
 console.log(
-  `vite: dev server host=${host} port=${port} proxy /api -> ${apiTarget}`
+  `vite: dev server host=${host} port=${port} proxy /api -> ${BACKEND_URL}`
 );
 
 export default defineConfig({
@@ -50,7 +46,7 @@ export default defineConfig({
     port,
     proxy: {
       "/api": {
-        target: apiTarget,
+        target: BACKEND_URL,
         changeOrigin: true,
         secure: false,
       },
