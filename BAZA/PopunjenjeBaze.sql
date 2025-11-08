@@ -1,5 +1,29 @@
 \c bregmotors
 
+INSERT INTO Vozilo (registracija, idModel, godinaProizv)
+VALUES
+    ('ZG123AA', 1, 2018),
+    ('ZG456BB', 2, 2017),
+    ('ST789CC', 3, 2020),
+    ('RI101DD', 4, 2022),
+    ('ZG202EE', 1, 2019);
+
+INSERT INTO Klijent (imeKlijent, prezimeKlijent, email, slikaUrl)
+VALUES
+    ('Marko', 'Horvat', 'marko.horvat@example.com', 'https://example.com/img1.jpg'),
+    ('Ivana', 'Kovač', 'ivana.kovac@example.com', 'https://example.com/img2.jpg'),
+    ('Petar', 'Marić', 'petar.maric@example.com', 'https://example.com/img3.jpg'),
+    ('Ana', 'Babić', 'ana.babic@example.com', 'https://example.com/img4.jpg'),
+    ('Luka', 'Novak', 'luka.novak@example.com', 'https://example.com/img5.jpg');
+
+INSERT INTO Nalog (datumVrijemeTermin, datumVrijemeZavrsenPopravak, status, datumVrijemeAzuriranja, idKlijent, idVozilo, idUsluga, idServiser)
+VALUES
+    ('2025-11-10 09:00:00', NULL, 0, CURRENT_TIMESTAMP, 1, 1, 1, 1),
+    ('2025-11-11 10:30:00', NULL, 0, CURRENT_TIMESTAMP, 2, 2, 1, 1),
+    ('2025-11-12 08:15:00', NULL, 1, CURRENT_TIMESTAMP, 3, 3, 1, 1),
+    ('2025-11-13 14:00:00', NULL, 2, CURRENT_TIMESTAMP, 4, 4, 1, 1),
+    ('2025-11-14 11:45:00', NULL, 0, CURRENT_TIMESTAMP, 5, 5, 1, 1);
+
 INSERT INTO Usluge (uslugaNaziv) VALUES
 ('Zamjena ulja'),
 ('Balansiranje guma'),
