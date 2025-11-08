@@ -12,10 +12,31 @@ INSERT INTO Usluge (uslugaNaziv) VALUES
 ('Servis mjenjača'),
 ('Ostalo');
 
+INSERT INTO ZamjenskoVozilo (idModel, datumPreuzimanja, datumVracanja) VALUES
+(3,  '2025-10-20', '2025-10-23'),
+(7,  '2025-09-15', '2025-09-20'),
+(12, '2025-11-01', '2025-11-03'),
+(18, '2025-11-02', NULL),                -- trenutno posuđeno
+(21, NULL, NULL),                        -- slobodno vozilo
+(25, '2025-10-10', '2025-10-12'),
+(30, NULL, NULL),
+(33, '2025-11-05', NULL),
+(37, '2025-09-28', '2025-09-30'),
+(40, NULL, NULL),
+(44, '2025-10-01', '2025-10-05'),
+(49, '2025-10-25', '2025-10-28'),
+(52, NULL, NULL),
+(56, '2025-11-04', NULL),
+(61, NULL, NULL),
+(67, '2025-08-12', '2025-08-15'),
+(73, '2025-11-06', NULL),
+(80, NULL, NULL),
+(95, '2025-09-01', '2025-09-07'),
+(100, NULL, NULL);
 
 INSERT INTO Serviser (imeServiser, prezimeServiser, email, voditeljServisa)
 VALUES
-('Antonio', 'Valec', 'antonio.valec04@gmail.com', TRUE),
+('Antonio', 'Valec', 'antonio.valec88@gmail.com', TRUE),
 ('Ivan', 'Horvat', 'ivan.horvat@gmail.com', FALSE),
 ('Petra', 'Klarić', 'petra.klaric@gmail.com', FALSE),
 ('Luka', 'Babić', 'luka.babic@gmail.com', FALSE),
