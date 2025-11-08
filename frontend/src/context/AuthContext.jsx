@@ -8,11 +8,13 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
     const [fetchAttempted, setFetchAttempted] = useState(false);
 
+    const BACKEND_URL = import.meta.env.BACKEND_URL || "http://localhost:8080";
+
     useEffect(() => {
         if (fetchAttempted) return; // prevent double fetches
         setFetchAttempted(true);
 
-        fetch("http://localhost:8080/api/user", {
+        fetch(`${BACKEND_URL}/api/user`, {
             credentials: "include",
         })
             .then((res) => {
@@ -25,11 +27,11 @@ export function AuthProvider({ children }) {
     }, [fetchAttempted]);
 
     const login = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+        window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
     };
 
     const logout = () => {
-        fetch("http://localhost:8080/logout", {
+        fetch(`${BACKEND_URL}/logout`, {
             method: "POST",
             credentials: "include",
         }).finally(() => {
