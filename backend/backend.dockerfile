@@ -1,9 +1,19 @@
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
-FROM eclipse-temurin:21-jre-jammy
+WORKDIR /workspace
+
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn -B clean package -DskipTests
+
+
+
+FROM eclipse-temurin:21-jre-jammy AS backend-service
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY --from=builder /workspace/target/*.jar app.jar
 
 ARG PORT=8080
 ENV PORT=${PORT}
