@@ -1,37 +1,55 @@
-import { defineConfig, loadEnv } from 'vite'
-import path from 'path'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
-// Use Vite's loadEnv to read .env files for the current mode (development/production)
-// This merges .env, .env.local, .env.development, etc. according to Vite conventions.
-export default ({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  // also attempt to load the repository root .env (one level up) so a single .env at repo root
-  // can be used without duplicating files in frontend/ (useful in your setup)
-  const rootEnv = loadEnv(mode, path.resolve(process.cwd(), '..'), '')
+// Decide whether we are running inside Docker
+const DOCKER_ENV = (process.env.DOCKER_ENV || "").toLowerCase() === "true";
 
-  // Resolve host/port from env (support both VITE_ and non-prefixed vars)
-  const host = env.VITE_HOST_FRONTEND || env.HOST_FRONTEND || rootEnv.VITE_HOST_FRONTEND || rootEnv.HOST_FRONTEND || 'localhost'
-  const port = parseInt(env.VITE_PORT_FRONTEND || env.PORT_FRONTEND || rootEnv.VITE_PORT_FRONTEND || rootEnv.PORT_FRONTEND || '3000', 10)
+if (!DOCKER_ENV) {
+  // Load frontend/.env.dev.local when not in Docker (local development)
+  const localEnvPath = path.resolve(__dirname, ".env.dev.local");
+  if (fs.existsSync(localEnvPath)) {
+    dotenv.config({ path: localEnvPath });
+    console.log(`vite: loaded env from ${localEnvPath}`);
+  } else {
+    // fallback to standard dotenv behavior (.env, .env.development, etc.)
+    dotenv.config();
+    console.log("vite: loaded env from default .env (if present)");
+  }
+} else {
+  console.log(
+    "vite: running with DOCKER_ENV=true — using container environment variables"
+  );
+}
 
-  // Backend URL for dev proxy. Preference order:
-  // 1) frontend env (VITE_BACKEND_URL), 2) frontend BACKEND_URL, 3) repo root VITE_BACKEND_URL, 4) repo root BACKEND_URL, 5) fallback
-  const BACKEND_URL = env.VITE_BACKEND_URL || env.BACKEND_URL || rootEnv.VITE_BACKEND_URL || rootEnv.BACKEND_URL || 'http://localhost:8080'
+// Determine host and port for the dev server (do not hardcode values)
+const host =
+  process.env.HOST_FRONTEND || process.env.VITE_HOST_FRONTEND || "localhost";
+const port = parseInt(
+  process.env.PORT_FRONTEND || process.env.VITE_PORT_FRONTEND || "3000",
+  10
+);
 
-  console.log(`vite: dev server host=${host} port=${port} proxy /api -> ${BACKEND_URL}`)
+// Proxy target for /api in dev. When running in Docker, prefer the backend service name.
+const BACKEND_URL = `${BACKEND_URL}` || "http://localhost:8080";
 
-  return defineConfig({
-    plugins: [react()],
-    server: {
-      host,
-      port,
-      proxy: {
-        '/api': {
-          target: BACKEND_URL,
-          changeOrigin: true,
-          secure: false,
-        },
+console.log(
+  `vite: dev server host=${host} port=${port} proxy /api -> ${BACKEND_URL}`
+);
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host,
+    port,
+    proxy: {
+      "/api": {
+        target: BACKEND_URL,
+        changeOrigin: true,
+        secure: false,
       },
     },
-  })
-}
+  },
+});
