@@ -22,10 +22,11 @@ GET ${BACKEND_URL}/api/user
 **Primjer odgovora (200 OK)**
 ```json
 {
-  "email": "marko@gmail.com",
-  "given_name": "Marko",
-  "family_name": "Horvat",
-  "picture": "https://lh3.googleusercontent.com/a/AA12345"
+  "idKlijent": 1,
+  "imeKlijent": "Antonio",
+  "prezimeKlijent": "Valec",
+  "email": "antonio.valec04@gmail.com",
+  "slikaUrl": "https://lh3.googleusercontent.com/a/ACg8ocJgZFtcGGOD4akTub66-eqS7drOm96BK9fdoI8cxBQHMWsp8XyE=s96-c"
 }
 ```
 
