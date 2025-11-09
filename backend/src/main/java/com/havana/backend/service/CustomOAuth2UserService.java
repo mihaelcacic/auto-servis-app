@@ -1,21 +1,19 @@
 package com.havana.backend.service;
 
-import com.havana.backend.model.User;
-import com.havana.backend.repository.UserRepository;
+import com.havana.backend.model.Klijent;
+import com.havana.backend.repository.KlijentRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
-
-    public CustomOAuth2UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final KlijentRepository klijentRepository;
 
     @Override
     @Transactional
@@ -23,43 +21,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String picture = oAuth2User.getAttribute("picture");
+        String slikaUrl = oAuth2User.getAttribute("picture");
+        String imeKlijent = oAuth2User.getAttribute("given_name");
+        String prezimeKlijent = oAuth2User.getAttribute("family_name");
 
-        // Razdvajanje imena i prezimena ako postoji
-        String firstName = oAuth2User.getAttribute("given_name");
-        String lastName = oAuth2User.getAttribute("family_name");
-
-        if (firstName == null || lastName == null) {
-            String fullName = oAuth2User.getAttribute("name");
-            if (fullName != null) {
-                String[] parts = fullName.split(" ", 2);
-                firstName = parts[0];
-                if (parts.length > 1) lastName = parts[1];
-                else lastName = "";
-            } else {
-                firstName = "";
-                lastName = "";
-            }
+        // proncadi email, ako postoji nemoj ga opet spremati
+        Klijent klijent = klijentRepository.findByEmail(email);
+        if (klijent == null) {
+            klijent = new Klijent(imeKlijent, prezimeKlijent, email, slikaUrl);
+            klijentRepository.save(klijent);
         }
-
-        String finalFirstName = firstName;
-        String finalLastName = lastName;
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User();
-            newUser.setEmail(email);
-            newUser.setFirstName(finalFirstName);
-            newUser.setLastName(finalLastName);
-            newUser.setPictureUrl(picture);
-            return userRepository.save(newUser);
-        });
-
-        // update user info if changed
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setPictureUrl(picture);
-
-        userRepository.save(user);
 
         return oAuth2User;
     }
