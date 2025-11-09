@@ -21,7 +21,15 @@ export function AuthProvider({ children }) {
                 if (res.status === 401) throw new Error("Not logged in");
                 return res.json();
             })
-            .then((data) => setUser(data))
+            .then((data) => {
+                const mappedUser = {
+                    id: data.idKlijent,
+                    name: `${data.imeKlijent} ${data.prezimeKlijent}`,
+                    email: data.email,
+                    picture: data.slikaUrl
+                };
+                setUser(mappedUser);
+            })
             .catch(() => setUser(null))
             .finally(() => setLoading(false));
     }, [fetchAttempted]);
