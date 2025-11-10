@@ -30,8 +30,8 @@ SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
 
 # --- GOOGLE OAUTH2 ---
-GOOGLE_CLIENT_ID=930584017027-tfgkt2l51rp5b4jo9no34qnhgd2sopfb.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
 # Notes:
 # - For local dev using Vite, set VITE_BACKEND_URL appropriately and run `npm run dev`.
