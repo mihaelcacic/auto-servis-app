@@ -3,7 +3,7 @@ package com.havana.backend.controller;
 import com.havana.backend.data.ApiResponse;
 import com.havana.backend.data.NalogRecord;
 import com.havana.backend.model.Nalog;
-import com.havana.backend.model.NalogService;
+import com.havana.backend.service.NalogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
