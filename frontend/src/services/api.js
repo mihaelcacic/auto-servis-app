@@ -90,4 +90,9 @@ export async function postNalog(payload){
   return handleRes(res)
 }
 
+export async function getNaloziByKlijent(klijentId){
+  const res = await fetch(`${API_BASE}/nalog/${encodeURIComponent(klijentId)}`, { credentials: 'include' })
+  return handleRes(res)
+}
+
 export default { getHealth, getMarke, getModelsByMarka, getUsluge, getServiseri, getZamjenskaSlobodna, postNalog }

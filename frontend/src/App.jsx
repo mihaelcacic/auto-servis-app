@@ -5,6 +5,7 @@ import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home/Home'
 import Services from './pages/Services/Services'
 import Appointments from './pages/Appointments/Appointments'
+import MyAppointments from './pages/Appointments/MyAppointments'
 import Footer from './components/Footer/Footer'
 import Contact from './pages/Contact/Contact'
 
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/appointments" element={<Appointments />} />
+          <Route path="/my-termini" element={<MyAppointments />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </Box>

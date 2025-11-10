@@ -33,16 +33,17 @@ export default function Navbar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const { user, login, logout } = useAuth();
 
-  const navItems = ["Home", "About", "Services", "Contact"];
-  const links = [
+  // base navigation links (will append user-only links when authenticated)
+  const baseLinks = [
     { label: 'Home', to: '/' },
     { label: 'Services', to: '/services' },
     { label: 'Appointments', to: '/appointments' },
     { label: 'Contact', to: '/contact' },
   ];
-
-  const { user, login, logout } = useAuth();
+  const links = user ? [...baseLinks, { label: 'Moji termini', to: '/my-termini' }] : baseLinks;
+  
 
   const handleUserMenuOpen = (event) => {
     setUserAnchorEl(event.currentTarget);
@@ -143,11 +144,11 @@ export default function Navbar() {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <MenuItem component={NavLink} to="/profile" onClick={handleUserMenuClose}>
+          <MenuItem component={NavLink} to="/my-termini" onClick={handleUserMenuClose}>
             <ListItemIcon>
               <AccountCircle fontSize="small" />
             </ListItemIcon>
-            Profile
+            Moji termini
           </MenuItem>
           <MenuItem onClick={() => { handleUserMenuClose(); logout(); }}>
             <ListItemIcon>
