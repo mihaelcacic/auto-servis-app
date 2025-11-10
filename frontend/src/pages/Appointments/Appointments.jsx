@@ -1,6 +1,11 @@
 import React from 'react'
-import AppointmentForm from './AppointmentForm'
+import './Appointments.css'
 
 export default function Appointments(){
-  return <AppointmentForm />
+  return (
+    <div className="Termini">
+      <h1>Termini</h1>
+      <p>Vaši rezervirani termini</p>
+    </div>
+  )
 }
