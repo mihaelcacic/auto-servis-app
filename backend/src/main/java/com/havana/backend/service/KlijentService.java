@@ -5,7 +5,6 @@ import com.havana.backend.repository.KlijentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class KlijentService {

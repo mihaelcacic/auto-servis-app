@@ -1,6 +1,7 @@
-package com.havana.backend.model;
+package com.havana.backend.service;
 
 import com.havana.backend.data.NalogRecord;
+import com.havana.backend.model.*;
 import com.havana.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
