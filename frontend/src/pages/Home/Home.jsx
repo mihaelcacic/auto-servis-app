@@ -4,6 +4,7 @@ import BuildIcon from '@mui/icons-material/Build'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import StarIcon from '@mui/icons-material/Star'
+import logo from '../../assets/icons/img/Logo.png'
 import { useNavigate } from 'react-router-dom'
 
 export default function Home(){
@@ -25,7 +26,7 @@ export default function Home(){
       >
         <Box sx={{ flex: 1 }}>
           <Typography variant="h3" gutterBottom>
-            Brzi i pouzdani auto servis Škoda
+            Brzi i pouzdani auto servis Bregmotors
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
             Kvalificirani serviseri, originalni dijelovi i transparentne cijene.
@@ -44,7 +45,7 @@ export default function Home(){
 
         <Box sx={{ width: { xs: '40%', md: '30%' } }}>
           <Box sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', borderRadius: 2, p: 3, textAlign: 'center' }}>
-            <CarRepairIcon color="primary" sx={{ fontSize: 40 }} />
+            <Box component="img" src={logo} alt="Bregmotors logo" sx={{ width: '100%', maxWidth: 160, mx: 'auto', mb: 1, borderRadius:4}} />
             <Typography variant="h6">Briga o vozilu</Typography>
             <Typography variant="body2">Redoviti servisi i hitne popravke</Typography>
           </Box>

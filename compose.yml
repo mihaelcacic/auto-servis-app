@@ -20,7 +20,7 @@ services:
 
   backend:
     environment:
-      - DOCKER_ENV=${DOCKER_ENV}
+      - DOCKER_ENV=true
       - SERVER_ADDRESS=${HOST_BACKEND}
       - SERVER_PORT=${PORT_BACKEND}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
