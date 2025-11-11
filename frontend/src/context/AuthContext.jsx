@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
     const [fetchAttempted, setFetchAttempted] = useState(false);
 
-    const BACKEND_URL = import.meta.env.BACKEND_URL || "http://localhost:8080";
+    const BACKEND_URL = 'https://appbackend-by7p.onrender.com';
 
     useEffect(() => {
         if (fetchAttempted) return; // prevent double fetches
