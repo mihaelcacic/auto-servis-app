@@ -1,32 +1,47 @@
 import { createTheme } from '@mui/material/styles'
 
-// Škoda-inspired palette: a strong green brand color, balanced neutrals and a
-// contrasting accent for calls-to-action. These choices give a trustworthy
-// automotive service feel while remaining modern and accessible.
+// Brand palette provided by user (olive/earth tones and warm browns).
+// Mapping:
+// - primary: maslinasto zelena (#4A6B3B)
+// - primary.dark: tamna maslinasta (#2E4A2F)
+// - primary.light: svjetlija maslinasta (#6F8843)
+// - secondary / accent: narančasto-smeđa (#B5642A)
+// - background: krem pozadina (#F1EAD8)
+// - text: taman akcent (#0E1D14)
+// - surfaces / wood / warm accents: use brown shades where appropriate
 
-const skodaTheme = createTheme({
+const createAppTheme = (mode = 'light') => createTheme({
   palette: {
+    mode,
     primary: {
-      main: '#1E8A3B', // Škoda-like green (brand)
-      contrastText: '#ffffff'
+      light: '#6F8843',
+      main: '#4A6B3B',
+      dark: '#2E4A2F',
+      contrastText: '#FFFFFF'
     },
     secondary: {
-      main: '#0F0D83', // deep indigo used previously in your CSS for headers
-      contrastText: '#ffffff'
+      light: '#D18A4A',
+      main: '#B5642A',
+      dark: '#8A5226',
+      contrastText: '#FFFFFF'
     },
     background: {
-      default: '#f7f9fb', // very light gray-blue for surfaces
-      paper: '#ffffff'
+      default: mode === 'dark' ? '#0E1D14' : '#F1EAD8',
+      paper: mode === 'dark' ? '#1F3A2A' : '#FFFFFF'
     },
     text: {
-      primary: '#0b1220',
-      secondary: '#445566'
+      primary: mode === 'dark' ? '#F1EAD8' : '#0E1D14',
+      secondary: '#5C3A1F'
     },
-    error: {
-      main: '#d32f2f'
+    divider: '#A0A84F',
+    info: {
+      main: '#1F3A2A'
     },
     success: {
-      main: '#2e7d32'
+      main: '#6F8843'
+    },
+    error: {
+      main: '#B5642A'
     }
   },
   typography: {
@@ -49,11 +64,19 @@ const skodaTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: '#1E8A3B'
+          backgroundColor: '#2E4A2F'
+        }
+      }
+    },
+    MuiIcon: {
+      styleOverrides: {
+        root: {
+          color: '#0E1D14'
         }
       }
     }
   }
 })
 
-export default skodaTheme
+export { createAppTheme }
+export default createAppTheme('light')

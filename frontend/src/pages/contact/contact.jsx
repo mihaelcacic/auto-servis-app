@@ -30,7 +30,7 @@ export default function Contact() {
             <Typography variant="h6" gutterBottom>Kontakt podaci</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <LocationOnIcon color="primary" sx={{ mr: 1 }} />
-              <Typography variant="body1">Servis Škoda, Zagrebačka 25, Osijek</Typography>
+              <Typography variant="body1">Bregmotors, Zagrebačka 25, Osijek</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <PhoneIcon color="primary" sx={{ mr: 1 }} />
@@ -38,7 +38,7 @@ export default function Contact() {
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <EmailIcon color="primary" sx={{ mr: 1 }} />
-              <Typography variant="body1">info@autoservis-skoda.hr</Typography>
+              <Typography variant="body1">info@bregmotors.hr</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <AccessTimeIcon color="primary" sx={{ mr: 1 }} />

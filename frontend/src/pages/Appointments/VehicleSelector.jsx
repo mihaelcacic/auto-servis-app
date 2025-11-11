@@ -37,7 +37,7 @@ export default function VehicleSelector({
   return (
     <>
       <TextField
-        label="Registracija"
+        label="AA0000BB"
         value={registracija}
         onChange={e=>cleanAndSetRegistracija(e.target.value)}
         onBlur={() => setRegError(!validateRegistracija(registracija))}

@@ -71,7 +71,7 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme }){
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
       <TextField
-        label="Datum"
+        label=""
         type="date"
         value={date}
         onChange={e=> setDate(e.target.value)}
