@@ -1,71 +1,3 @@
-\c bregmotors
-
-INSERT INTO Vozilo (registracija, idModel, godinaProizv)
-VALUES
-    ('ZG123AA', 1, 2018),
-    ('ZG456BB', 2, 2017),
-    ('ST789CC', 3, 2020),
-    ('RI101DD', 4, 2022),
-    ('ZG202EE', 1, 2019);
-
-INSERT INTO Klijent (imeKlijent, prezimeKlijent, email, slikaUrl)
-VALUES
-    ('Marko', 'Horvat', 'marko.horvat@example.com', 'https://example.com/img1.jpg'),
-    ('Ivana', 'Kovač', 'ivana.kovac@example.com', 'https://example.com/img2.jpg'),
-    ('Petar', 'Marić', 'petar.maric@example.com', 'https://example.com/img3.jpg'),
-    ('Ana', 'Babić', 'ana.babic@example.com', 'https://example.com/img4.jpg'),
-    ('Luka', 'Novak', 'luka.novak@example.com', 'https://example.com/img5.jpg');
-
-INSERT INTO Nalog (datumVrijemeTermin, datumVrijemeZavrsenPopravak, status, datumVrijemeAzuriranja, idKlijent, idVozilo, idUsluga, idServiser)
-VALUES
-    ('2025-11-10 09:00:00', NULL, 0, CURRENT_TIMESTAMP, 1, 1, 1, 1),
-    ('2025-11-11 10:30:00', NULL, 0, CURRENT_TIMESTAMP, 2, 2, 1, 1),
-    ('2025-11-12 08:15:00', NULL, 1, CURRENT_TIMESTAMP, 3, 3, 1, 1),
-    ('2025-11-13 14:00:00', NULL, 2, CURRENT_TIMESTAMP, 4, 4, 1, 1),
-    ('2025-11-14 11:45:00', NULL, 0, CURRENT_TIMESTAMP, 5, 5, 1, 1);
-
-INSERT INTO Usluge (uslugaNaziv) VALUES
-('Zamjena ulja'),
-('Balansiranje guma'),
-('Servis kočnica'),
-('Dijagnostika motora'),
-('Promjena filtera zraka'),
-('Zamjena akumulatora'),
-('Popravak klima uređaja'),
-('Zamjena svjećica'),
-('Servis mjenjača'),
-('Ostalo');
-
-INSERT INTO ZamjenskoVozilo (idModel, datumPreuzimanja, datumVracanja) VALUES
-(3,  '2025-10-20', '2025-10-23'),
-(7,  '2025-09-15', '2025-09-20'),
-(12, '2025-11-01', '2025-11-03'),
-(18, '2025-11-02', NULL),                -- trenutno posuđeno
-(21, NULL, NULL),                        -- slobodno vozilo
-(25, '2025-10-10', '2025-10-12'),
-(30, NULL, NULL),
-(33, '2025-11-05', NULL),
-(37, '2025-09-28', '2025-09-30'),
-(40, NULL, NULL),
-(44, '2025-10-01', '2025-10-05'),
-(49, '2025-10-25', '2025-10-28'),
-(52, NULL, NULL),
-(56, '2025-11-04', NULL),
-(61, NULL, NULL),
-(67, '2025-08-12', '2025-08-15'),
-(73, '2025-11-06', NULL),
-(80, NULL, NULL),
-(95, '2025-09-01', '2025-09-07'),
-(100, NULL, NULL);
-
-INSERT INTO Serviser (imeServiser, prezimeServiser, email, voditeljServisa)
-VALUES
-('Antonio', 'Valec', 'antonio.valec88@gmail.com', TRUE),
-('Ivan', 'Horvat', 'ivan.horvat@gmail.com', FALSE),
-('Petra', 'Klarić', 'petra.klaric@gmail.com', FALSE),
-('Luka', 'Babić', 'luka.babic@gmail.com', FALSE),
-('Ana', 'Radić', 'ana.radic@gmail.com', FALSE);
-
 INSERT INTO Model (modelNaziv, markaNaziv) VALUES
 ('A3', 'Audi'),
 ('A4', 'Audi'),
@@ -169,3 +101,70 @@ INSERT INTO Model (modelNaziv, markaNaziv) VALUES
 ('Tipo', 'Fiat'),
 ('Doblo', 'Fiat'),
 ('Punto', 'Fiat');
+
+INSERT INTO Serviser (imeServiser, prezimeServiser, email, voditeljServisa)
+VALUES
+('Antonio', 'Valec', 'antonio.valec88@gmail.com', TRUE),
+('Ivan', 'Horvat', 'ivan.horvat@gmail.com', FALSE),
+('Petra', 'Klarić', 'petra.klaric@gmail.com', FALSE),
+('Luka', 'Babić', 'luka.babic@gmail.com', FALSE),
+('Ana', 'Radić', 'ana.radic@gmail.com', FALSE);
+
+INSERT INTO Usluge (uslugaNaziv) VALUES
+('Zamjena ulja'),
+('Balansiranje guma'),
+('Servis kočnica'),
+('Dijagnostika motora'),
+('Promjena filtera zraka'),
+('Zamjena akumulatora'),
+('Popravak klima uređaja'),
+('Zamjena svjećica'),
+('Servis mjenjača'),
+('Ostalo');
+
+
+INSERT INTO Vozilo (registracija, idModel, godinaProizv)
+VALUES
+('ZG123AA', 1, 2018),
+('ZG456BB', 2, 2017),
+('ST789CC', 3, 2020),
+('RI101DD', 4, 2022),
+('ZG202EE', 1, 2019);
+
+INSERT INTO Klijent (imeKlijent, prezimeKlijent, email, slikaUrl)
+VALUES
+('Marko', 'Horvat', 'marko.horvat@example.com', 'https://example.com/img1.jpg'),
+('Ivana', 'Kovač', 'ivana.kovac@example.com', 'https://example.com/img2.jpg'),
+('Petar', 'Marić', 'petar.maric@example.com', 'https://example.com/img3.jpg'),
+('Ana', 'Babić', 'ana.babic@example.com', 'https://example.com/img4.jpg'),
+('Luka', 'Novak', 'luka.novak@example.com', 'https://example.com/img5.jpg');
+
+INSERT INTO ZamjenskoVozilo (idModel, datumPreuzimanja, datumVracanja) VALUES
+(3,  '2025-10-20', '2025-10-23'),
+(7,  '2025-09-15', '2025-09-20'),
+(12, '2025-11-01', '2025-11-03'),
+(18, '2025-11-02', NULL),                -- trenutno posuđeno
+(21, NULL, NULL),                        -- slobodno vozilo
+(25, '2025-10-10', '2025-10-12'),
+(30, NULL, NULL),
+(33, '2025-11-05', NULL),
+(37, '2025-09-28', '2025-09-30'),
+(40, NULL, NULL),
+(44, '2025-10-01', '2025-10-05'),
+(49, '2025-10-25', '2025-10-28'),
+(52, NULL, NULL),
+(56, '2025-11-04', NULL),
+(61, NULL, NULL),
+(67, '2025-08-12', '2025-08-15'),
+(73, '2025-11-06', NULL),
+(80, NULL, NULL),
+(95, '2025-09-01', '2025-09-07'),
+(100, NULL, NULL);
+
+INSERT INTO Nalog (datumVrijemeTermin, datumVrijemeZavrsenPopravak, status, datumVrijemeAzuriranja, idKlijent, idVozilo, idUsluga, idServiser)
+VALUES
+('2025-11-10 09:00:00', NULL, 0, CURRENT_TIMESTAMP, 1, 1, 1, 1),
+('2025-11-11 10:30:00', NULL, 0, CURRENT_TIMESTAMP, 2, 2, 1, 1),
+('2025-11-12 08:15:00', NULL, 1, CURRENT_TIMESTAMP, 3, 3, 1, 1),
+('2025-11-13 14:00:00', NULL, 2, CURRENT_TIMESTAMP, 4, 4, 1, 1),
+('2025-11-14 11:45:00', NULL, 0, CURRENT_TIMESTAMP, 5, 5, 1, 1);
