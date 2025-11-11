@@ -11,6 +11,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import { NavLink } from "react-router-dom";
+import logo from '../../assets/icons/img/Logo.png';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -33,16 +34,17 @@ export default function Navbar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
-  const navItems = ["Home", "About", "Services", "Contact"];
-  const links = [
-    { label: 'Home', to: '/' },
-    { label: 'Services', to: '/services' },
-    { label: 'Appointments', to: '/appointments' },
-    { label: 'Contact', to: '/contact' },
-  ];
-
   const { user, login, logout } = useAuth();
+
+  // base navigation links (will append user-only links when authenticated)
+  const baseLinks = [
+    { label: 'Početna', to: '/' },
+    { label: 'Usluge', to: '/services' },
+    { label: 'Novi termin', to: '/appointments' },
+    { label: 'Kontakt', to: '/contact' },
+  ];
+  const links = user ? [...baseLinks, { label: 'Moji termini', to: '/my-termini' }] : baseLinks;
+  
 
   const handleUserMenuOpen = (event) => {
     setUserAnchorEl(event.currentTarget);
@@ -53,7 +55,10 @@ export default function Navbar() {
     <AppBar position="static" color="primary" elevation={3}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Škoda Auto Servis
+          <Box component={NavLink} to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+            <Box component="img" src={logo} alt="Bregmotors logo" sx={{borderRadius:2, height: 40, mr: 1 }} />
+            <Box component="span" sx={{ fontWeight: 700 }}>Bregmotors</Box>
+          </Box>
         </Typography>
 
         {isSmall ? (
@@ -143,17 +148,12 @@ export default function Navbar() {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <MenuItem component={NavLink} to="/profile" onClick={handleUserMenuClose}>
-            <ListItemIcon>
-              <AccountCircle fontSize="small" />
-            </ListItemIcon>
-            Profile
-          </MenuItem>
+          
           <MenuItem onClick={() => { handleUserMenuClose(); logout(); }}>
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>
-            Logout
+            Odjava
           </MenuItem>
         </Menu>
       </Toolbar>
@@ -174,7 +174,7 @@ function GoogleSignInButton() {
         borderColor: 'divider',
       }}
     >
-      Sign in
+      Prijava
     </Button>
   );
 }

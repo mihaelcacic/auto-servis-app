@@ -22,10 +22,11 @@ GET ${BACKEND_URL}/api/user
 **Primjer odgovora (200 OK)**
 ```json
 {
-  "email": "marko@gmail.com",
-  "given_name": "Marko",
-  "family_name": "Horvat",
-  "picture": "https://lh3.googleusercontent.com/a/AA12345"
+  "idKlijent": 1,
+  "imeKlijent": "Antonio",
+  "prezimeKlijent": "Valec",
+  "email": "antonio.valec04@gmail.com",
+  "slikaUrl": "https://lh3.googleusercontent.com/a/ACg8ocJgZFtcGGOD4akTub66-eqS7drOm96BK9fdoI8cxBQHMWsp8XyE=s96-c"
 }
 ```
 
@@ -162,7 +163,7 @@ GET ${BACKEND_URL}/api/zamjenska-vozila/slobodna
 
 ## 🧾 Nalozi (servisni radni nalozi)
 
-### `POST /api/nalozi`
+### `POST /api/nalog`
 **Opis:** Kreira novi nalog za servis. Ako vozilo s istom registracijom ne postoji, backend prvo kreira vozilo pa nalog.  
 **Auth:** ✅ Zahtijeva prijavu.
 
@@ -199,34 +200,62 @@ Content-Type: application/json
 
 ---
 
-### `GET /api/nalozi/klijent`
+### `GET /api/nalog/{klijentId}`
 **Opis:** Dohvaća sve naloge prijavljenog klijenta (na temelju OAuth2 emaila).  
 **Auth:** ✅ Zahtijeva prijavu.
 
 **Request**
 ```http
-GET ${BACKEND_URL}/api/nalozi/klijent
+GET ${BACKEND_URL}/api/nalog/{klijentId}
 ```
 
 **Primjer odgovora (200 OK)**
 ```json
 [
   {
-    "idNalog": 12,
-    "vozilo": "Toyota Corolla ZG-1234-AB",
-    "datumVrijemeTermin": "2025-11-10",
-    "usluga": "Promjena ulja",
-    "status": "U tijeku"
+    "idNalog": 1,
+    "datumVrijemeTermin": "2025-11-10T10:00:00",
+    "datumVrijemeZavršenPopravak": null,
+    "status": 0,
+    "datumVrijemeAzuriranja": "2025-11-08T20:36:22.65449",
+    "vozilo": {
+      "idVozilo": 1,
+      "registracija": "ZG-9876-XY",
+      "godinaProizv": 2019,
+      "model": {
+        "idModel": 3,
+        "modelNaziv": "A6",
+        "markaNaziv": "Audi"
+      }
+    },
+    "klijent": {
+      "idKlijent": 1,
+      "imeKlijent": "Antonio",
+      "prezimeKlijent": "Valec",
+      "email": "antonio.valec04@gmail.com",
+      "slikaUrl": "https://lh3.googleusercontent.com/a/ACg8ocJgZFtcGGOD4akTub66-eqS7drOm96BK9fdoI8cxBQHMWsp8XyE=s96-c"
+    },
+    "usluga": {
+      "idUsluga": 2,
+      "uslugaNaziv": "Balansiranje guma"
+    },
+    "serviser": {
+      "idServiser": 1,
+      "imeServiser": "Antonio",
+      "prezimeServiser": "Valec",
+      "email": "antonio.valec88@gmail.com",
+      "voditeljServisa": true
+    },
+    "zamjenskoVozilo": null
   }
 ]
 ```
 
 ---
 
-### Za sada netreba
+### Za sada netreba ali vraca isto kao `GET /api/nalog/{klijentId}`
 ### `GET /api/nalozi`
-**Opis:** Dohvaća sve naloge (vidljivo samo voditeljima servisa).  
-**Auth:** ✅ Zahtijeva prijavu s rolom `VODITELJ`.
+**Opis:** Dohvaća sve naloge (vidljivo samo voditeljima servisa).
 
 **Request**
 ```http
@@ -237,12 +266,40 @@ GET ${BACKEND_URL}/api/nalozi
 ```json
 [
   {
-    "idNalog": 12,
-    "klijent": "Marko Horvat",
-    "vozilo": "Toyota Corolla ZG-1234-AB",
-    "usluga": "Promjena ulja",
-    "serviser": "Ivan Ivić",
-    "status": "Završeno"
+    "idNalog": 1,
+    "datumVrijemeTermin": "2025-11-10T10:00:00",
+    "datumVrijemeZavršenPopravak": null,
+    "status": 0,
+    "datumVrijemeAzuriranja": "2025-11-08T20:36:22.65449",
+    "vozilo": {
+      "idVozilo": 1,
+      "registracija": "ZG-9876-XY",
+      "godinaProizv": 2019,
+      "model": {
+        "idModel": 3,
+        "modelNaziv": "A6",
+        "markaNaziv": "Audi"
+      }
+    },
+    "klijent": {
+      "idKlijent": 1,
+      "imeKlijent": "Antonio",
+      "prezimeKlijent": "Valec",
+      "email": "antonio.valec04@gmail.com",
+      "slikaUrl": "https://lh3.googleusercontent.com/a/ACg8ocJgZFtcGGOD4akTub66-eqS7drOm96BK9fdoI8cxBQHMWsp8XyE=s96-c"
+    },
+    "usluga": {
+      "idUsluga": 2,
+      "uslugaNaziv": "Balansiranje guma"
+    },
+    "serviser": {
+      "idServiser": 1,
+      "imeServiser": "Antonio",
+      "prezimeServiser": "Valec",
+      "email": "antonio.valec88@gmail.com",
+      "voditeljServisa": true
+    },
+    "zamjenskoVozilo": null
   }
 ]
 ```

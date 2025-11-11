@@ -2,7 +2,7 @@ package com.havana.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "nalog")
@@ -17,16 +17,16 @@ public class Nalog {
     private Integer idNalog;
 
     @Column(name = "datumvrijemetermin", nullable = false)
-    private LocalDate datumVrijemeTermin;
+    private LocalDateTime datumVrijemeTermin;
 
-    @Column(name = "datumvrijemezavršenpopravak")
-    private LocalDate datumVrijemeZavršenPopravak;
+    @Column(name = "datumvrijemezavrsenpopravak")
+    private LocalDateTime datumVrijemeZavrsenPopravak;
 
     @Column(name = "status", nullable = false)
     private Integer status;
 
     @Column(name = "datumvrijemeazuriranja", nullable = false)
-    private LocalDate datumVrijemeAzuriranja;
+    private LocalDateTime datumVrijemeAzuriranja;
 
     @ManyToOne
     @JoinColumn(name = "idvozilo", nullable = false)
@@ -45,6 +45,6 @@ public class Nalog {
     private Serviser serviser;
 
     @ManyToOne
-    @JoinColumn(name = "idzamjvozilo", nullable = false)
+    @JoinColumn(name = "idzamjvozilo")
     private ZamjenskoVozilo zamjenskoVozilo;
 }

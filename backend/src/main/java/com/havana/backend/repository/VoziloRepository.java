@@ -4,7 +4,9 @@ import com.havana.backend.model.Vozilo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface VoziloRepository extends JpaRepository<Vozilo, Integer> {
-    Vozilo findByRegistracija(String registracija);
+    Optional<Vozilo> findByRegistracija(String registracija);
 }

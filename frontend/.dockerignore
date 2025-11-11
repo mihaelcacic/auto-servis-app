@@ -1,7 +1,7 @@
 
 # not taking in docker dependencies
 .dockerignore
-frontend.Dockerfile
+frontend.dockerfile
 
 # not taking git dependencies
 .git/
