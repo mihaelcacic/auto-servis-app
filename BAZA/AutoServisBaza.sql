@@ -1,7 +1,5 @@
 CREATE DATABASE bregmotors;
 
-\c bregmotors
-
 CREATE TABLE Klijent
 (
     idKlijent INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
