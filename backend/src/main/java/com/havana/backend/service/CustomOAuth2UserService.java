@@ -25,8 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String imeKlijent = oAuth2User.getAttribute("given_name");
         String prezimeKlijent = oAuth2User.getAttribute("family_name");
 
-        if (prezimeKlijent == null) prezimeKlijent = "";
-
         // proncadi email, ako postoji nemoj ga opet spremati
         Klijent klijent = klijentRepository.findByEmail(email);
         if (klijent == null) {
