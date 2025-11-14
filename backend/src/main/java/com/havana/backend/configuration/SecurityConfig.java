@@ -51,8 +51,9 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("frame-ancestors" + frontendUrl)
+                                .policyDirectives("frame-ancestors " + frontendUrl)
                         )
                 );
 
