@@ -7,7 +7,7 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const BACKEND_URL = "https://auto-servis-app-valec-backend.onrender.com";
+    const BACKEND_URL = "https://appbackend-by7p.onrender.com";
 
     useEffect(() => {
         fetch(`${BACKEND_URL}/api/user`, {
