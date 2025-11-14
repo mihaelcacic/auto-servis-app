@@ -49,6 +49,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl(frontendUrl)
                         .deleteCookies("JSESSIONID")
+                )
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors" + frontendUrl)
+                        )
                 );
 
         return http.build();
