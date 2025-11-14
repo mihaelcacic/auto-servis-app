@@ -1,7 +1,7 @@
 // src/api.js
 
 // Always use the backend defined in the environment
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+const BACKEND_URL = "https://auto-servis-app-valec-backend.onrender.com";
 
 async function handleRes(res) {
     if (!res.ok) {

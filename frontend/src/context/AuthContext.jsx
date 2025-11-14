@@ -7,7 +7,7 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+    const BACKEND_URL = "https://auto-servis-app-valec-backend.onrender.com";
 
     useEffect(() => {
         fetch(`${BACKEND_URL}/api/user`, {
