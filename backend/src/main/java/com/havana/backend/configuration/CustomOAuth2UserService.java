@@ -1,4 +1,4 @@
-package com.havana.backend.service;
+package com.havana.backend.configuration;
 
 import com.havana.backend.model.Klijent;
 import com.havana.backend.repository.KlijentRepository;

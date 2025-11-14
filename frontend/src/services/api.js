@@ -1,7 +1,7 @@
 // src/api.js
 
 // Always use the backend defined in the environment
-const BACKEND_URL = 'https://appbackend-by7p.onrender.com';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
 
 async function handleRes(res) {
     if (!res.ok) {
