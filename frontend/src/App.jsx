@@ -8,21 +8,11 @@ import Appointments from './pages/Appointments/Appointments'
 import MyAppointments from './pages/Appointments/MyAppointments'
 import Footer from './components/Footer/Footer'
 import Contact from './pages/Contact/Contact'
-import CookiePopup from './components/Cookie/CookieWarningPopup'
-import useThirdPartyCookies from './hooks/useThirdPartyCookies'
 
 export default function App() {
 
-    const cookiesEnabled = useThirdPartyCookies();
-    const [popupClosed, setPopupClosed] = useState(false);
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
-            {/* ---- COOKIE POPUP ---- */}
-            {!cookiesEnabled && !popupClosed && (
-                <CookiePopup onClose={() => setPopupClosed(true)} />
-            )}
 
             <Navbar />
 

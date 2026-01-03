@@ -97,7 +97,7 @@ export default function Navbar() {
                 horizontal: "right",
               }}
             >
-              {links.map((item) => (
+                {links.map((item) => (
                 <MenuItem
                   key={item.to}
                   component={NavLink}
@@ -148,7 +148,22 @@ export default function Navbar() {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          
+
+            {user?.role && (
+                <MenuItem
+                    sx={{
+                        opacity: 0.8,
+                        cursor: "default",
+                        pointerEvents: "none"
+                    }}
+                >
+                    <ListItemIcon>
+                        <AccountCircle fontSize="small" />
+                    </ListItemIcon>
+                    {user.role}
+                </MenuItem>
+            )}
+
           <MenuItem onClick={() => { handleUserMenuClose(); logout(); }}>
             <ListItemIcon>
               <Logout fontSize="small" />

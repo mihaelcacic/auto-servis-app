@@ -1,7 +1,7 @@
 // src/api.js
 
 // Always use the backend defined in the environment
-const BACKEND_URL = "https://auto-servis-app-valec-backend.onrender.com";
+import { BACKEND_URL } from '../config/env';
 
 async function handleRes(res) {
     if (!res.ok) {

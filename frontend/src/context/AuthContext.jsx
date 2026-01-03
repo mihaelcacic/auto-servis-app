@@ -1,5 +1,6 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { BACKEND_URL } from '../config/env';
 
 const AuthContext = createContext();
 
@@ -7,7 +8,6 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const BACKEND_URL = "https://auto-servis-app-valec-backend.onrender.com";
 
     useEffect(() => {
         fetch(`${BACKEND_URL}/api/user`, {
@@ -19,10 +19,11 @@ export function AuthProvider({ children }) {
             })
             .then(data => {
                 setUser({
-                    id: data.idKlijent,
-                    name: `${data.imeKlijent} ${data.prezimeKlijent}`,
+                    id: data.id,
+                    name: `${data.ime} ${data.prezime}`,
                     email: data.email,
-                    picture: data.slikaUrl
+                    picture: data.slikaUrl,
+                    role: data.role
                 });
             })
             .catch(() => setUser(null))

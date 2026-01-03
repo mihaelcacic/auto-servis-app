@@ -3,6 +3,7 @@ package com.havana.backend.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,33 +29,65 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                // ---- CORS ----
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // ---- CSRF ----
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // ---- AUTHORIZATION ----
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/usluge", "/api/serviseri", "/api/marke", "/api/model/*",
-                                        "/api/zamjenska-vozila/slobodna", "/health", "/oauth2/**",
-                                "/cookie-check", "/cookie-check-status").permitAll()
+
+                        // javni endpointi
+                        .requestMatchers(
+                                "/health",
+                                "/oauth2/**",
+                                "/login/**",
+                                "/api/usluge",
+                                "/api/marke",
+                                "/api/model/**",
+                                "/api/serviseri",
+                                "/api/zamjenska-vozila/slobodna"
+                        ).permitAll()
+
+                        // ADMIN
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
+                        // SERVISER (i ADMIN)
+                        .requestMatchers("/api/serviser/**")
+                        .hasAnyRole("SERVISER", "ADMIN")
+
+                        // KLIJENT
+                        .requestMatchers("/api/klijent/**")
+                        .hasRole("KLIJENT")
+
+                        // sve ostalo → mora biti prijavljen
                         .anyRequest().authenticated()
                 )
+
+                // ---- OAUTH2 LOGIN ----
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)
+                        )
                         .defaultSuccessUrl(frontendUrl, true)
                 )
+
+                // ---- UNAUTHORIZED HANDLING ----
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, authEx) -> {
-                            res.setStatus(401);
-                            res.getWriter().write("Korisnik nije prijavljen!");
+                            res.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            res.getWriter().write("Korisnik nije prijavljen");
                         })
                 )
+
+                // ---- LOGOUT ----
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl(frontendUrl)
+                        .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                )
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("frame-ancestors " + frontendUrl)
-                        )
                 );
 
         return http.build();
