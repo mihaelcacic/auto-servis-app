@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/klijent")
 @RequiredArgsConstructor
-public class NalogController {
+public class KlijentController {
 
     private final NalogService nalogService;
     private final KlijentService klijentService;
@@ -39,7 +39,8 @@ public class NalogController {
                 nalog.serviserId(),
                 nalog.zamjenskoVoziloId(),
                 nalog.datumVrijemeTermin(),
-                nalog.status()
+                nalog.status(),
+                nalog.napomena()
         );
 
         boolean uspjeh = nalogService.createNewNalog(recordForClient);
@@ -66,15 +67,4 @@ public class NalogController {
         return ResponseEntity.ok(nalozi);
     }
 
-    @GetMapping("/nalozi")
-    public ResponseEntity<?> getSviNalozi() {
-        List<Nalog> sviNalozi = nalogService.getSviNalozi();
-
-        if (sviNalozi.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "Nema nijedan nalog."));
-        }
-
-        return ResponseEntity.ok(sviNalozi);
-    }
 }
