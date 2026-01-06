@@ -163,7 +163,7 @@ GET ${BACKEND_URL}/api/zamjenska-vozila/slobodna
 
 ## 🧾 Nalozi (servisni radni nalozi)
 
-### `POST /api/nalog`
+### `POST /api/klijent/nalog`
 **Opis:** Kreira novi nalog za servis. Ako vozilo s istom registracijom ne postoji, backend prvo kreira vozilo pa nalog.  
 **Auth:** ✅ Zahtijeva prijavu.
 
@@ -200,66 +200,13 @@ Content-Type: application/json
 
 ---
 
-### `GET /api/nalog/{klijentId}`
+### `GET /api/klijent/nalog/{klijentId}`
 **Opis:** Dohvaća sve naloge prijavljenog klijenta (na temelju OAuth2 emaila).  
 **Auth:** ✅ Zahtijeva prijavu.
 
 **Request**
 ```http
 GET ${BACKEND_URL}/api/nalog/{klijentId}
-```
-
-**Primjer odgovora (200 OK)**
-```json
-[
-  {
-    "idNalog": 1,
-    "datumVrijemeTermin": "2025-11-10T10:00:00",
-    "datumVrijemeZavršenPopravak": null,
-    "status": 0,
-    "datumVrijemeAzuriranja": "2025-11-08T20:36:22.65449",
-    "vozilo": {
-      "idVozilo": 1,
-      "registracija": "ZG-9876-XY",
-      "godinaProizv": 2019,
-      "model": {
-        "idModel": 3,
-        "modelNaziv": "A6",
-        "markaNaziv": "Audi"
-      }
-    },
-    "klijent": {
-      "idKlijent": 1,
-      "imeKlijent": "Antonio",
-      "prezimeKlijent": "Valec",
-      "email": "antonio.valec04@gmail.com",
-      "slikaUrl": "https://lh3.googleusercontent.com/a/ACg8ocJgZFtcGGOD4akTub66-eqS7drOm96BK9fdoI8cxBQHMWsp8XyE=s96-c"
-    },
-    "usluga": {
-      "idUsluga": 2,
-      "uslugaNaziv": "Balansiranje guma"
-    },
-    "serviser": {
-      "idServiser": 1,
-      "imeServiser": "Antonio",
-      "prezimeServiser": "Valec",
-      "email": "antonio.valec88@gmail.com",
-      "voditeljServisa": true
-    },
-    "zamjenskoVozilo": null
-  }
-]
-```
-
----
-
-### Za sada netreba ali vraca isto kao `GET /api/nalog/{klijentId}`
-### `GET /api/nalozi`
-**Opis:** Dohvaća sve naloge (vidljivo samo voditeljima servisa).
-
-**Request**
-```http
-GET ${BACKEND_URL}/api/nalozi
 ```
 
 **Primjer odgovora (200 OK)**

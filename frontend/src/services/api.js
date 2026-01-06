@@ -1,7 +1,7 @@
 // src/api.js
 
 // Always use the backend defined in the environment
-const BACKEND_URL = "https://appbackend-by7p.onrender.com";
+import { BACKEND_URL } from '../config/env';
 
 async function handleRes(res) {
     if (!res.ok) {
@@ -54,7 +54,7 @@ export async function getZamjenskaSlobodna() {
 }
 
 export async function postNalog(payload) {
-    const res = await fetch(`${BACKEND_URL}/api/nalog`, {
+    const res = await fetch(`${BACKEND_URL}/api/klijent/nalog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -64,7 +64,7 @@ export async function postNalog(payload) {
 }
 
 export async function getNaloziByKlijent(klijentId) {
-    const res = await fetch(`${BACKEND_URL}/api/nalog/${encodeURIComponent(klijentId)}`, {
+    const res = await fetch(`${BACKEND_URL}/api/klijent/nalog/${encodeURIComponent(klijentId)}`, {
         credentials: 'include',
     });
     return handleRes(res);
