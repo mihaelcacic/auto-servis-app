@@ -46,7 +46,7 @@ public class MetaDataController {
         return uslugeService.findAllUsluge();
     }
 
-    @GetMapping("/slobodna")
+    @GetMapping("/zamjenska-vozila/slobodna")
     public List<ZamjenskoVozilo> getSlobodnaZamjenskaVozila(){
         return zamjenskoVoziloService.findAllZamjenskaSlobodnaVozila();
     }
