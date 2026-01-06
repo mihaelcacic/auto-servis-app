@@ -44,7 +44,7 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/**",
                                 "/api/usluge",
-                                "/api/marke",
+                                "/api/marke/**",
                                 "/api/model/**",
                                 "/api/serviseri",
                                 "/api/zamjenska-vozila/slobodna"
