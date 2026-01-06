@@ -57,7 +57,7 @@ public class ServiserService {
     /**
      * Dodavanje / izmjena napomene servisera
      */
-    public void updateNapomena(Integer nalogId, String napomena, String email) throws Exception {
+    public void updateNapomena(Integer nalogId, String napomena, String email) throws AccessDeniedException {
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
 
@@ -67,6 +67,25 @@ public class ServiserService {
         }
 
         nalog.setNapomena(napomena);
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+
+        nalogRepository.save(nalog);
+    }
+
+    public void updateTermin(Integer nalogId, LocalDateTime termin, String email) throws AccessDeniedException {
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
+
+        Serviser serviser = serviserRepository.findByEmail(email);
+        if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
+            throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
+        }
+
+        if (nalog.getStatus() == 3) {
+            throw new IllegalStateException("Završeni nalog se ne može mijenjati");
+        }
+
+        nalog.setDatumVrijemeTermin(termin);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
         nalogRepository.save(nalog);
