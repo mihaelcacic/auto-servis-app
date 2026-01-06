@@ -28,7 +28,7 @@ public class ServiserService {
     public List<Nalog> getNaloziByServiserEmail(String email) {
         Serviser serviser = serviserRepository.findByEmail(email);
 
-        return nalogRepository.findByServiserId(serviser.getIdServiser());
+        return nalogRepository.findByServiser_IdServiser(serviser.getIdServiser());
     }
 
     /**
