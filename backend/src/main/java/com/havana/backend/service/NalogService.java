@@ -6,6 +6,7 @@ import com.havana.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,8 +53,18 @@ public class NalogService {
             nalog.setServiser(serviser);
 
             if (nalogRecord.zamjenskoVoziloId() != null) {
-                ZamjenskoVozilo zv = zamjenskoVoziloRepository.findById(nalogRecord.zamjenskoVoziloId())
+                ZamjenskoVozilo zv = zamjenskoVoziloRepository
+                        .findById(nalogRecord.zamjenskoVoziloId())
                         .orElseThrow(() -> new IllegalArgumentException("Zamjensko vozilo ne postoji"));
+
+                // postavi datum preuzimanja AKO već nije zauzeto
+                if (zv.getDatumPreuzimanja() != null) {
+                    throw new IllegalStateException("Zamjensko vozilo je već zauzeto");
+                }
+
+                zv.setDatumPreuzimanja(LocalDate.now());
+                zv.setDatumVracanja(null); // sigurnost
+
                 nalog.setZamjenskoVozilo(zv);
             } else {
                 nalog.setZamjenskoVozilo(null);
@@ -78,5 +89,12 @@ public class NalogService {
 
     public List<Nalog> getSviNalozi() {
         return nalogRepository.findAll();
+    }
+
+    public void deleteNalog(Integer id) {
+        if (!nalogRepository.existsById(id)) {
+            throw new RuntimeException("Nalog not found");
+        }
+        nalogRepository.deleteById(id);
     }
 }

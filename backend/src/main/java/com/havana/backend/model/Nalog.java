@@ -28,6 +28,9 @@ public class Nalog {
     @Column(name = "datumvrijemeazuriranja", nullable = false)
     private LocalDateTime datumVrijemeAzuriranja;
 
+    @Column(name = "napomena")
+    private String napomena;
+
     @ManyToOne
     @JoinColumn(name = "idvozilo", nullable = false)
     private Vozilo vozilo;
