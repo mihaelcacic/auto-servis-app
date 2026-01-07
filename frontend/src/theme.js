@@ -10,9 +10,8 @@ import { createTheme } from '@mui/material/styles'
 // - text: taman akcent (#0E1D14)
 // - surfaces / wood / warm accents: use brown shades where appropriate
 
-const createAppTheme = (mode = 'light') => createTheme({
+const brandTheme = createTheme({
   palette: {
-    mode,
     primary: {
       light: '#6F8843',
       main: '#4A6B3B',
@@ -26,14 +25,14 @@ const createAppTheme = (mode = 'light') => createTheme({
       contrastText: '#FFFFFF'
     },
     background: {
-      default: mode === 'dark' ? '#0E1D14' : '#F1EAD8',
-      paper: mode === 'dark' ? '#1F3A2A' : '#FFFFFF'
+      default: '#F1EAD8', // krem pozadina
+      paper: '#FFFFFF'
     },
     text: {
-      primary: mode === 'dark' ? '#F1EAD8' : '#0E1D14',
-      secondary: '#5C3A1F'
+      primary: '#0E1D14', // taman akcent
+      secondary: '#5C3A1F' // tamno smeđa for secondary text
     },
-    divider: '#A0A84F',
+    divider: '#A0A84F', // svijetla maslinasto-žuta (used subtly)
     info: {
       main: '#1F3A2A'
     },
@@ -78,5 +77,4 @@ const createAppTheme = (mode = 'light') => createTheme({
   }
 })
 
-export { createAppTheme }
-export default createAppTheme('light')
+export default brandTheme
