@@ -6,6 +6,7 @@ services:
       - PORT_FRONTEND=${PORT_FRONTEND}
       - HOST_BACKEND=${HOST_BACKEND}
       - PORT_BACKEND=${PORT_BACKEND}
+      - BACKEND_URL=${BACKEND_URL}
     build:
       context: ./frontend
       dockerfile: frontend.dockerfile
@@ -13,7 +14,7 @@ services:
         - PORT=${PORT_FRONTEND}
     image: frontend-service:latest
     ports:
-      - "${PORT_FRONTEND}:${PORT_NGINX_FRONTEND}"
+      - "${PORT_NGINX_FRONTEND}:${PORT_NGINX_FRONTEND}"
     restart: unless-stopped
     networks:
       - appnet

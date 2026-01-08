@@ -28,12 +28,12 @@ if (!DOCKER_ENV) {
 const host =
   process.env.HOST_FRONTEND || process.env.VITE_HOST_FRONTEND || "localhost";
 const port = parseInt(
-  process.env.PORT_FRONTEND || process.env.VITE_PORT_FRONTEND || "3000",
+  process.env.PORT_FRONTEND || process.env.VITE_PORT_FRONTEND || "5173",
   10
 );
 
 // Proxy target for /api in dev. When running in Docker, prefer the backend service name.
-const BACKEND_URL = `${BACKEND_URL}` || "http://localhost:8080";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8080";
 
 console.log(
   `vite: dev server host=${host} port=${port} proxy /api -> ${BACKEND_URL}`
