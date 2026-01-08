@@ -10,15 +10,15 @@ export default ({ mode }) => {
   // can be used without duplicating files in frontend/ (useful in your setup)
   const rootEnv = loadEnv(mode, path.resolve(process.cwd(), '..'), '')
 
-  // Resolve host/port from env (support both VITE_ and non-prefixed vars)
-  const host = env.VITE_HOST_FRONTEND || env.HOST_FRONTEND || rootEnv.VITE_HOST_FRONTEND || rootEnv.HOST_FRONTEND || 'localhost'
-  const port = parseInt(env.VITE_PORT_FRONTEND || env.PORT_FRONTEND || rootEnv.VITE_PORT_FRONTEND || rootEnv.PORT_FRONTEND || '3000', 10)
+   // Determine host and port for the dev server (do not hardcode values)
+  const host = process.env.HOST_FRONTEND || process.env.VITE_HOST_FRONTEND || "localhost";
+  const port = parseInt(process.env.PORT_FRONTEND || process.env.VITE_PORT_FRONTEND || "5173");
 
-  // Backend URL for dev proxy. Preference order:
-  // 1) frontend env (VITE_BACKEND_URL), 2) frontend BACKEND_URL, 3) repo root VITE_BACKEND_URL, 4) repo root BACKEND_URL, 5) fallback
-  const BACKEND_URL = env.VITE_BACKEND_URL || env.BACKEND_URL || rootEnv.VITE_BACKEND_URL || rootEnv.BACKEND_URL || 'http://localhost:8080'
+  // Proxy target for /api in dev. When running in Docker, prefer the backend service name.
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8080";
 
   console.log(`vite: dev server host=${host} port=${port} proxy /api -> ${BACKEND_URL}`)
+
 
   return defineConfig({
     plugins: [react()],
