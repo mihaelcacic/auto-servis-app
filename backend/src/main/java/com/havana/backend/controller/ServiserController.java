@@ -36,7 +36,7 @@ public class ServiserController {
      * PUT /api/serviser/nalog/2/status?status=3
      */
     @PutMapping("/nalog/{id}/status")
-    public ResponseEntity<Void> updateStatus(@PathVariable Integer id, @RequestBody Integer status, @AuthenticationPrincipal OAuth2User principal) throws Exception {
+    public ResponseEntity<Void> updateStatus(@PathVariable Integer id, @RequestParam Integer status, @AuthenticationPrincipal OAuth2User principal) throws Exception {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

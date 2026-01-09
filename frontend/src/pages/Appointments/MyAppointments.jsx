@@ -49,7 +49,7 @@ export default function MyAppointments(){
             <Card>
               <CardContent>
                 <Typography variant="subtitle1">Termin: {n.datumVrijemeTermin}</Typography>
-                <Typography variant="body2" color="text.secondary">Status: {n.status}</Typography>
+                <Typography variant="body2" color="text.secondary">Status: {formatStatus(n.status)}</Typography>
 
                 <Box sx={{ mt:1 }}>
                   <Typography variant="subtitle2">Vozilo</Typography>
@@ -73,4 +73,21 @@ export default function MyAppointments(){
       </Grid>
     </Box>
   )
+}
+
+function formatStatus(s){
+  // Map numeric status codes to human-friendly Croatian strings
+  switch(s){
+    case 0:
+    case '0':
+      return 'Čeka potvrdu servisera'
+    case 1:
+    case '1':
+      return 'Na popravku'
+    case 2:
+    case '2':
+      return 'Popravljen, spreman za preuzimanje'
+    default:
+      return String(s ?? '-')
+  }
 }

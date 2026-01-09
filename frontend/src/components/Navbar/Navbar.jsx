@@ -36,14 +36,25 @@ export default function Navbar() {
   };
   const { user, login, logout } = useAuth();
 
-  // base navigation links (will append user-only links when authenticated)
+  // base navigation links
   const baseLinks = [
     { label: 'Početna', to: '/' },
     { label: 'Usluge', to: '/services' },
     { label: 'Novi termin', to: '/appointments' },
     { label: 'Kontakt', to: '/contact' },
   ];
-  const links = user ? [...baseLinks, { label: 'Moji termini', to: '/my-termini' }] : baseLinks;
+
+  // role-protected links
+  const roleLinks = []
+    if(user){
+    // common for logged-in clients
+    roleLinks.push({ label: 'Moji termini', to: '/my-termini' })
+    const roles = user.roles || (user.role ? [user.role] : [])
+    if(roles.includes('ROLE_ADMIN')) roleLinks.push({ label: 'Admin', to: '/admin' })
+    if(roles.includes('ROLE_SERVISER')) roleLinks.push({ label: 'Serviser', to: '/serviser' })
+  }
+
+  const links = [...baseLinks, ...roleLinks]
   
 
   const handleUserMenuOpen = (event) => {
@@ -149,19 +160,19 @@ export default function Navbar() {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
 
-            {user?.role && (
-                <MenuItem
-                    sx={{
-                        opacity: 0.8,
-                        cursor: "default",
-                        pointerEvents: "none"
-                    }}
-                >
-                    <ListItemIcon>
-                        <AccountCircle fontSize="small" />
-                    </ListItemIcon>
-                    {user.role}
-                </MenuItem>
+            {((user?.roles && user.roles.length) || user?.role) && (
+              <MenuItem
+                sx={{
+                  opacity: 0.8,
+                  cursor: "default",
+                  pointerEvents: "none"
+                }}
+              >
+                <ListItemIcon>
+                  <AccountCircle fontSize="small" />
+                </ListItemIcon>
+                {(user.roles && user.roles.join(', ')) || user.role}
+              </MenuItem>
             )}
 
           <MenuItem onClick={() => { handleUserMenuClose(); logout(); }}>

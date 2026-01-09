@@ -6,6 +6,9 @@ import Home from './pages/Home/Home'
 import Services from './pages/Services/Services'
 import Appointments from './pages/Appointments/Appointments'
 import MyAppointments from './pages/Appointments/MyAppointments'
+import Admin from './pages/Admin/Admin'
+import ServiserDashboard from './pages/Serviser/ServiserDashboard'
+import ProtectedRoute from './components/ProtectedRoute'
 import Footer from './components/Footer/Footer'
 import Contact from './pages/Contact/Contact'
 
@@ -22,6 +25,16 @@ export default function App() {
                     <Route path="/services" element={<Services />} />
                     <Route path="/appointments" element={<Appointments />} />
                     <Route path="/my-termini" element={<MyAppointments />} />
+                    <Route path="/admin" element={
+                        <ProtectedRoute allowedRoles={[ 'ROLE_ADMIN' ]}>
+                            <Admin />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/serviser" element={
+                        <ProtectedRoute allowedRoles={[ 'ROLE_SERVISER' ]}>
+                            <ServiserDashboard />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/contact" element={<Contact />} />
                 </Routes>
             </Box>
