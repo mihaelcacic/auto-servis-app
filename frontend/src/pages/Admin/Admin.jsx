@@ -94,32 +94,39 @@ export default function Admin(){
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt:6, mb:8 }}>
-      <Typography variant="h4" gutterBottom>Admin</Typography>
+    <Container maxWidth="lg" sx={{ mt:6, mb:8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Typography variant="h4" gutterBottom align="center">Admin</Typography>
 
-      <Grid container spacing={4}>
+      <Box sx={{ width: '100%', maxWidth: 1100 }}>
+        <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p:2 }}>
-            <Typography variant="h6">Kreiraj administratora</Typography>
-            <Box component="form" onSubmit={submitAdmin} sx={{ mt:2 }}>
-              <TextField fullWidth label="Ime" value={adminForm.imeAdmin} onChange={e=>setAdminForm({...adminForm, imeAdmin:e.target.value})} sx={{ mb:2 }} />
-              <TextField fullWidth label="Prezime" value={adminForm.prezimeAdmin} onChange={e=>setAdminForm({...adminForm, prezimeAdmin:e.target.value})} sx={{ mb:2 }} />
-              <TextField fullWidth label="Email" value={adminForm.email} onChange={e=>setAdminForm({...adminForm, email:e.target.value})} sx={{ mb:2 }} />
-              <Button type="submit" variant="contained">Kreiraj</Button>
+            <Typography variant="h6" align="center">Kreiraj administratora</Typography>
+            <Box component="form" onSubmit={submitAdmin} sx={{ mt:2, display:'flex', flexDirection:'column', alignItems:'center' }}>
+              <Box sx={{ width: '100%', maxWidth: 420 }}>
+                <TextField label="Ime" value={adminForm.imeAdmin} onChange={e=>setAdminForm({...adminForm, imeAdmin:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <TextField label="Prezime" value={adminForm.prezimeAdmin} onChange={e=>setAdminForm({...adminForm, prezimeAdmin:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <TextField label="Email" value={adminForm.email} onChange={e=>setAdminForm({...adminForm, email:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button type="submit" variant="contained">Kreiraj</Button>
+                </Box>
+              </Box>
             </Box>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Paper sx={{ p:2 }}>
-            <Typography variant="h6">Dodaj servisera</Typography>
-            <Box component="form" onSubmit={submitServiser} sx={{ mt:2 }}>
-              <TextField fullWidth label="Ime" value={serviserForm.imeServiser} onChange={e=>setServiserForm({...serviserForm, imeServiser:e.target.value})} sx={{ mb:2 }} />
-              <TextField fullWidth label="Prezime" value={serviserForm.prezimeServiser} onChange={e=>setServiserForm({...serviserForm, prezimeServiser:e.target.value})} sx={{ mb:2 }} />
-              <TextField fullWidth label="Email" value={serviserForm.email} onChange={e=>setServiserForm({...serviserForm, email:e.target.value})} sx={{ mb:2 }} />
-              <FormControlLabel control={<Checkbox checked={serviserForm.voditeljServisa} onChange={e=>setServiserForm({...serviserForm, voditeljServisa:e.target.checked})} />} label="Voditelj servisa" />
-              <Box sx={{ mt:2 }}>
-                <Button type="submit" variant="contained">Dodaj</Button>
+            <Typography variant="h6" align="center">Dodaj servisera</Typography>
+            <Box component="form" onSubmit={submitServiser} sx={{ mt:2, display:'flex', flexDirection:'column', alignItems:'center' }}>
+              <Box sx={{ width: '100%', maxWidth: 420 }}>
+                <TextField label="Ime" value={serviserForm.imeServiser} onChange={e=>setServiserForm({...serviserForm, imeServiser:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <TextField label="Prezime" value={serviserForm.prezimeServiser} onChange={e=>setServiserForm({...serviserForm, prezimeServiser:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <TextField label="Email" value={serviserForm.email} onChange={e=>setServiserForm({...serviserForm, email:e.target.value})} sx={{ mb:2 }} fullWidth />
+                <FormControlLabel control={<Checkbox checked={serviserForm.voditeljServisa} onChange={e=>setServiserForm({...serviserForm, voditeljServisa:e.target.checked})} />} label="Voditelj servisa" />
+                <Box sx={{ mt:2, display: 'flex', justifyContent: 'center' }}>
+                  <Button type="submit" variant="contained">Dodaj</Button>
+                </Box>
               </Box>
             </Box>
           </Paper>
@@ -222,7 +229,8 @@ export default function Admin(){
             </TableContainer>
           )}
         </Grid>
-      </Grid>
+        </Grid>
+      </Box>
 
       <Dialog open={!!editServiser} onClose={()=>setEditServiser(null)} fullWidth>
         <DialogTitle>Uredi servisera</DialogTitle>
