@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -16,6 +17,7 @@ import java.util.List;
 public class ServiserService {
     private final ServiserRepository serviserRepository;
     private final NalogRepository nalogRepository;
+    public final EmailService emailService;
 
     public List<Serviser> findAllServisere() {
         return serviserRepository.findAllServisere();
@@ -85,9 +87,24 @@ public class ServiserService {
             throw new IllegalStateException("Završeni nalog se ne može mijenjati");
         }
 
+        LocalDateTime oldTermin = nalog.getDatumVrijemeTermin();
+
         nalog.setDatumVrijemeTermin(termin);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
         nalogRepository.save(nalog);
+
+        if (oldTermin != null) {
+            long daysDiff = Math.abs(
+                    ChronoUnit.DAYS.between(oldTermin, termin)
+            );
+
+            if (daysDiff >= 3) {
+                emailService.sendPromjenaTermina(
+                        nalog.getKlijent().getEmail(),
+                        daysDiff
+                );
+            }
+        }
     }
 }

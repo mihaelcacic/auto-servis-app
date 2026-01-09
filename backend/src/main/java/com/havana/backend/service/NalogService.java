@@ -21,6 +21,7 @@ public class NalogService {
     private final UslugeRepository uslugeRepository;
     private final ServiserRepository serviserRepository;
     private final ZamjenskoVoziloRepository zamjenskoVoziloRepository;
+    private final EmailService emailService;
 
     public boolean createNewNalog(NalogRecord nalogRecord) {
         try {
@@ -75,6 +76,11 @@ public class NalogService {
             nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
             nalogRepository.save(nalog);
+
+            emailService.sendPotvrdaPrijaveVozila(
+                    nalog.getKlijent().getEmail()
+            );
+
             return true;
 
         } catch (Exception e) {
