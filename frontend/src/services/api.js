@@ -162,6 +162,8 @@ export async function putNalogNapomenaServiser(id, text) {
     return handleRes(res);
 }
 
+// TODO: dodaj uredivanje termina
+
 export default {
     getHealth,
     getMarke,
