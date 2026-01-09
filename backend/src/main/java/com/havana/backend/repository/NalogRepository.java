@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     List<Nalog> findByKlijent_IdKlijent(Integer klijentId);
+    List<Nalog> findByServiser_IdServiser(Integer idServiser);
 }

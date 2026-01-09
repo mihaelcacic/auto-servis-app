@@ -75,6 +75,7 @@ CREATE TABLE Nalog
     idUsluga INT NOT NULL,
     idServiser INT NOT NULL,
     idZamjVozilo INT,
+    napomena TEXT,
     FOREIGN KEY (idVozilo) REFERENCES Vozilo(idVozilo),
     FOREIGN KEY (idKlijent) REFERENCES Klijent(idKlijent),
     FOREIGN KEY (idUsluga) REFERENCES Usluge(idUsluga),

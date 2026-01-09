@@ -9,5 +9,6 @@ public record NalogRecord(
         Integer serviserId,
         Integer zamjenskoVoziloId,
         LocalDateTime datumVrijemeTermin,
-        Integer status
+        Integer status,
+        String napomena
 ) {}
