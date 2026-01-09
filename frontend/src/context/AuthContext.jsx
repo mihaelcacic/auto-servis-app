@@ -23,7 +23,8 @@ export function AuthProvider({ children }) {
                     name: `${data.ime} ${data.prezime}`,
                     email: data.email,
                     picture: data.slikaUrl,
-                    role: data.role
+                    role: data.role,
+                    roles: data.roles || (data.role ? [data.role] : [])
                 });
             })
             .catch(() => setUser(null))

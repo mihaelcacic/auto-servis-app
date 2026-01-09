@@ -1,7 +1,7 @@
 // src/api.js
 
-// Always use the backend defined in the environment
-import { BACKEND_URL } from '../config/env';
+// Use backend URL from environment
+import { BACKEND_URL } from '../config/env'
 
 async function handleRes(res) {
     if (!res.ok) {
@@ -54,7 +54,7 @@ export async function getZamjenskaSlobodna() {
 }
 
 export async function postNalog(payload) {
-    const res = await fetch(`${BACKEND_URL}/api/klijent/nalog`, {
+    const res = await fetch(`${BACKEND_URL}/api/nalog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -64,8 +64,94 @@ export async function postNalog(payload) {
 }
 
 export async function getNaloziByKlijent(klijentId) {
-    const res = await fetch(`${BACKEND_URL}/api/klijent/nalog/${encodeURIComponent(klijentId)}`, {
+    const res = await fetch(`${BACKEND_URL}/api/nalog/${encodeURIComponent(klijentId)}`, {
         credentials: 'include',
+    });
+    return handleRes(res);
+}
+
+// --- Admin endpoints (require ADMIN role) ---
+export async function postAdmin(payload) {
+    const res = await fetch(`${BACKEND_URL}/api/admin/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+}
+
+export async function postServiserAdmin(payload) {
+    const res = await fetch(`${BACKEND_URL}/api/admin/serviser`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+}
+
+export async function putServiserAdmin(id, payload) {
+    const res = await fetch(`${BACKEND_URL}/api/admin/serviser/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+}
+
+export async function getServiseriAdmin() {
+    const res = await fetch(`${BACKEND_URL}/api/admin/serviser/svi`, { credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function putKlijentAdmin(id, payload) {
+    const res = await fetch(`${BACKEND_URL}/api/admin/klijent/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+}
+
+export async function getKlijentiAdmin() {
+    const res = await fetch(`${BACKEND_URL}/api/admin/klijent/svi`, { credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function getNaloziAdmin() {
+    const res = await fetch(`${BACKEND_URL}/api/admin/nalozi`, { credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function deleteNalogAdmin(id) {
+    const res = await fetch(`${BACKEND_URL}/api/admin/nalog/delete/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return handleRes(res);
+}
+
+// --- Serviser endpoints (authenticated serviser) ---
+export async function getMyNalozi() {
+    const res = await fetch(`${BACKEND_URL}/api/serviser/nalozi`, { credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function putNalogStatusServiser(id, status) {
+    const url = `${BACKEND_URL}/api/serviser/nalog/${encodeURIComponent(id)}/status?status=${encodeURIComponent(status)}`;
+    const res = await fetch(url, { method: 'PUT', credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function putNalogNapomenaServiser(id, text) {
+    const res = await fetch(`${BACKEND_URL}/api/serviser/nalog/${encodeURIComponent(id)}/napomena`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        credentials: 'include',
+        body: text,
     });
     return handleRes(res);
 }
@@ -79,4 +165,17 @@ export default {
     getZamjenskaSlobodna,
     postNalog,
     getNaloziByKlijent,
+    // admin
+    postAdmin,
+    postServiserAdmin,
+    putServiserAdmin,
+    getServiseriAdmin,
+    putKlijentAdmin,
+    getKlijentiAdmin,
+    getNaloziAdmin,
+    deleteNalogAdmin,
+    // serviser
+    getMyNalozi,
+    putNalogStatusServiser,
+    putNalogNapomenaServiser,
 };
