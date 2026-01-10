@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/admin/statistika")
+@RequestMapping("/api/statistika")
 public class StatistikaController {
 
     private final StatistikaService statistikaService;
@@ -33,13 +33,16 @@ public class StatistikaController {
     }
 
 
+    @GetMapping(value = "/xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public StatistikaRecord exportXml() {
+        return statistikaService.getSveukupnaStatistika();
+    }
+
     @GetMapping("/pdf")
-    public ResponseEntity<byte[]> exportPdf(
-            @RequestParam LocalDateTime from,
-            @RequestParam LocalDateTime to
-    ) {
-        StatistikaRecord stats = statistikaService.getStatistika(from, to);
-        byte[] pdf = pdfExportService.exportStatistics(stats);
+    public ResponseEntity<byte[]> exportPdf() {
+        byte[] pdf = pdfExportService.exportStatistikaTablicno(
+                statistikaService.getSveukupnaStatistika()
+        );
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=statistika.pdf")
@@ -48,24 +51,14 @@ public class StatistikaController {
     }
 
     @GetMapping("/xlsx")
-    public ResponseEntity<byte[]> exportXlsx(
-            @RequestParam LocalDateTime from,
-            @RequestParam LocalDateTime to
-    ) {
-        StatistikaRecord stats = statistikaService.getStatistika(from, to);
-        byte[] excel = excelExportService.exportStatistics(stats);
+    public ResponseEntity<byte[]> exportXlsx() {
+        byte[] xlsx = excelExportService.exportStatistikaTablicno(
+                statistikaService.getSveukupnaStatistika()
+        );
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=statistika.xlsx")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(excel);
-    }
-
-    @GetMapping(value = "/xml", produces = MediaType.APPLICATION_XML_VALUE)
-    public StatistikaRecord exportXml(
-            @RequestParam LocalDateTime from,
-            @RequestParam LocalDateTime to
-    ) {
-        return statistikaService.getStatistika(from, to);
+                .body(xlsx);
     }
 }
