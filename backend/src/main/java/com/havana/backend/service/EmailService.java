@@ -23,10 +23,24 @@ public class EmailService {
     }
 
     public void sendPotvrdaPrijaveVozila(String to){ /*metoda za slanje maila kod stvaranja naloga*/
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Potvrda prijave vozila");
-        message.setText("Vaše vozilo uspješno je prijavljeno na servis!");
-        mailSender.send(message);
+        SimpleMailMessage poruka = new SimpleMailMessage();
+
+        // Postavi osnovne podatke maila
+        poruka.setTo(to);
+        poruka.setSubject("Potvrda registracije servisa - Bregmotors");
+
+        // Sadržaj maila
+        String tekst = """
+            Poštovani,
+            
+            Vaša registracija servisa je zaprimljena. U tijeku je prihvaćanje Vašeg zahtjeva, te će se čim je prihvaćen, Vama na mail poslati Potvrda o predaji vozila.
+            
+            Vaš Bregmotors
+            """;
+
+        poruka.setText(tekst);
+
+        // Pošalji mail
+        mailSender.send(poruka);
     }
 }
