@@ -18,6 +18,7 @@ public class ServiserService {
     private final ServiserRepository serviserRepository;
     private final NalogRepository nalogRepository;
     public final EmailService emailService;
+    public final PDFExportService pdfExportService;
 
     public List<Serviser> findAllServisere() {
         return serviserRepository.findAllServisere();
@@ -106,5 +107,21 @@ public class ServiserService {
                 );
             }
         }
+    }
+    public byte[] getPotvrdaOPreuzimanju(Integer nalogId) {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        byte[] pdf = pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
+
+        emailService.sendPdfKlijentu(
+                nalog.getKlijent().getEmail(),
+                pdf,
+                "Potvrda o preuzimanju vozila",
+                "Poštovani,\n\nu privitku se nalazi potvrda o preuzimanju vozila.\n\nLijep pozdrav,\nBregmotors"
+        );
+
+        return pdf;
     }
 }

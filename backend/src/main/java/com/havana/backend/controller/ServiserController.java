@@ -4,7 +4,9 @@ import com.havana.backend.data.NalogRecord;
 import com.havana.backend.model.Nalog;
 import com.havana.backend.service.ServiserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -72,5 +74,19 @@ public class ServiserController {
         serviserService.updateTermin(id, termin, email);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/nalog/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPotvrdaOPreuzimanju(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception  {
+        byte[] pdf =
+                serviserService.getPotvrdaOPreuzimanju(id);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_preuzimanje_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

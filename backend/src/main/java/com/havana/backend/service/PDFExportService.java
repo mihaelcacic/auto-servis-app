@@ -4,6 +4,7 @@ import com.havana.backend.data.AktivniNalogRecord;
 import com.havana.backend.data.StatistikaRecord;
 
 import com.havana.backend.data.ZamjenskoVoziloRecord;
+import com.havana.backend.model.Nalog;
 import org.openpdf.text.*;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -14,6 +15,8 @@ import java.io.ByteArrayOutputStream;
 
 @Service
 public class PDFExportService {
+
+    //------------- GENERIRANJE STATISTIKE-------------
 
     public byte[] exportStatistikaTablicno(StatistikaRecord statistika) {
         try {
@@ -44,7 +47,9 @@ public class PDFExportService {
         }
     }
 
-    // ---------- POMOĆNE METODE ----------
+
+
+    // ---------- POMOĆNE METODE ZA STATISTIKU----------
 
     private void addTitle(Document document, String text) throws DocumentException {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
@@ -103,4 +108,216 @@ public class PDFExportService {
             table.addCell(cell);
         }
     }
+
+    //----------- GENERIRANJE POTVRDE O PREDAJI ------------
+
+    public byte[] generatePotvrdaOPredajiVozila(Nalog nalog) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, out);
+
+            document.open();
+
+            Font naslovFont = new Font(Font.HELVETICA, 16, Font.BOLD);
+            Font tekstFont = new Font(Font.HELVETICA, 11, Font.NORMAL);
+
+            // NASLOV
+            Paragraph naslov = new Paragraph("Potvrda o predaji vozila", naslovFont);
+            naslov.setAlignment(Element.ALIGN_CENTER);
+            document.add(naslov);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            // SADRŽAJ
+            String klijent =
+                    nalog.getKlijent().getImeKlijent() + " " + nalog.getKlijent().getPrezimeKlijent();
+
+            String vozilo =
+                    nalog.getVozilo().getModel().getModelNaziv();
+
+            String usluga =
+                    nalog.getUsluga().getUslugaNaziv();
+
+            String serviser =
+                    nalog.getServiser().getImeServiser() + " "
+                            + nalog.getServiser().getPrezimeServiser();
+
+            Paragraph p1 = new Paragraph(
+                    "Ovom izjavom se potvrđuje da je " + klijent +
+                            " predao svoje vozilo " + vozilo + " na servis.",
+                    tekstFont
+            );
+            p1.setAlignment(Element.ALIGN_JUSTIFIED);
+            document.add(p1);
+
+            document.add(Chunk.NEWLINE);
+
+            Paragraph p2 = new Paragraph(
+                    "Zatražena usluga na servisu je: " + usluga + ".",
+                    tekstFont
+            );
+            document.add(p2);
+
+            document.add(Chunk.NEWLINE);
+
+            Paragraph p3 = new Paragraph(
+                    "Vozilo je preuzeo odabrani serviser " + serviser + ".",
+                    tekstFont
+            );
+            document.add(p3);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            Paragraph p4 = new Paragraph(
+                    "Sve napomene vezane uz servis možete vidjeti na našoj web stranici.",
+                    tekstFont
+            );
+            document.add(p4);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            // POTPISI
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+
+            PdfPCell klijentCell = new PdfPCell(
+                    new Phrase(klijent + "\n\n___________________________", tekstFont)
+            );
+            klijentCell.setBorder(Rectangle.NO_BORDER);
+
+            PdfPCell serviserCell = new PdfPCell(
+                    new Phrase(
+                            "Potpis ovlaštene osobe\n\nM.P.\n\n___________________________",
+                            tekstFont
+                    )
+            );
+            serviserCell.setBorder(Rectangle.NO_BORDER);
+            serviserCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+            table.addCell(klijentCell);
+            table.addCell(serviserCell);
+
+            document.add(table);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            Paragraph footer = new Paragraph("Bregmotors", tekstFont);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Greška pri generiranju PDF potvrde", e);
+        }
+    }
+
+    //------------- GENERIRANJE POTVRDE O PREUZIMANJU ---------
+
+    public byte[] generatePotvrdaOPreuzimanjuVozila(Nalog nalog) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, out);
+
+            document.open();
+
+            Font naslovFont = new Font(Font.HELVETICA, 16, Font.BOLD);
+            Font tekstFont = new Font(Font.HELVETICA, 11, Font.NORMAL);
+
+            // NASLOV
+            Paragraph naslov = new Paragraph("Potvrda o preuzimanju vozila", naslovFont);
+            naslov.setAlignment(Element.ALIGN_CENTER);
+            document.add(naslov);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            // PODACI IZ BAZE
+            String klijent =
+                    nalog.getKlijent().getImeKlijent() + " " +
+                            nalog.getKlijent().getPrezimeKlijent();
+
+            // SADRŽAJ DOKUMENTA
+            Paragraph p1 = new Paragraph(
+                    "Ovom izjavom se potvrđuje da je " + klijent +
+                            " preuzeo svoje vozilo sa servisa.",
+                    tekstFont
+            );
+            p1.setAlignment(Element.ALIGN_JUSTIFIED);
+            document.add(p1);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            Paragraph p2 = new Paragraph(
+                    "Za dodatne servise možete ponovo posjetiti našu stranicu.",
+                    tekstFont
+            );
+            document.add(p2);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            Paragraph p3 = new Paragraph(
+                    "Hvala Vam na suradnji i povjerenju koje imate u Bregmotors!",
+                    tekstFont
+            );
+            document.add(p3);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            // POTPISI
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+
+            PdfPCell klijentCell = new PdfPCell(
+                    new Phrase(
+                            klijent + "\n\n___________________________",
+                            tekstFont
+                    )
+            );
+            klijentCell.setBorder(Rectangle.NO_BORDER);
+
+            PdfPCell serviserCell = new PdfPCell(
+                    new Phrase(
+                            "Potpis ovlaštene osobe\n\nM.P.\n\n___________________________",
+                            tekstFont
+                    )
+            );
+            serviserCell.setBorder(Rectangle.NO_BORDER);
+            serviserCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+            table.addCell(klijentCell);
+            table.addCell(serviserCell);
+
+            document.add(table);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            // FOOTER
+            Paragraph footer = new Paragraph("Bregmotors", tekstFont);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Greška pri generiranju PDF potvrde o preuzimanju vozila", e);
+        }
+    }
+
 }
