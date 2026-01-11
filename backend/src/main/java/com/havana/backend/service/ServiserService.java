@@ -108,7 +108,7 @@ public class ServiserService {
             }
         }
     }
-    public byte[] getPotvrdaOPreuzimanju(Integer nalogId) {
+    public byte[] getPotvrdaOPreuzimanju(Integer nalogId) throws AccessDeniedException {
 
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
