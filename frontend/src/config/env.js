@@ -1,2 +1,2 @@
 
-export const BACKEND_URL = "https://appbackend-by7p.onrender.com";
+export const BACKEND_URL = "https://appfrontend-9r7b.onrender.com";
