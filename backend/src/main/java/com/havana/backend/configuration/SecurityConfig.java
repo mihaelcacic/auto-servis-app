@@ -74,14 +74,6 @@ public class SecurityConfig {
                         .defaultSuccessUrl(frontendUrl, true)
                 )
 
-                // ---- UNAUTHORIZED HANDLING ----
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((req, res, authEx) -> {
-                            res.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            res.getWriter().write("Korisnik nije prijavljen");
-                        })
-                )
-
                 // ---- LOGOUT ----
                 .logout(logout -> logout
                         .logoutUrl("/logout")
