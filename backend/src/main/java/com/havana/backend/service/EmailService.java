@@ -2,6 +2,7 @@ package com.havana.backend.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendPotvrdaPrijaveVozila(String to){ /*metoda za slanje maila kod stvaranja naloga*/
         SimpleMailMessage poruka = new SimpleMailMessage();
 
