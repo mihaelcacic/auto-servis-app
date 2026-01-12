@@ -63,7 +63,10 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme }){
   },[date,time])
 
   const today = new Date()
-  const minDate = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`
+  // Set minimum date to tomorrow (not today)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const minDate = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`
   const maxDateObj = new Date()
   maxDateObj.setDate(maxDateObj.getDate() + 365)
   const maxDate = `${maxDateObj.getFullYear()}-${pad(maxDateObj.getMonth()+1)}-${pad(maxDateObj.getDate())}`

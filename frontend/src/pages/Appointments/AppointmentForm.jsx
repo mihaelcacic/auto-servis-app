@@ -71,6 +71,15 @@ export default function AppointmentForm(){
       setError('Unesite valjanu registraciju vozila')
       return
     }
+    // validate date is not in the past
+    const selectedDate = new Date(datumVrijeme)
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setHours(0, 0, 0, 0)
+    if(selectedDate < tomorrow){
+      setError('Termin mora biti sutrašnji dan ili kasnije')
+      return
+    }
 
     const payload = {
       klijentId: 1,
