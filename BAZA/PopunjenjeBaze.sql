@@ -140,25 +140,25 @@ VALUES
 ('Luka', 'Novak', 'luka.novak@example.com', 'https://example.com/img5.jpg');
 
 INSERT INTO ZamjenskoVozilo (idModel, datumPreuzimanja, datumVracanja) VALUES
-(3,  '2025-10-20', '2025-10-23'),
-(7,  '2025-09-15', '2025-09-20'),
-(12, '2025-11-01', '2025-11-03'),
-(18, '2025-11-02', NULL),                -- trenutno posuđeno
-(21, NULL, NULL),                        -- slobodno vozilo
-(25, '2025-10-10', '2025-10-12'),
+(3,  NULL, NULL),
+(7,  NULL, NULL),
+(12, NULL, NULL),
+(18, NULL, NULL),
+(21, NULL, NULL),
+(25, NULL, NULL),
 (30, NULL, NULL),
-(33, '2025-11-05', NULL),
-(37, '2025-09-28', '2025-09-30'),
+(33, NULL, NULL),
+(37, NULL, NULL),
 (40, NULL, NULL),
-(44, '2025-10-01', '2025-10-05'),
-(49, '2025-10-25', '2025-10-28'),
+(44, NULL, NULL),
+(49, NULL, NULL),
 (52, NULL, NULL),
-(56, '2025-11-04', NULL),
+(56, NULL, NULL),
 (61, NULL, NULL),
-(67, '2025-08-12', '2025-08-15'),
-(73, '2025-11-06', NULL),
+(67, NULL, NULL),
+(73, NULL, NULL),
 (80, NULL, NULL),
-(95, '2025-09-01', '2025-09-07'),
+(95, NULL, NULL),
 (100, NULL, NULL);
 
 INSERT INTO Nalog (datumVrijemeTermin, datumVrijemeZavrsenPopravak, status, datumVrijemeAzuriranja, idKlijent, idVozilo, idUsluga, idServiser)
