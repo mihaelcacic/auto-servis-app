@@ -78,8 +78,12 @@ public class ServiserController {
 
     @GetMapping("/nalog/{id}/pdf")
     public ResponseEntity<byte[]> downloadPotvrdaOPreuzimanju(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception  {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         byte[] pdf =
-                serviserService.getPotvrdaOPreuzimanju(id);
+                serviserService.getPotvrdaOPreuzimanju(id,principal.getAttribute("email"));
 
         return ResponseEntity.ok()
                 .header(
