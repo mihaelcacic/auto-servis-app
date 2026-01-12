@@ -201,4 +201,41 @@ public class ServiserService {
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
         nalogRepository.save(nalog);
     }
+
+    public void updateTerminServisa(Integer nalogId, String serviserEmail, LocalDateTime noviTermin) {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        //if (!nalog.getServiser().getEmail().equals(serviserEmail)) {
+        //    throw new AccessDeniedException("Nemaš pravo mijenjati termin ovog naloga");
+        //}
+
+        if (nalog.getStatus() == 2) {
+            throw new IllegalStateException("Servis je već završen");
+        }
+
+        if (noviTermin.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Termin ne može biti u prošlosti");
+        }
+
+        int hour = noviTermin.getHour();
+        if (hour < 8 || hour > 16) {
+            throw new IllegalArgumentException("Termin mora biti u radnom vremenu");
+        }
+        
+        boolean zauzet = nalogRepository.existsByServiserAndTermin(
+                nalog.getServiser().getIdServiser(),
+                noviTermin
+        );
+
+        if (zauzet) {
+            throw new IllegalStateException("Već postoji nalog u tom terminu");
+        }
+
+        nalog.setDatumVrijemeTermin(noviTermin);
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+
+        nalogRepository.save(nalog);
+    }
 }

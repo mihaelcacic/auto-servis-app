@@ -19,4 +19,17 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
         WHERE n.status <> 3
     """)
     List<Nalog> findAllAktivni();
+
+    @Query("""
+    SELECT COUNT(n) > 0
+    FROM Nalog n
+    WHERE n.serviser.idServiser = :serviserId
+      AND n.datumVrijemeTermin = :termin
+      AND n.status <> 2
+""")
+    boolean existsByServiserAndTermin(
+            @Param("serviserId") Integer serviserId,
+            @Param("termin") LocalDateTime termin
+    );
+
 }

@@ -1,6 +1,7 @@
 package com.havana.backend.controller;
 
 import com.havana.backend.data.NalogRecord;
+import com.havana.backend.data.UpdateTerminRequestRecord;
 import com.havana.backend.model.Nalog;
 import com.havana.backend.service.ServiserService;
 import lombok.RequiredArgsConstructor;
@@ -65,15 +66,20 @@ public class ServiserController {
     }
 
     @PutMapping("/nalog/{id}/termin")
-    public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody LocalDateTime termin, @AuthenticationPrincipal OAuth2User principal) throws Exception {
+    public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody UpdateTerminRequestRecord request, @AuthenticationPrincipal OAuth2User principal
+    ) {
+
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String email = principal.getAttribute("email");
-        serviserService.updateTermin(id, termin, email);
+        serviserService.updateTerminServisa(
+                id,
+                principal.getAttribute("email"),
+                request.noviTermin()
+        );
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/nalog/preuzimanje/{id}/pdf")
