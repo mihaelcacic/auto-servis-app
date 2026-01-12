@@ -76,7 +76,7 @@ public class ServiserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/nalog/{id}/pdf")
+    @GetMapping("/nalog/preuzimanje/{id}/pdf")
     public ResponseEntity<byte[]> downloadPotvrdaOPreuzimanju(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception  {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -89,6 +89,25 @@ public class ServiserController {
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=potvrda_preuzimanje_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/nalog/predaja/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPotvrdaOPredaji(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws  Exception  {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        byte[] pdf =
+                serviserService.getPotvrdaOPredaji(id, principal.getAttribute("email"));
+
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_predaje_vozila.pdf"
                 )
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);

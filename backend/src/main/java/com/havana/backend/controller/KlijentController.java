@@ -70,17 +70,5 @@ public class KlijentController {
         return ResponseEntity.ok(nalozi);
     }
 
-    @GetMapping("/nalog/{id}/pdf")
-    public ResponseEntity<byte[]> downloadPotvrdaOPredaji(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) {
-        byte[] pdf = klijentService.getPotvrdaOPredaji(id);
-
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=potvrda_predaja_vozila.pdf"
-                )
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdf);
-    }
 }
 

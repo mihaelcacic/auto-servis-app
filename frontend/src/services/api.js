@@ -180,7 +180,7 @@ async function handleBlobRes(res) {
 }
 
 export async function downloadServiserNalogPdf(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/pdf`;
+    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`;
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }

@@ -128,4 +128,27 @@ public class ServiserService {
 
         return pdf;
     }
+
+    public byte[] getPotvrdaOPredaji(Integer nalogId, String email) throws AccessDeniedException {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        Serviser serviser = serviserRepository.findByEmail(email);
+        if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
+            throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
+        }
+
+        byte[] pdf = pdfExportService.generatePotvrdaOPredajiVozila(nalog);
+
+        emailService.sendPdfServiseru(
+                nalog.getServiser().getEmail(),
+                pdf,
+                "Potvrda o predaji vozila",
+                "U privitku se nalazi potvrda o predaji vozila."
+        );
+
+        return pdf;
+
+    }
 }

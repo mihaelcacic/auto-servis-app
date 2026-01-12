@@ -193,7 +193,7 @@ public class PDFExportService {
 
             PdfPCell serviserCell = new PdfPCell(
                     new Phrase(
-                            "Potpis ovlaštene osobe\n\nM.P.\n\n___________________________",
+                            "Potpis ovlaštene osobe\n\n___________________________",
                             tekstFont
                     )
             );
@@ -292,7 +292,7 @@ public class PDFExportService {
 
             PdfPCell serviserCell = new PdfPCell(
                     new Phrase(
-                            "Potpis ovlaštene osobe\n\nM.P.\n\n___________________________",
+                            "Potpis ovlaštene osobe\n\n___________________________",
                             tekstFont
                     )
             );
