@@ -76,39 +76,6 @@ public class ServiserService {
         nalogRepository.save(nalog);
     }
 
-    public void updateTermin(Integer nalogId, LocalDateTime termin, String email) throws AccessDeniedException {
-        Nalog nalog = nalogRepository.findById(nalogId)
-                .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
-
-        Serviser serviser = serviserRepository.findByEmail(email);
-        if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
-            throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
-        }
-
-        if (nalog.getStatus() == 3) {
-            throw new IllegalStateException("Završeni nalog se ne može mijenjati");
-        }
-
-        LocalDateTime oldTermin = nalog.getDatumVrijemeTermin();
-
-        nalog.setDatumVrijemeTermin(termin);
-        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
-
-        nalogRepository.save(nalog);
-
-        if (oldTermin != null) {
-            long daysDiff = Math.abs(
-                    ChronoUnit.DAYS.between(oldTermin, termin)
-            );
-
-            if (daysDiff >= 3) {
-                emailService.sendPromjenaTermina(
-                        nalog.getKlijent().getEmail(),
-                        daysDiff
-                );
-            }
-        }
-    }
     public byte[] getPotvrdaOPreuzimanju(Integer nalogId, String email) throws AccessDeniedException {
 
         Nalog nalog = nalogRepository.findById(nalogId)
@@ -202,18 +169,20 @@ public class ServiserService {
         nalogRepository.save(nalog);
     }
 
-    public void updateTerminServisa(Integer nalogId, String serviserEmail, LocalDateTime noviTermin) {
+    public void updateTerminServisa(Integer nalogId, String serviserEmail, LocalDateTime noviTermin) throws  AccessDeniedException {
 
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
 
-        //if (!nalog.getServiser().getEmail().equals(serviserEmail)) {
-        //    throw new AccessDeniedException("Nemaš pravo mijenjati termin ovog naloga");
-        //}
+        if (!nalog.getServiser().getEmail().equals(serviserEmail)) {
+            throw new AccessDeniedException("Nemaš pravo mijenjati termin ovog naloga");
+        }
 
         if (nalog.getStatus() == 2) {
             throw new IllegalStateException("Servis je već završen");
         }
+
+        LocalDateTime stariTermin = nalog.getDatumVrijemeTermin();
 
         if (noviTermin.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Termin ne može biti u prošlosti");
@@ -223,7 +192,7 @@ public class ServiserService {
         if (hour < 8 || hour > 16) {
             throw new IllegalArgumentException("Termin mora biti u radnom vremenu");
         }
-        
+
         boolean zauzet = nalogRepository.existsByServiserAndTermin(
                 nalog.getServiser().getIdServiser(),
                 noviTermin
@@ -231,6 +200,21 @@ public class ServiserService {
 
         if (zauzet) {
             throw new IllegalStateException("Već postoji nalog u tom terminu");
+        }
+
+        long razlikaUDanima =
+                Math.abs(ChronoUnit.DAYS.between(stariTermin, noviTermin));
+
+        if (razlikaUDanima >= 3) {
+            emailService.sendMailKlijentu(
+                    nalog.getKlijent().getEmail(),
+                    "Promjena termina servisa",
+                    "Poštovani " + nalog.getKlijent().getImeKlijent() + ",\n\n" +
+                            "obavještavamo Vas da je termin servisa Vašeg vozila promijenjen.\n\n" +
+                            "Stari termin: " + stariTermin + "\n" +
+                            "Novi termin: " + noviTermin + "\n\n" +
+                            "Lijep pozdrav,\nBregmotors"
+            );
         }
 
         nalog.setDatumVrijemeTermin(noviTermin);

@@ -67,7 +67,7 @@ public class ServiserController {
 
     @PutMapping("/nalog/{id}/termin")
     public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody UpdateTerminRequestRecord request, @AuthenticationPrincipal OAuth2User principal
-    ) {
+    ) throws  Exception {
 
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

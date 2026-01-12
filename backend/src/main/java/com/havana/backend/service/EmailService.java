@@ -15,16 +15,6 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendPromjenaTermina(String to, long days){ /*metoda za slanje podsjetnika kod ažuriranja termina*/
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Promjena datuma termina");
-        message.setText("Datum termina promijenjen je za "+ days +
-                " dana.");
-
-        mailSender.send(message);
-    }
-
     public void sendPotvrdaPrijaveVozila(String to){ /*metoda za slanje maila kod stvaranja naloga*/
         SimpleMailMessage poruka = new SimpleMailMessage();
 
