@@ -112,4 +112,18 @@ public class ServiserController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
+
+    @PostMapping("/nalog/{id}/servis-zavrsen")
+    public ResponseEntity<Void> notifyServisZavrsen(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        serviserService.notifyKlijentServisZavrsen(
+                id,
+                principal.getAttribute("email")
+        );
+
+        return ResponseEntity.ok().build();
+    }
 }

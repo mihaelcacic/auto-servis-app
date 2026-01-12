@@ -36,7 +36,7 @@ public class EmailService {
         String tekst = """
             Poštovani,
             
-            Vaša registracija servisa je zaprimljena. U tijeku je prihvaćanje Vašeg zahtjeva, te će se čim je prihvaćen, Vama na mail poslati Potvrda o predaji vozila.
+            Vaša registracija servisa je zaprimljena. Dođite čim prije u našu poslovnicu kako bi mogli krenuti sa servisom Vašeg vozila!
             
             Vaš Bregmotors
             """;
@@ -74,8 +74,7 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Greška pri slanju maila", e);
         }
-    }//ako ce igdje biti problema, to je kod ove funkcije zbog importa i kak se koristi
-     //pripazi kada budes deployo da ne zaboravis na ovu funkciju
+    }
 
     public void sendPdfKlijentu(
             String to,
@@ -102,5 +101,15 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Greška pri slanju maila klijentu", e);
         }
-    }//ista stvar i ovdje ako se naleti na error
+    }
+
+    public void sendMailKlijentu(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+
+        mailSender.send(message);
+    }
+
 }

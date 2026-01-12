@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -50,7 +51,7 @@ public class ServiserService {
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
         // ako je završen
-        if (status == 3) { // npr. 3 = ZAVRŠEN
+        if (status == 2) { // npr. 2 = ZAVRŠEN
             nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
         }
 
@@ -117,6 +118,11 @@ public class ServiserService {
         if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
             throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
         }
+
+        if (nalog.getStatus() == 2) {
+            throw new IllegalStateException("Servis je već završen");
+        }
+
         byte[] pdf = pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
 
         emailService.sendPdfKlijentu(
@@ -126,6 +132,15 @@ public class ServiserService {
                 "Poštovani,\n\nu privitku se nalazi potvrda o preuzimanju vozila.\n\nLijep pozdrav,\nBregmotors"
         );
 
+        nalog.setStatus(2); // 2 = GOTOV SERVIS
+        nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+
+        if (nalog.getZamjenskoVozilo() != null) {
+            nalog.getZamjenskoVozilo().setDatumVracanja(LocalDate.now());
+        }
+
+        nalogRepository.save(nalog);
         return pdf;
     }
 
@@ -139,16 +154,51 @@ public class ServiserService {
             throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
         }
 
+        if (nalog.getStatus() == 1) {
+            throw new IllegalStateException("Servis je već aktivan");
+        }
+
         byte[] pdf = pdfExportService.generatePotvrdaOPredajiVozila(nalog);
 
         emailService.sendPdfServiseru(
                 nalog.getServiser().getEmail(),
                 pdf,
                 "Potvrda o predaji vozila",
-                "U privitku se nalazi potvrda o predaji vozila."
+                "Poštovani,\n\nu privitku se nalazi potvrda o predaji vozila.\n\nLijep pozdrav,\nBregmotors"
         );
+
+        nalog.setStatus(1); // 1 = AKTIVAN SERVIS
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+
+        nalogRepository.save(nalog);
 
         return pdf;
 
+    }
+
+    public void notifyKlijentServisZavrsen(Integer nalogId, String email) throws AccessDeniedException {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        if (!nalog.getServiser().getEmail().equals(email)) {
+            throw new AccessDeniedException("Nemaš pravo na ovaj nalog");
+        }
+
+        if (nalog.getStatus() != 1) {//nalog mora biti aktivan
+            throw new IllegalStateException("Servis nije u aktivnom stanju");
+        }
+
+        emailService.sendMailKlijentu(
+                nalog.getKlijent().getEmail(),
+                "Servis vozila je završen",
+                "Poštovani " + nalog.getKlijent().getImeKlijent() + ",\n\n" +
+                        "obavještavamo Vas da je servis Vašeg vozila završen.\n" +
+                        "Molimo Vas da dođete preuzeti vozilo.\n\n" +
+                        "Lijep pozdrav,\nBregmotors"
+        );
+
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+        nalogRepository.save(nalog);
     }
 }
