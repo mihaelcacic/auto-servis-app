@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
     const login = () => {
         // redirect to OAuth endpoint; prefer absolute BACKEND_URL when provided
         const oauthBase = BACKEND_URL || '';
-        window.location.href = `${oauthBase}/oauth2/authorization/google`;
+        window.location.href = `https://appbackend-by7p.onrender.com/oauth2/authorization/google`;
     };
 
     const logout = () => {
