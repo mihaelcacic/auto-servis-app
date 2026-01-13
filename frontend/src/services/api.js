@@ -57,6 +57,13 @@ export async function getZamjenskaSlobodna() {
     return handleRes(res);
 }
 
+export async function getZauzetiTermini() {
+    const res = await fetch(`${API_BASE || ''}/api/zauzeti-termini`, {
+        credentials: 'include',
+    });
+    return handleRes(res);
+}
+
 export async function postNalog(payload) {
     // backend expects client nalog under /api/klijent/nalog
     const res = await fetch(`${API_BASE || ''}/api/klijent/nalog`, {

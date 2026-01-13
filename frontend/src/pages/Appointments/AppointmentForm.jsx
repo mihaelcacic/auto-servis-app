@@ -6,7 +6,7 @@ import ServiceSelector from './ServiceSelector'
 import StaffSelector from './StaffSelector'
 import ReplacementVehicleSelector from './ReplacementVehicleSelector'
 import DateTimeField from './DateTimeField'
-import { getMarke, getModelsByMarka, getUsluge, getServiseri, getZamjenskaSlobodna, postNalog } from '../../services/api'
+import { getMarke, getModelsByMarka, getUsluge, getServiseri, getZamjenskaSlobodna, getZauzetiTermini, postNalog } from '../../services/api'
 
 export default function AppointmentForm(){
   const { user, loading: authLoading } = useAuth()
@@ -23,6 +23,7 @@ export default function AppointmentForm(){
   const [zamjenska, setZamjenska] = useState([])
   const [zamjenskoId, setZamjenskoId] = useState('')
   const [datumVrijeme, setDatumVrijeme] = useState('')
+  const [zauzetiTermini, setZauzetiTermini] = useState([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -31,11 +32,12 @@ export default function AppointmentForm(){
   useEffect(()=>{
     async function load(){
       try{
-        const [m, u, s, z] = await Promise.all([getMarke(), getUsluge(), getServiseri(), getZamjenskaSlobodna()])
+        const [m, u, s, z, zt] = await Promise.all([getMarke(), getUsluge(), getServiseri(), getZamjenskaSlobodna(), getZauzetiTermini()])
         setMarke(Array.isArray(m) ? m : [])
         setUsluge(Array.isArray(u) ? u : [])
         setServiseri(Array.isArray(s) ? s : [])
         setZamjenska(Array.isArray(z) ? z : [])
+        setZauzetiTermini(Array.isArray(zt) ? zt : [])
       }catch(e){
         console.error(e)
         setError('Ne mogu dohvatiti podatke s poslužitelja')
@@ -161,7 +163,7 @@ export default function AppointmentForm(){
 
           <ReplacementVehicleSelector zamjenska={zamjenska} zamjenskoId={zamjenskoId} setZamjenskoId={setZamjenskoId} />
 
-          <DateTimeField datumVrijeme={datumVrijeme} setDatumVrijeme={setDatumVrijeme} />
+          <DateTimeField datumVrijeme={datumVrijeme} setDatumVrijeme={setDatumVrijeme} zauzetiTermini={zauzetiTermini} />
 
           <Box sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 2, alignItems: 'center' }}>
             {loading ? <CircularProgress size={24} /> : <Button type="submit" variant="contained">Rezerviraj</Button>}
