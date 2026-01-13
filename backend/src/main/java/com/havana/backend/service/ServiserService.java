@@ -76,7 +76,7 @@ public class ServiserService {
         nalogRepository.save(nalog);
     }
 
-    public byte[] getPotvrdaOPreuzimanju(Integer nalogId, String email) throws AccessDeniedException {
+    public byte[] getPotvrdaOPreuzimanju(Integer nalogId, String email) throws AccessDeniedException{
 
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
@@ -92,24 +92,26 @@ public class ServiserService {
 
         byte[] pdf = pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
 
-        emailService.sendPdfKlijentu(
-                nalog.getKlijent().getEmail(),
-                pdf,
-                "Potvrda o preuzimanju vozila",
-                "Poštovani,\n\nu privitku se nalazi potvrda o preuzimanju vozila.\n\nLijep pozdrav,\nBregmotors"
-        );
+        // MAIL NE SMIJE RUŠITI PDF
+        try {
+            emailService.sendPdfPreuzimanjeKlijentu(
+                    nalog.getKlijent().getEmail(),
+                    pdf,
+                    "Potvrda o preuzimanju vozila",
+                    "Poštovani,\n\nu privitku se nalazi potvrda o preuzimanju vozila.\n\nLijep pozdrav,\nBregmotors"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        nalog.setStatus(2); // 2 = GOTOV SERVIS
+        nalog.setStatus(2);
         nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
-
-        if (nalog.getZamjenskoVozilo() != null) {
-            nalog.getZamjenskoVozilo().setDatumVracanja(LocalDate.now());
-        }
 
         nalogRepository.save(nalog);
         return pdf;
     }
+
 
     public byte[] getPotvrdaOPredaji(Integer nalogId, String email) throws AccessDeniedException {
 
@@ -127,15 +129,17 @@ public class ServiserService {
 
         byte[] pdf = pdfExportService.generatePotvrdaOPredajiVozila(nalog);
 
-        emailService.sendPdfServiseru(
-                nalog.getServiser().getEmail(),
+        emailService.sendPdfPredajeServiseru(
+                nalog.getKlijent().getEmail(),
                 pdf,
                 "Potvrda o predaji vozila",
                 "Poštovani,\n\nu privitku se nalazi potvrda o predaji vozila.\n\nLijep pozdrav,\nBregmotors"
         );
 
-        nalog.setStatus(1); // 1 = AKTIVAN SERVIS
-        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+        if(nalog.getStatus() != 2) {
+            nalog.setStatus(1); // 1 = AKTIVAN SERVIS
+            nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+        }
 
         nalogRepository.save(nalog);
 
