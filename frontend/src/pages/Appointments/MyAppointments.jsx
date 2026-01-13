@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, CircularProgress, Alert, Card, CardContent, Grid, Button } from '@mui/material'
+import { Container, Typography, CircularProgress, Alert, Button, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper } from '@mui/material'
 import { formatDatetime } from '../../utils/date'
 import { useAuth } from '../../context/AuthContext'
-import { getNaloziByKlijent, downloadKlijentNalogPdf } from '../../services/api'
+import { getNaloziByKlijent } from '../../services/api'
 
 export default function MyAppointments(){
   const { user, login, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [nalozi, setNalozi] = useState([])
-  const [predajProcessing, setPredajProcessing] = useState([])
+  
 
   useEffect(()=>{
     if(authLoading) return
@@ -32,86 +32,60 @@ export default function MyAppointments(){
     return ()=>{ mounted = false; clearInterval(iv) }
   },[user, authLoading])
 
-  async function handlePredaj(id){
-    if (predajProcessing.includes(id)) return
-    setPredajProcessing(p=>[...p,id])
-    try{
-      const { blob, filename } = await downloadKlijentNalogPdf(id)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename || `nalog_${id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
-      setError(null)
-      // refresh list from server (server now persists status=1)
-      const data = await getNaloziByKlijent(user.id)
-      setNalozi(Array.isArray(data) ? data : [])
-    }catch(e){
-      console.error(e)
-      setError('Greška pri predaji vozila / preuzimanju PDF')
-    }
-    setPredajProcessing(p=>p.filter(x=>x!==id))
-  }
+  
 
-  if(authLoading) return <Box sx={{p:3}}><CircularProgress/></Box>
+  if(authLoading) return <Container sx={{mt:6}}><CircularProgress/></Container>
 
   if(!user) return (
-    <Box sx={{p:3}}>
+    <Container sx={{mt:6}}>
       <Alert severity="info">Morate biti prijavljeni da vidite svoje termine.</Alert>
-      <Box sx={{mt:2}}>
-        <Button variant="contained" onClick={login}>Prijavi se</Button>
-      </Box>
-    </Box>
+      <Button variant="contained" onClick={login} sx={{mt:2}}>Prijavi se</Button>
+    </Container>
   )
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>Moji termini</Typography>
-      {loading && <CircularProgress />}
+    <Container maxWidth="lg" sx={{ mt: 6, mb: 8 }}>
+      <Typography variant="h4" gutterBottom>Moji termini</Typography>
+      {loading && (
+        <CircularProgress sx={{ display: 'block', mx: 'auto', my: 4 }} />
+      )}
       {error && <Alert severity="error" sx={{ mb:2 }}>{error}</Alert>}
 
-      {!loading && !nalozi.length && <Alert severity="info">Nemate rezerviranih termina.</Alert>}
-
-      <Grid container spacing={2} sx={{ mt: 1 }}>
-        {nalozi.map(n => (
-          <Grid item xs={12} md={6} key={n.idNalog}>
-            <Card>
-              <CardContent>
-                <Typography variant="subtitle1">Termin: {formatDatetime(n.datumVrijemeTermin)}</Typography>
-                <Typography variant="body2" color="text.secondary">Status: {formatStatus(n.status)}</Typography>
-
-                <Box sx={{ mt:1 }}>
-                  <Typography variant="subtitle2">Vozilo</Typography>
-                  <Typography>{n.vozilo?.registracija} — {n.vozilo?.model?.markaNaziv} {n.vozilo?.model?.modelNaziv}</Typography>
-                </Box>
-
-                <Box sx={{ mt:1 }}>
-                  <Typography variant="subtitle2">Usluga</Typography>
-                  <Typography>{n.usluga?.uslugaNaziv || '-'}</Typography>
-                </Box>
-
-                <Box sx={{ mt:1 }}>
-                  <Typography variant="subtitle2">Serviser</Typography>
-                  <Typography>{n.serviser ? `${n.serviser.imeServiser} ${n.serviser.prezimeServiser}` : '-'}</Typography>
-                </Box>
-
-                <Box sx={{ mt:1 }}>
-                  { (n.status === 0 || n.status === '0') && (
-                    <Button variant="contained" size="small" onClick={()=>handlePredaj(n.idNalog)} disabled={predajProcessing.includes(n.idNalog)}>Predaj vozilo i preuzmi PDF</Button>
-                  ) }
-                  { (n.status === 1 || n.status === '1') && (
-                    <Typography variant="caption">Predano — čekanje potvrde servisera</Typography>
-                  ) }
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+      {!loading && !error && (
+        <TableContainer component={Paper} elevation={1}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Termin</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Vozilo</TableCell>
+                <TableCell>Usluga</TableCell>
+                <TableCell>Serviser</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {nalozi.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">Nemate rezerviranih termina.</TableCell>
+                </TableRow>
+              ) : (
+                nalozi.map(n => (
+                  <TableRow key={n.idNalog ?? n.id} hover>
+                    <TableCell>{n.idNalog ?? n.id}</TableCell>
+                    <TableCell>{formatDatetime(n.datumVrijemeTermin)}</TableCell>
+                    <TableCell>{formatStatus(n.status)}</TableCell>
+                    <TableCell>{n.vozilo?.registracija ? `${n.vozilo.registracija} — ${n.vozilo?.model?.markaNaziv || ''} ${n.vozilo?.model?.modelNaziv || ''}` : '-'}</TableCell>
+                    <TableCell>{n.usluga?.uslugaNaziv || '-'}</TableCell>
+                    <TableCell>{n.serviser ? `${n.serviser.imeServiser} ${n.serviser.prezimeServiser}` : '-'}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Container>
   )
 }
 
@@ -123,15 +97,12 @@ function formatStatus(s){
       return 'Čeka potvrdu servisera'
     case 1:
     case '1':
-      return 'Termin potvrđen — čeka se dostava vozila'
+      return 'Servis preuzeo vozilo'
     case 2:
     case '2':
-      return 'Serviser preuzeo vozilo — radi se servis'
+      return 'Servis gotov — čeka preuzimanje'
     case 3:
     case '3':
-      return 'Servis gotov — čeka preuzimanje'
-    case 4:
-    case '4':
       return 'Klijent preuzeo vozilo'
     default:
       return String(s ?? '-')
