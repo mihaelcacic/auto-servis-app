@@ -3,7 +3,10 @@ package com.havana.backend.controller;
 import com.havana.backend.data.NalogRecord;
 import com.havana.backend.data.UpdateTerminRequestRecord;
 import com.havana.backend.model.Nalog;
+import com.havana.backend.repository.ServiserRepository;
+import com.havana.backend.service.NalogService;
 import com.havana.backend.service.ServiserService;
+import com.havana.backend.service.ZamjenskoVoziloService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import java.util.List;
 public class ServiserController {
 
     private final ServiserService serviserService;
+    private final ZamjenskoVoziloService zamjenskoVoziloService;
 
     @GetMapping("/nalozi")
     public ResponseEntity<List<Nalog>> getMyNalozi(@AuthenticationPrincipal OAuth2User principal) {
@@ -129,6 +133,8 @@ public class ServiserController {
                 id,
                 principal.getAttribute("email")
         );
+
+        zamjenskoVoziloService.azurirajPovratak(id);
 
         return ResponseEntity.ok().build();
     }
