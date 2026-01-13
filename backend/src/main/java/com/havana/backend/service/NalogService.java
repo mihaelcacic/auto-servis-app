@@ -27,6 +27,10 @@ public class NalogService {
         try {
             Nalog nalog = new Nalog();
 
+            if (nalogRecord.datumVrijemeTermin().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Termin ne može biti u prošlosti");
+            }
+
             Klijent klijent = klijentRepository.findById(nalogRecord.klijentId())
                     .orElseThrow(() -> new IllegalArgumentException("Klijent ne postoji"));
             nalog.setKlijent(klijent);
