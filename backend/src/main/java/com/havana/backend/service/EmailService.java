@@ -1,105 +1,118 @@
 package com.havana.backend.service;
 
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.sendgrid.*;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
+
 
 @Service
 public class EmailService {
-    private final JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    private final String sendGridApiKey;
+    private final String fromEmail;
+
+    public EmailService(
+            @Value("${sendgrid.api.key}") String sendGridApiKey,
+            @Value("${sendgrid.from.email}") String fromEmail
+    ) {
+        this.sendGridApiKey = sendGridApiKey;
+        this.fromEmail = fromEmail;
     }
 
-    public void sendPotvrdaPrijaveVozila(String to){ /*metoda za slanje maila kod stvaranja naloga*/
-        SimpleMailMessage poruka = new SimpleMailMessage();
+    // ---------- OBIČAN MAIL ----------
+    public void sendMailKlijentu(String to, String subject, String text) {
 
-        // Postavi osnovne podatke maila
-        poruka.setTo(to);
-        poruka.setSubject("Potvrda registracije servisa - Bregmotors");
+        Email from = new Email(fromEmail);
+        Email toEmail = new Email(to);
+        Content content = new Content("text/plain", text);
+        Mail mail = new Mail(from, subject, toEmail, content);
 
-        // Sadržaj maila
-        String tekst = """
-            Poštovani,
-            
-            Vaša registracija servisa je zaprimljena. Dođite čim prije u našu poslovnicu kako bi mogli krenuti sa servisom Vašeg vozila!
-            
-            Vaš Bregmotors
-            """;
-
-        poruka.setText(tekst);
-
-        // Pošalji mail
-        mailSender.send(poruka);
+        send(mail);
     }
 
-    //tu moram dodat metodu koja šalje određeni mail kada se pritisne jedan od endpointova, ovo ćemo kasnije
-
+    // ---------- PDF SERVISERU ----------
     public void sendPdfServiseru(
             String to,
             byte[] pdf,
             String subject,
             String text
     ) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(message, true);
-
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(text);
-
-            helper.addAttachment(
-                    "potvrda_preuzimanje.pdf",
-                    new ByteArrayResource(pdf)
-            );
-
-            mailSender.send(message);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Greška pri slanju maila", e);
-        }
+        sendMailWithAttachment(
+                to,
+                subject,
+                text,
+                pdf,
+                "potvrda_predaje_vozila.pdf"
+        );
     }
 
+    // ---------- PDF KLIJENTU ----------
     public void sendPdfKlijentu(
             String to,
             byte[] pdf,
             String subject,
             String text
     ) {
+        sendMailWithAttachment(
+                to,
+                subject,
+                text,
+                pdf,
+                "potvrda_preuzimanje_vozila.pdf"
+        );
+    }
+
+    // ---------- CORE SENDGRID LOGIKA ----------
+    private void sendMailWithAttachment(
+            String to,
+            String subject,
+            String text,
+            byte[] attachmentBytes,
+            String filename
+    ) {
+
+        Email from = new Email(fromEmail);
+        Email toEmail = new Email(to);
+        Content content = new Content("text/plain", text);
+        Mail mail = new Mail(from, subject, toEmail, content);
+
+        Attachments attachments = new Attachments();
+        attachments.setContent(
+                Base64.getEncoder().encodeToString(attachmentBytes)
+        );
+        attachments.setType("application/pdf");
+        attachments.setFilename(filename);
+        attachments.setDisposition("attachment");
+
+        mail.addAttachments(attachments);
+
+        send(mail);
+    }
+
+    private void send(Mail mail) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(message, true);
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Request request = new Request();
 
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(text);
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
 
-            helper.addAttachment(
-                    "potvrda_preuzimanje_vozila.pdf",
-                    new ByteArrayResource(pdf)
-            );
+            Response response = sg.api(request);
 
-            mailSender.send(message);
+            if (response.getStatusCode() >= 400) {
+                throw new RuntimeException(
+                        "SendGrid error: " + response.getBody()
+                );
+            }
 
         } catch (Exception e) {
-            throw new RuntimeException("Greška pri slanju maila klijentu", e);
+            throw new RuntimeException("Greška pri slanju maila preko SendGrid-a", e);
         }
     }
-
-    public void sendMailKlijentu(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-
-        mailSender.send(message);
-    }
-
 }

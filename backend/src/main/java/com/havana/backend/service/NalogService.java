@@ -77,9 +77,20 @@ public class NalogService {
 
             nalogRepository.save(nalog);
 
-            emailService.sendPotvrdaPrijaveVozila(
-                    nalog.getKlijent().getEmail()
+            emailService.sendMailKlijentu(
+                    nalog.getKlijent().getEmail(),
+                    "Potvrda prijave servisa - Bregmotors",
+                    """
+                    Poštovani,
+            
+                    Vaša prijava servisa je zaprimljena.
+                    Očekujte daljnje obavijesti od našeg servisera.
+            
+                    Lijep pozdrav,
+                    Bregmotors
+                    """
             );
+
 
             return true;
 
