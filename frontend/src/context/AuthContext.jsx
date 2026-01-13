@@ -25,7 +25,6 @@ export function AuthProvider({ children }) {
                 const derivedRoles = [];
                 if (data.role) {
                     derivedRoles.push(data.role);
-                    if (data.role === 'ROLE_ADMIN') derivedRoles.push('ROLE_SERVISER');
                 } else if (Array.isArray(data.roles)) {
                     // fallback if backend still returns roles array
                     derivedRoles.push(...data.roles);
