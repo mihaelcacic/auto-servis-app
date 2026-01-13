@@ -359,7 +359,7 @@ export default function Admin(){
                         <TableRow key={n.idNalog ?? n.id} hover>
                           <TableCell>{n.idNalog ?? n.id}</TableCell>
                           <TableCell>{formatDatetime(n.datumVrijemeTermin)}</TableCell>
-                          <TableCell>{n.status}</TableCell>
+                          <TableCell>{formatStatus(n.status)}</TableCell>
                           <TableCell>{n.napomena || '-'}</TableCell>
                           <TableCell align="right">
                             <Button size="small" variant="outlined" color="error" onClick={()=>handleDeleteNalog(n.idNalog ?? n.id)}>
@@ -473,4 +473,20 @@ export default function Admin(){
       <Snackbar open={alert.open} autoHideDuration={4000} onClose={()=>setAlert({...alert, open:false})} message={alert.message} />
     </Container>
   )
+}
+
+function formatStatus(s){
+  switch(s){
+    case 0:
+    case '0':
+      return 'Čeka potvrdu servisera'
+    case 1:
+    case '1':
+      return 'Servis u tijeku'
+    case 2:
+    case '2':
+      return 'Servis završen'
+    default:
+      return String(s ?? '-')
+  }
 }

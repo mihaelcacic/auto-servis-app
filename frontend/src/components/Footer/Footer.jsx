@@ -2,8 +2,13 @@ import React from 'react'
 import { Box, Container, Typography, Stack, Link as MuiLink } from '@mui/material'
 import logo from '../../assets/icons/img/Logo.png'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Footer(){
+    const { user } = useAuth()
+    const roles = user?.roles || (user?.role ? [user.role] : [])
+    const isClient = roles.includes('ROLE_KLIJENT')
+
     return (
         <Box component="footer" sx={{ backgroundColor: 'background.paper', borderTop: t => `1px solid ${t.palette.divider}`, py: 3 }}>
             <Container maxWidth="lg">
@@ -19,7 +24,7 @@ export default function Footer(){
                     <Stack direction="row" spacing={2} alignItems="center">
                         <MuiLink component={NavLink} to="/" underline="none">Početna</MuiLink>
                         <MuiLink component={NavLink} to="/services" underline="none">Usluge</MuiLink>
-                        <MuiLink component={NavLink} to="/appointments" underline="none">Novi termin</MuiLink>
+                        {isClient && <MuiLink component={NavLink} to="/appointments" underline="none">Novi termin</MuiLink>}
                         <MuiLink component={NavLink} to="/contact" underline="none">Kontakt</MuiLink>
                     </Stack>
                 </Stack>
