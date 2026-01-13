@@ -36,7 +36,7 @@ public class EmailService {
     }
 
     // ---------- PDF SERVISERU ----------
-    public void sendPdfServiseru(
+    public void sendPdfPredajeServiseru(
             String to,
             byte[] pdf,
             String subject,
@@ -52,7 +52,7 @@ public class EmailService {
     }
 
     // ---------- PDF KLIJENTU ----------
-    public void sendPdfKlijentu(
+    public void sendPdfPreuzimanjeKlijentu(
             String to,
             byte[] pdf,
             String subject,
