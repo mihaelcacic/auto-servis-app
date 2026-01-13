@@ -63,7 +63,7 @@ public class NalogService {
                         .orElseThrow(() -> new IllegalArgumentException("Zamjensko vozilo ne postoji"));
 
                 // postavi datum preuzimanja AKO već nije zauzeto
-                if (zv.getDatumPreuzimanja() != null) {
+                if (zv.getDatumPreuzimanja() != null && zv.getDatumVracanja() == null) {
                     throw new IllegalStateException("Zamjensko vozilo je već zauzeto");
                 }
 
