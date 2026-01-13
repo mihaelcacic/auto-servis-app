@@ -3,9 +3,12 @@ package com.havana.backend.controller;
 import com.havana.backend.data.ApiResponse;
 import com.havana.backend.data.NalogRecord;
 import com.havana.backend.model.Nalog;
+import com.havana.backend.repository.NalogRepository;
 import com.havana.backend.service.NalogService;
 import com.havana.backend.service.KlijentService;
 import com.havana.backend.model.Klijent;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import lombok.RequiredArgsConstructor;
@@ -68,3 +71,4 @@ public class KlijentController {
     }
 
 }
+

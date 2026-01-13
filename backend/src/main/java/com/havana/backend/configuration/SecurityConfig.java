@@ -51,7 +51,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ADMIN
-                        .requestMatchers("/api/admin/**")
+                        .requestMatchers("/api/admin/**","/api/statistika/**")
                         .hasRole("ADMIN")
 
                         // SERVISER (i ADMIN)

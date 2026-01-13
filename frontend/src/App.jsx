@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Box } from '@mui/material'
-import Navbar from './components/Navbar/Navbar'
+import { Navbar, Footer, ProtectedRoute } from './components'
 import Home from './pages/Home/Home'
 import Services from './pages/Services/Services'
 import Appointments from './pages/Appointments/Appointments'
 import MyAppointments from './pages/Appointments/MyAppointments'
 import Admin from './pages/Admin/Admin'
-import ServiserDashboard from './pages/Serviser/ServiserDashboard'
-import ProtectedRoute from './components/ProtectedRoute'
-import Footer from './components/Footer/Footer'
 import Contact from './pages/Contact/Contact'
+import ServiserDashboard from './pages/Serviser/ServiserDashboard'
+
 
 export default function App() {
 

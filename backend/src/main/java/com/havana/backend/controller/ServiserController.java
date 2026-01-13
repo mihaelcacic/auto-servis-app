@@ -1,10 +1,13 @@
 package com.havana.backend.controller;
 
 import com.havana.backend.data.NalogRecord;
+import com.havana.backend.data.UpdateTerminRequestRecord;
 import com.havana.backend.model.Nalog;
 import com.havana.backend.service.ServiserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -63,14 +66,70 @@ public class ServiserController {
     }
 
     @PutMapping("/nalog/{id}/termin")
-    public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody LocalDateTime termin, @AuthenticationPrincipal OAuth2User principal) throws Exception {
+    public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody UpdateTerminRequestRecord request, @AuthenticationPrincipal OAuth2User principal
+    ) throws  Exception {
+
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String email = principal.getAttribute("email");
-        serviserService.updateTermin(id, termin, email);
+        serviserService.updateTerminServisa(
+                id,
+                principal.getAttribute("email"),
+                request.noviTermin()
+        );
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/nalog/preuzimanje/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPotvrdaOPreuzimanju(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception  {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        byte[] pdf =
+                serviserService.getPotvrdaOPreuzimanju(id,principal.getAttribute("email"));
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_preuzimanje_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/nalog/predaja/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPotvrdaOPredaji(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws  Exception  {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        byte[] pdf =
+                serviserService.getPotvrdaOPredaji(id, principal.getAttribute("email"));
+
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_predaje_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @PostMapping("/nalog/{id}/servis-zavrsen")
+    public ResponseEntity<Void> notifyServisZavrsen(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        serviserService.notifyKlijentServisZavrsen(
+                id,
+                principal.getAttribute("email")
+        );
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,48 +1,118 @@
 package com.havana.backend.service;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
+import com.sendgrid.*;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
+
 
 @Service
 public class EmailService {
-    private final JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    private final String sendGridApiKey;
+    private final String fromEmail;
+
+    public EmailService(
+            @Value("${sendgrid.api.key}") String sendGridApiKey,
+            @Value("${sendgrid.from.email}") String fromEmail
+    ) {
+        this.sendGridApiKey = sendGridApiKey;
+        this.fromEmail = fromEmail;
     }
 
-    public void sendPromjenaTermina(String to, long days){ /*metoda za slanje podsjetnika kod ažuriranja termina*/
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Promjena datuma termina");
-        message.setText("Datum termina promijenjen je za "+ days +
-                " dana.");
+    // ---------- OBIČAN MAIL ----------
+    public void sendMailKlijentu(String to, String subject, String text) {
 
-        mailSender.send(message);
+        Email from = new Email(fromEmail);
+        Email toEmail = new Email(to);
+        Content content = new Content("text/plain", text);
+        Mail mail = new Mail(from, subject, toEmail, content);
+
+        send(mail);
     }
 
-    @Async
-    public void sendPotvrdaPrijaveVozila(String to){ /*metoda za slanje maila kod stvaranja naloga*/
-        SimpleMailMessage poruka = new SimpleMailMessage();
+    // ---------- PDF SERVISERU ----------
+    public void sendPdfServiseru(
+            String to,
+            byte[] pdf,
+            String subject,
+            String text
+    ) {
+        sendMailWithAttachment(
+                to,
+                subject,
+                text,
+                pdf,
+                "potvrda_predaje_vozila.pdf"
+        );
+    }
 
-        // Postavi osnovne podatke maila
-        poruka.setTo(to);
-        poruka.setSubject("Potvrda registracije servisa - Bregmotors");
+    // ---------- PDF KLIJENTU ----------
+    public void sendPdfKlijentu(
+            String to,
+            byte[] pdf,
+            String subject,
+            String text
+    ) {
+        sendMailWithAttachment(
+                to,
+                subject,
+                text,
+                pdf,
+                "potvrda_preuzimanje_vozila.pdf"
+        );
+    }
 
-        // Sadržaj maila
-        String tekst = """
-            Poštovani,
-            
-            Vaša registracija servisa je zaprimljena. U tijeku je prihvaćanje Vašeg zahtjeva, te će se čim je prihvaćen, Vama na mail poslati Potvrda o predaji vozila.
-            
-            Vaš Bregmotors
-            """;
+    // ---------- CORE SENDGRID LOGIKA ----------
+    private void sendMailWithAttachment(
+            String to,
+            String subject,
+            String text,
+            byte[] attachmentBytes,
+            String filename
+    ) {
 
-        poruka.setText(tekst);
+        Email from = new Email(fromEmail);
+        Email toEmail = new Email(to);
+        Content content = new Content("text/plain", text);
+        Mail mail = new Mail(from, subject, toEmail, content);
 
-        // Pošalji mail
-        mailSender.send(poruka);
+        Attachments attachments = new Attachments();
+        attachments.setContent(
+                Base64.getEncoder().encodeToString(attachmentBytes)
+        );
+        attachments.setType("application/pdf");
+        attachments.setFilename(filename);
+        attachments.setDisposition("attachment");
+
+        mail.addAttachments(attachments);
+
+        send(mail);
+    }
+
+    private void send(Mail mail) {
+        try {
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Request request = new Request();
+
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sg.api(request);
+
+            if (response.getStatusCode() >= 400) {
+                throw new RuntimeException(
+                        "SendGrid error: " + response.getBody()
+                );
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Greška pri slanju maila preko SendGrid-a", e);
+        }
     }
 }

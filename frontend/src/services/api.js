@@ -162,6 +162,67 @@ export async function putNalogNapomenaServiser(id, text) {
     return handleRes(res);
 }
 
+export async function putNalogTerminServiser(id, noviTermin) {
+    const res = await fetch(`${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/termin`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ noviTermin: noviTermin }),
+    });
+    return handleRes(res);
+}
+
+// --- Download endpoints that return files (PDF / reports) ---
+async function handleBlobRes(res) {
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        const err = new Error(text || res.statusText);
+        err.status = res.status;
+        throw err;
+    }
+    const blob = await res.blob();
+    // try to derive filename from content-disposition
+    const cd = res.headers.get('content-disposition') || '';
+    let filename = '';
+    const m = /filename\*=UTF-8''([^;\n\r]+)/i.exec(cd) || /filename="?([^";\n\r]+)"?/i.exec(cd);
+    if (m && m[1]) filename = decodeURIComponent(m[1]);
+    return { blob, filename, contentType: res.headers.get('content-type') };
+}
+
+export async function downloadServiserNalogPdf(id) {
+    // PDF for when serviser finishes service (status 1 -> 2)
+    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
+}
+
+// PDF generated when serviser performs "predaja" (handover)
+export async function downloadServiserPredajaPdf(id) {
+    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/${encodeURIComponent(id)}/pdf`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
+}
+
+// Trigger sending an email to the client that service is finished
+export async function notifyServisZavrsen(id) {
+    const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/servis-zavrsen`;
+    const res = await fetch(url, { method: 'POST', credentials: 'include' });
+    return handleRes(res);
+}
+
+export async function downloadKlijentNalogPdf(id) {
+    const url = `${API_BASE || ''}/api/klijent/nalog/${encodeURIComponent(id)}/pdf`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
+}
+
+export async function downloadStatistika(format) {
+    const f = String(format || 'pdf');
+    const url = `${API_BASE || ''}/api/statistika/${encodeURIComponent(f)}`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
+}
+
 // TODO: dodaj uredivanje termina
 
 export default {
@@ -186,4 +247,10 @@ export default {
     getMyNalozi,
     putNalogStatusServiser,
     putNalogNapomenaServiser,
+    putNalogTerminServiser,
+    downloadServiserNalogPdf,
+    downloadServiserPredajaPdf,
+    notifyServisZavrsen,
+    downloadKlijentNalogPdf,
+    downloadStatistika,
 };
