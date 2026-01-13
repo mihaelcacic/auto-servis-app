@@ -226,4 +226,32 @@ public class ServiserService {
 
         nalogRepository.save(nalog);
     }
+
+    public byte[] lokalnaPotvrdaOPredaji(Integer nalogId, String email)
+            throws AccessDeniedException {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        Serviser serviser = serviserRepository.findByEmail(email);
+        if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
+            throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
+        }
+
+        return pdfExportService.generatePotvrdaOPredajiVozila(nalog);
+    }
+
+    public byte[] lokalnaPotvrdaOPreuzimanju(Integer nalogId, String email)
+            throws AccessDeniedException {
+
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));
+
+        Serviser serviser = serviserRepository.findByEmail(email);
+        if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
+            throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
+        }
+
+        return pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
+    }
 }
