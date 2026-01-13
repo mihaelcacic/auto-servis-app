@@ -40,16 +40,18 @@ export default function Navbar() {
   const baseLinks = [
     { label: 'Početna', to: '/' },
     { label: 'Usluge', to: '/services' },
-    { label: 'Novi termin', to: '/appointments' },
     { label: 'Kontakt', to: '/contact' },
   ];
 
   // role-protected links
   const roleLinks = []
-    if(user){
-    // common for logged-in clients
-    roleLinks.push({ label: 'Moji termini', to: '/my-termini' })
+  if(user){
     const roles = user.roles || (user.role ? [user.role] : [])
+    // Only clients can see "Novi termin" and "Moji termini"
+    if(roles.includes('ROLE_KLIJENT')){
+      roleLinks.push({ label: 'Novi termin', to: '/appointments' })
+      roleLinks.push({ label: 'Moji termini', to: '/my-termini' })
+    }
     if(roles.includes('ROLE_ADMIN')) roleLinks.push({ label: 'Admin', to: '/admin' })
     if(roles.includes('ROLE_SERVISER')) roleLinks.push({ label: 'Serviser', to: '/serviser' })
   }

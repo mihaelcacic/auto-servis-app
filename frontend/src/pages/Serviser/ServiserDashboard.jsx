@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, CircularProgress, Alert, Snackbar, Box } from '@mui/material'
 import { useAuth } from '../../context/AuthContext'
-import { getMyNalozi, putNalogStatusServiser, putNalogNapomenaServiser, putNalogTerminServiser, downloadServiserNalogPdf, downloadServiserPredajaPdf, notifyServisZavrsen, downloadKlijentNalogPdf } from '../../services/api'
+import { getMyNalozi, putNalogStatusServiser, putNalogNapomenaServiser, putNalogTerminServiser, downloadServiserNalogPdf, downloadServiserPredajaPdf, notifyServisZavrsen, getPotvrdaOPreuzimanjuWithEmail } from '../../services/api'
 import { formatDatetime } from '../../utils/date'
 
 export default function ServiserDashboard(){
@@ -44,26 +44,9 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // downloadServiserPredajaPdf calls getPotvrdaOPredaji which should change status to 1
-      // But if it doesn't work, we'll also explicitly change status to 1
-      const { blob, filename } = await downloadServiserPredajaPdf(id)
-      // Explicitly change status to 1 as backup (in case backend didn't do it)
-      try {
-        await putNalogStatusServiser(id, 1)
-      } catch (statusError) {
-        // If status update fails, it might already be 1, so we'll continue
-        console.warn('Status update failed (might already be 1):', statusError)
-      }
-      // Download the PDF
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename || `predaja_${id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
-      setAlert({ open:true, message:'Vozilo preuzeto od klijenta, mail poslan i PDF preuzet', severity:'success' })
+      // Only change status to 1 - this is the green button "Potvrdi da je klijent predao vozilo"
+      await putNalogStatusServiser(id, 1)
+      setAlert({ open:true, message:'Status ažuriran - servis počeo', severity:'success' })
       await load()
     }catch(e){ 
       console.error('Error in takeVehicleFromClient:', e)
@@ -76,7 +59,7 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Try to download PDF - this may change status if status is 0
+      // Download PDF - this endpoint does NOT change status
       const { blob, filename } = await downloadServiserPredajaPdf(id)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -87,24 +70,8 @@ export default function ServiserDashboard(){
       a.remove()
       URL.revokeObjectURL(url)
       setAlert({ open:true, message:'PDF preuzet', severity:'success' })
-      await load()
     }catch(e){ 
-      // If download fails (e.g., status is already 1 or higher), try using klijent PDF
-      try {
-        const { blob, filename } = await downloadKlijentNalogPdf(id)
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = filename || `predaja_${id}.pdf`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        URL.revokeObjectURL(url)
-        setAlert({ open:true, message:'PDF preuzet', severity:'success' })
-        await load()
-      } catch (e2) {
-        setAlert({ open:true, message:e.message||'Greška pri preuzimanju PDF-a', severity:'error' })
-      }
+      setAlert({ open:true, message:e.message||'Greška pri preuzimanju PDF-a', severity:'error' })
     }
     setProcessingIds(ids=>ids.filter(x=>x!==id))
   }
@@ -113,11 +80,17 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // send email to client first (while status is still 1)
+      // Only send email to client - do NOT change status
+      // Status remains 1 until client pickup is confirmed
       await notifyServisZavrsen(id)
-      // then change status to 2
-      await putNalogStatusServiser(id, 2)
-      setAlert({ open:true, message:'Servis završen i mail poslan klijentu', severity:'success' })
+      // Add note to napomena
+      const nalog = nalozi.find(n => (n.idNalog ?? n.id) === id)
+      const currentNapomena = nalog?.napomena || ''
+      const newNapomena = currentNapomena 
+        ? `${currentNapomena}\nServis gotov, klijent obaviješten`
+        : 'Servis gotov, klijent obaviješten'
+      await putNalogNapomenaServiser(id, newNapomena)
+      setAlert({ open:true, message:'Mail poslan klijentu o završetku servisa', severity:'success' })
       await load()
     }catch(e){ setAlert({ open:true, message:e.message||'Greška', severity:'error' }) }
     setProcessingIds(ids=>ids.filter(x=>x!==id))
@@ -127,14 +100,24 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Status is 2, but getPotvrdaOPreuzimanju requires status to be 0 or 1
-      // So we need to temporarily change status back to 1, generate PDF, then change to 3
-      // Actually, that's too complicated. Let's just change status to 3.
-      // The PDF was already generated when status changed to 2 (in finishService)
-      await putNalogStatusServiser(id, 3)
-      setAlert({ open:true, message:'Potvrđeno da je klijent preuzeo vozilo', severity:'success' })
+      // Use getPotvrdaOPreuzimanju which changes status to 2 and sends email with PDF to client
+      // This endpoint requires status to be 0 or 1 (not 2), so it should work when status is 1
+      const { blob, filename } = await getPotvrdaOPreuzimanjuWithEmail(id)
+      // Download the PDF locally
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename || `preuzimanje_${id}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      setAlert({ open:true, message:'Potvrđeno da je klijent preuzeo vozilo - mail s PDF-om poslan klijentu', severity:'success' })
       await load()
-    }catch(e){ setAlert({ open:true, message:e.message||'Greška', severity:'error' }) }
+    }catch(e){ 
+      console.error('Error in confirmClientPickup:', e)
+      setAlert({ open:true, message:e.message||'Greška', severity:'error' }) 
+    }
     setProcessingIds(ids=>ids.filter(x=>x!==id))
   }
 
@@ -142,7 +125,7 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Try to download PDF - this may change status if status is 1
+      // Download PDF - this endpoint does NOT change status
       const { blob, filename } = await downloadServiserNalogPdf(id)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -153,24 +136,8 @@ export default function ServiserDashboard(){
       a.remove()
       URL.revokeObjectURL(url)
       setAlert({ open:true, message:'PDF preuzet', severity:'success' })
-      await load()
     }catch(e){ 
-      // If download fails (e.g., status is already 2 or higher), try using klijent PDF
-      try {
-        const { blob, filename } = await downloadKlijentNalogPdf(id)
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = filename || `preuzimanje_${id}.pdf`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        URL.revokeObjectURL(url)
-        setAlert({ open:true, message:'PDF preuzet', severity:'success' })
-        await load()
-      } catch (e2) {
-        setAlert({ open:true, message:e.message||'Greška pri preuzimanju PDF-a', severity:'error' })
-      }
+      setAlert({ open:true, message:e.message||'Greška pri preuzimanju PDF-a', severity:'error' })
     }
     setProcessingIds(ids=>ids.filter(x=>x!==id))
   }
@@ -216,18 +183,6 @@ export default function ServiserDashboard(){
     setProcessingIds(ids=>ids.filter(x=>x!==id))
   }
 
-  async function finishAndNotify(id){
-    if (processingIds.includes(id)) return
-    setProcessingIds(ids=>[...ids, id])
-    try{
-      await putNalogStatusServiser(id, 3)
-      // ask backend to send notification email to client
-      await notifyServisZavrsen(id)
-      setAlert({ open:true, message:'Servis označen kao završen i poslan mail klijentu', severity:'success' })
-      await load()
-    }catch(e){ setAlert({ open:true, message:e.message||'Greška pri završetku servisa', severity:'error' }) }
-    setProcessingIds(ids=>ids.filter(x=>x!==id))
-  }
 
   async function saveNapomena(){
     try{
@@ -273,13 +228,10 @@ export default function ServiserDashboard(){
         return 'Čeka potvrdu servisera'
       case 1:
       case '1':
-        return 'Servis preuzeo vozilo'
+        return 'Servis u tijeku'
       case 2:
       case '2':
-        return 'Servis gotov — čeka preuzimanje'
-      case 3:
-      case '3':
-        return 'Klijent preuzeo vozilo'
+        return 'Servis završen'
       default:
         return String(s ?? '-')
     }
@@ -314,7 +266,7 @@ export default function ServiserDashboard(){
                         <Button 
                           size="small" 
                           onClick={()=>setEditTermin(n)}
-                          disabled={(n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2') || (n.status === 3 || n.status === '3')}
+                          disabled={(n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2')}
                         >
                           Promijeni termin
                         </Button>
@@ -323,29 +275,28 @@ export default function ServiserDashboard(){
                       {/* Akcije - mijenjanje statusa */}
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
                         { (n.status === 0 || n.status === '0') && (
-                          <Button size="small" variant="contained" color="primary" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>takeVehicleFromClient(n.idNalog ?? n.id)}>Preuzmi vozilo od klijenta</Button>
+                          <Button size="small" variant="contained" color="success" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>takeVehicleFromClient(n.idNalog ?? n.id)}>Potvrdi da je klijent predao vozilo</Button>
                         ) }
 
                         { (n.status === 1 || n.status === '1') && (
-                          <Button size="small" variant="contained" color="success" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>finishService(n.idNalog ?? n.id)}>Obavijesti klijenta da je servis završen</Button>
+                          <>
+                            <Button size="small" variant="contained" color="primary" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>finishService(n.idNalog ?? n.id)}>Servis završio</Button>
+                            <Button size="small" variant="contained" color="success" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>confirmClientPickup(n.idNalog ?? n.id)}>Potvrdi da je klijent preuzeo vozilo</Button>
+                          </>
                         ) }
 
                         { (n.status === 2 || n.status === '2') && (
-                          <Button size="small" variant="contained" color="primary" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>confirmClientPickup(n.idNalog ?? n.id)}>Potvrdi da je klijent preuzeo vozilo</Button>
-                        ) }
-
-                        { (n.status === 3 || n.status === '3') && (
                           <Button size="small" disabled>Završeno</Button>
                         ) }
                       </Box>
 
                       {/* PDF preuzimanja - odvojeno od akcija */}
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                        { ((n.status === 0 || n.status === '0') || (n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2') || (n.status === 3 || n.status === '3')) && (
+                        { ((n.status === 0 || n.status === '0') || (n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2')) && (
                           <Button size="small" variant="outlined" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>downloadPredajaPdf(n.idNalog ?? n.id)}>Preuzmi PDF - Potvrda o predaji vozila klijenta</Button>
                         ) }
 
-                        { (n.status === 3 || n.status === '3') && (
+                        { ((n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2')) && (
                           <Button size="small" variant="outlined" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>downloadPreuzimanjePdf(n.idNalog ?? n.id)}>Preuzmi PDF - Potvrda da je klijent preuzeo vozilo</Button>
                         ) }
                       </Box>
