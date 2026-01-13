@@ -1,7 +1,9 @@
 package com.havana.backend.data;
 
+import java.util.List;
+
 public record StatistikaRecord(
-        long ukupanBrojZaprimljenihVozila,
-        long zauzetaZamjenskaVozila,
-        long zauzetiTermini
+        List<AktivniNalogRecord> aktivniNalozi,
+        List<ZamjenskoVoziloRecord> zauzetaZamjenskaVozila,
+        List<ZamjenskoVoziloRecord> slobodnaZamjenskaVozila
 ) {}

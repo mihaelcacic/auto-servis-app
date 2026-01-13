@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Typography, Box, Grid, TextField, Button, Checkbox, FormControlLabel, Table, TableHead, TableRow, TableCell, TableBody, Paper, TableContainer, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Snackbar } from '@mui/material'
 import { useAuth } from '../../context/AuthContext'
-import { postAdmin, postServiserAdmin, getServiseriAdmin, putServiserAdmin, getKlijentiAdmin, putKlijentAdmin, getNaloziAdmin, deleteNalogAdmin } from '../../services/api'
+import { postAdmin, postServiserAdmin, getServiseriAdmin, putServiserAdmin, getKlijentiAdmin, putKlijentAdmin, getNaloziAdmin, deleteNalogAdmin, downloadStatistika } from '../../services/api'
+import { formatDatetime } from '../../utils/date'
 
 export default function Admin(){
   const { user, loading } = useAuth()
@@ -93,11 +94,36 @@ export default function Admin(){
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
 
+  async function handleDownloadStats(format){
+    try{
+      const { blob, filename, contentType } = await downloadStatistika(format)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      // choose sensible default filename if backend doesn't provide one
+      const ext = (format === 'xlsx') ? 'xlsx' : (format === 'xml' ? 'xml' : 'pdf')
+      a.download = filename || `statistika.${ext}`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      setAlert({ open:true, message:`Preuzeto: statistika (${format})`, severity:'success' })
+    }catch(err){ setAlert({ open:true, message:err.message||'Greška pri preuzimanju statistike', severity:'error' }) }
+  }
+
   return (
     <Container maxWidth="lg" sx={{ mt:6, mb:8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h4" gutterBottom align="center">Admin</Typography>
 
       <Box sx={{ width: '100%', maxWidth: 1100 }}>
+            <Paper sx={{ p:2, mb:2 }}>
+              <Typography variant="h6">Preuzmi statistiku</Typography>
+              <Box sx={{ display: 'flex', gap: 2, mt:1 }}>
+                <Button variant="contained" onClick={()=>handleDownloadStats('pdf')}>Preuzmi PDF</Button>
+                <Button variant="contained" onClick={()=>handleDownloadStats('xlsx')}>Preuzmi XLSX</Button>
+                <Button variant="contained" onClick={()=>handleDownloadStats('xml')}>Preuzmi XML</Button>
+              </Box>
+            </Paper>
         <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p:2 }}>
@@ -216,7 +242,7 @@ export default function Admin(){
                   {nalozi.map(n=> (
                     <TableRow key={n.idNalog ?? n.id} hover>
                       <TableCell>{n.idNalog ?? n.id}</TableCell>
-                      <TableCell>{n.datumVrijemeTermin}</TableCell>
+                      <TableCell>{formatDatetime(n.datumVrijemeTermin)}</TableCell>
                       <TableCell>{n.status}</TableCell>
                       <TableCell>{n.napomena}</TableCell>
                       <TableCell>
