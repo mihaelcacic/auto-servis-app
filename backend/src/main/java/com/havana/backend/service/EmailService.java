@@ -5,6 +5,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -68,7 +69,8 @@ public class EmailService {
     }
 
     // ---------- CORE SENDGRID LOGIKA ----------
-    private void sendMailWithAttachment(
+    @Async
+    protected void sendMailWithAttachment(
             String to,
             String subject,
             String text,
@@ -94,7 +96,8 @@ public class EmailService {
         send(mail);
     }
 
-    private void send(Mail mail) {
+    @Async
+    protected void send(Mail mail) {
         try {
             SendGrid sg = new SendGrid(sendGridApiKey);
             Request request = new Request();

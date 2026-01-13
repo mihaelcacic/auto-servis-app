@@ -2,8 +2,10 @@ package com.havana.backend.service;
 
 import com.havana.backend.model.Nalog;
 import com.havana.backend.model.Serviser;
+import com.havana.backend.model.ZamjenskoVozilo;
 import com.havana.backend.repository.NalogRepository;
 import com.havana.backend.repository.ServiserRepository;
+import com.havana.backend.repository.ZamjenskoVoziloRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +23,11 @@ public class ServiserService {
     private final NalogRepository nalogRepository;
     public final EmailService emailService;
     public final PDFExportService pdfExportService;
+    public final ZamjenskoVoziloRepository  zamjenskoVoziloRepository;
 
     public List<Serviser> findAllServisere() {
         return serviserRepository.findAllServisere();
     }
-
 
     /**
      * Dohvat naloga za trenutno prijavljenog servisera (po emailu)
@@ -143,6 +146,12 @@ public class ServiserService {
 
         nalogRepository.save(nalog);
 
+        if (nalog.getZamjenskoVozilo() != null) {
+            ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
+            zv.setDatumVracanja(LocalDate.now());
+            zamjenskoVoziloRepository.save(zv);
+        }
+
         return pdf;
 
     }
@@ -225,6 +234,12 @@ public class ServiserService {
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
         nalogRepository.save(nalog);
+
+        if (nalog.getZamjenskoVozilo() != null) {
+            ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
+            zv.setDatumPreuzimanja(noviTermin.toLocalDate());
+            zamjenskoVoziloRepository.save(zv);
+        }
     }
 
     public byte[] lokalnaPotvrdaOPredaji(Integer nalogId, String email)

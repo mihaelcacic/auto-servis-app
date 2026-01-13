@@ -14,6 +14,6 @@ public class ZamjenskoVoziloService {
     private final ZamjenskoVoziloRepository zamjenskoVoziloRepository;
 
     public List<ZamjenskoVozilo> findAllZamjenskaSlobodnaVozila() {
-        return zamjenskoVoziloRepository.findAllSlobodnaVozila();
+        return zamjenskoVoziloRepository.findSlobodna();
     }
 }
