@@ -210,6 +210,13 @@ export async function downloadServiserPredajaPdf(id) {
     return handleBlobRes(res);
 }
 
+// Get PDF with email sent to client - changes status to 1 and sends email with PDF
+export async function getPotvrdaOPredajiWithEmail(id) {
+    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/${encodeURIComponent(id)}/pdf`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
+}
+
 // Trigger sending an email to the client that service is finished (no status change)
 export async function notifyServisZavrsen(id) {
     const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/servis-zavrsen`;

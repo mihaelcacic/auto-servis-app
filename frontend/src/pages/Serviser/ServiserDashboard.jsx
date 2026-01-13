@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, CircularProgress, Alert, Snackbar, Box } from '@mui/material'
 import { useAuth } from '../../context/AuthContext'
-import { getMyNalozi, putNalogStatusServiser, putNalogNapomenaServiser, putNalogTerminServiser, downloadServiserNalogPdf, downloadServiserPredajaPdf, notifyServisZavrsen, getPotvrdaOPreuzimanjuWithEmail } from '../../services/api'
+import { getMyNalozi, putNalogStatusServiser, putNalogNapomenaServiser, putNalogTerminServiser, downloadServiserNalogPdf, downloadServiserPredajaPdf, notifyServisZavrsen, getPotvrdaOPreuzimanjuWithEmail, getPotvrdaOPredajiWithEmail } from '../../services/api'
 import { formatDatetime } from '../../utils/date'
 
 export default function ServiserDashboard(){
@@ -44,9 +44,18 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Only change status to 1 - this is the green button "Potvrdi da je klijent predao vozilo"
-      await putNalogStatusServiser(id, 1)
-      setAlert({ open:true, message:'Status ažuriran - servis počeo', severity:'success' })
+      // Use getPotvrdaOPredaji which changes status to 1, sends email with PDF to client, and returns PDF
+      const { blob, filename } = await getPotvrdaOPredajiWithEmail(id)
+      // Download the PDF locally
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename || `predaja_${id}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      setAlert({ open:true, message:'Potvrđeno da je klijent predao vozilo - mail s PDF-om poslan klijentu', severity:'success' })
       await load()
     }catch(e){ 
       console.error('Error in takeVehicleFromClient:', e)
