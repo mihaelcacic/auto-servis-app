@@ -63,7 +63,7 @@ public class NalogService {
                     throw new IllegalStateException("Zamjensko vozilo je već zauzeto");
                 }
 
-                zv.setDatumPreuzimanja(LocalDate.now());
+                zv.setDatumPreuzimanja(LocalDate.from(nalogRecord.datumVrijemeTermin()));
                 zv.setDatumVracanja(null); // sigurnost
 
                 nalog.setZamjenskoVozilo(zv);

@@ -132,4 +132,52 @@ public class ServiserController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/nalog/predaja/lokalno-preuzimanje/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPredajaPdf(
+            @PathVariable Integer id,
+            @AuthenticationPrincipal OAuth2User principal
+    ) throws Exception {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        byte[] pdf = serviserService.lokalnaPotvrdaOPredaji(
+                id,
+                principal.getAttribute("email")
+        );
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_predaja_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/nalog/preuzimanje/lokalno-preuzimanje/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPreuzimanjePdf(
+            @PathVariable Integer id,
+            @AuthenticationPrincipal OAuth2User principal
+    ) throws Exception {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        byte[] pdf = serviserService.lokalnaPotvrdaOPreuzimanju(
+                id,
+                principal.getAttribute("email")
+        );
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=potvrda_preuzimanje_vozila.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
 }

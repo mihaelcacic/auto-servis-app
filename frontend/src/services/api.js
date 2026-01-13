@@ -189,25 +189,32 @@ async function handleBlobRes(res) {
     return { blob, filename, contentType: res.headers.get('content-type') };
 }
 
+// PDF for preuzimanje vozila sa servisa (lokalno-preuzimanje) - ne mijenja status
 export async function downloadServiserNalogPdf(id) {
-    // PDF for when serviser finishes service (status 1 -> 2)
-    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`;
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// PDF generated when serviser performs "predaja" (handover)
+// PDF for predaja vozila (lokalno-preuzimanje) - ne mijenja status
 export async function downloadServiserPredajaPdf(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/${encodeURIComponent(id)}/pdf`;
+    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`;
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// Trigger sending an email to the client that service is finished
+// Trigger sending an email to the client that service is finished (no status change)
 export async function notifyServisZavrsen(id) {
     const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/servis-zavrsen`;
     const res = await fetch(url, { method: 'POST', credentials: 'include' });
     return handleRes(res);
+}
+
+// Get PDF with email sent to client - changes status to 2 and sends email with PDF
+export async function getPotvrdaOPreuzimanjuWithEmail(id) {
+    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const res = await fetch(url, { credentials: 'include' });
+    return handleBlobRes(res);
 }
 
 export async function downloadKlijentNalogPdf(id) {

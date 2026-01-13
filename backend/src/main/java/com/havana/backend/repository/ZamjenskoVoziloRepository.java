@@ -9,10 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ZamjenskoVoziloRepository extends JpaRepository<ZamjenskoVozilo, Integer> {
-
-    @Query("SELECT z FROM ZamjenskoVozilo z WHERE z.datumPreuzimanja IS NULL ")
-    List<ZamjenskoVozilo> findAllSlobodnaVozila();
-
     @Query("""
         SELECT z FROM ZamjenskoVozilo z
         WHERE z.datumPreuzimanja IS NOT NULL

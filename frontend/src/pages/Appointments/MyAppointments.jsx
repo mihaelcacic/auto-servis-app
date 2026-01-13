@@ -97,13 +97,10 @@ function formatStatus(s){
       return 'Čeka potvrdu servisera'
     case 1:
     case '1':
-      return 'Servis preuzeo vozilo'
+      return 'Servis u tijeku'
     case 2:
     case '2':
-      return 'Servis gotov — čeka preuzimanje'
-    case 3:
-    case '3':
-      return 'Klijent preuzeo vozilo'
+      return 'Servis završen'
     default:
       return String(s ?? '-')
   }

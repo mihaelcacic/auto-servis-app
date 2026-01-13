@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, Paper, Typography, Alert, CircularProgress } from '@mui/material'
+import { Box, Button, Paper, Typography, Alert, CircularProgress, Container } from '@mui/material'
+import { useAuth } from '../../context/AuthContext'
 import VehicleSelector from './VehicleSelector'
 import ServiceSelector from './ServiceSelector'
 import StaffSelector from './StaffSelector'
@@ -8,6 +9,7 @@ import DateTimeField from './DateTimeField'
 import { getMarke, getModelsByMarka, getUsluge, getServiseri, getZamjenskaSlobodna, postNalog } from '../../services/api'
 
 export default function AppointmentForm(){
+  const { user, loading: authLoading } = useAuth()
   const [marke, setMarke] = useState([])
   const [marka, setMarka] = useState('')
   const [models, setModels] = useState([])
@@ -114,6 +116,26 @@ export default function AppointmentForm(){
     }finally{
       setLoading(false)
     }
+  }
+
+  // Check if user is logged in and has client role
+  if (authLoading) {
+    return (
+      <Container sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    )
+  }
+
+  const roles = user?.roles || (user?.role ? [user.role] : [])
+  const isClient = roles.includes('ROLE_KLIJENT')
+  
+  if (!user || !isClient) {
+    return (
+      <Container sx={{ mt: 6 }}>
+        <Alert severity="error">Samo klijenti mogu rezervirati termine servisa.</Alert>
+      </Container>
+    )
   }
 
   return (
