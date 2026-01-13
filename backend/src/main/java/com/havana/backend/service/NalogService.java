@@ -118,4 +118,8 @@ public class NalogService {
         }
         nalogRepository.deleteById(id);
     }
+
+    public List<LocalDateTime> getZauzetiTermini() {
+        return nalogRepository.findZauzetiTermini();
+    }
 }

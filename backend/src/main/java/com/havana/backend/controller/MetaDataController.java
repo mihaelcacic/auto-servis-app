@@ -4,16 +4,14 @@ import com.havana.backend.model.Model;
 import com.havana.backend.model.Serviser;
 import com.havana.backend.model.Usluge;
 import com.havana.backend.model.ZamjenskoVozilo;
-import com.havana.backend.service.ModelService;
-import com.havana.backend.service.ServiserService;
-import com.havana.backend.service.UslugeService;
-import com.havana.backend.service.ZamjenskoVoziloService;
+import com.havana.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,6 +23,7 @@ public class MetaDataController {
     private final ServiserService serviserService;
     private final UslugeService uslugeService;
     private final ZamjenskoVoziloService zamjenskoVoziloService;
+    private final NalogService nalogService;
 
     @GetMapping("/marke")
     public List<String> getMarke() {
@@ -49,6 +48,11 @@ public class MetaDataController {
     @GetMapping("/zamjenska-vozila/slobodna")
     public List<ZamjenskoVozilo> getSlobodnaZamjenskaVozila(){
         return zamjenskoVoziloService.findAllZamjenskaSlobodnaVozila();
+    }
+
+    @GetMapping("/zauzeti-termini")
+    public List<LocalDateTime> dohvatiZauzeteTermini(){
+        return nalogService.getZauzetiTermini();
     }
 
 }

@@ -26,10 +26,14 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     WHERE n.serviser.idServiser = :serviserId
       AND n.datumVrijemeTermin = :termin
       AND n.status <> 2
-""")
+    """)
     boolean existsByServiserAndTermin(
             @Param("serviserId") Integer serviserId,
             @Param("termin") LocalDateTime termin
     );
 
+    @Query("""
+    SELECT n.datumVrijemeTermin FROM Nalog n WHERE n.status <> 2
+    """)
+    List<LocalDateTime> findZauzetiTermini();
 }
