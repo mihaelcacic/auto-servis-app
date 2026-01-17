@@ -26,6 +26,7 @@ public class EmailService {
     }
 
     // ---------- OBIČAN MAIL ----------
+    @Async
     public void sendMailKlijentu(String to, String subject, String text) {
 
         Email from = new Email(fromEmail);
@@ -37,6 +38,7 @@ public class EmailService {
     }
 
     // ---------- PDF SERVISERU ----------
+    @Async
     public void sendPdfPredajeServiseru(
             String to,
             byte[] pdf,
@@ -53,6 +55,7 @@ public class EmailService {
     }
 
     // ---------- PDF KLIJENTU ----------
+    @Async
     public void sendPdfPreuzimanjeKlijentu(
             String to,
             byte[] pdf,
@@ -69,8 +72,8 @@ public class EmailService {
     }
 
     // ---------- CORE SENDGRID LOGIKA ----------
-    @Async
-    protected void sendMailWithAttachment(
+
+    private void sendMailWithAttachment(
             String to,
             String subject,
             String text,
@@ -96,8 +99,8 @@ public class EmailService {
         send(mail);
     }
 
-    @Async
-    protected void send(Mail mail) {
+
+    private void send(Mail mail) {
         try {
             SendGrid sg = new SendGrid(sendGridApiKey);
             Request request = new Request();
