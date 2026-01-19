@@ -82,3 +82,12 @@ CREATE TABLE Nalog
     FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser),
     FOREIGN KEY (idZamjVozilo) REFERENCES ZamjenskoVozilo(idZamjVozilo)
 );
+
+CREATE TABLE nalog_usluga (
+                              idnalog INT NOT NULL,
+                              idusluga INT NOT NULL,
+                              PRIMARY KEY (idnalog, idusluga),
+                              FOREIGN KEY (idnalog) REFERENCES nalog(idnalog),
+                              FOREIGN KEY (idusluga) REFERENCES usluge(idusluga)
+);
+

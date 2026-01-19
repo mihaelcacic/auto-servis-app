@@ -1,6 +1,8 @@
 package com.havana.backend.service;
 
 import com.havana.backend.data.NalogRecord;
+import com.havana.backend.data.NalogResponse;
+import com.havana.backend.data.UslugaResponse;
 import com.havana.backend.model.*;
 import com.havana.backend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -45,9 +48,14 @@ public class NalogService {
                     });
             nalog.setVozilo(vozilo);
 
-            Usluge usluga = uslugeRepository.findById(nalogRecord.uslugaId())
-                    .orElseThrow(() -> new IllegalArgumentException("Usluga ne postoji"));
-            nalog.setUsluga(usluga);
+            List<Usluge> usluge = uslugeRepository.findAllById(nalogRecord.uslugaIds());
+
+            if (usluge.isEmpty() || usluge.size() != nalogRecord.uslugaIds().size()) {
+                throw new IllegalArgumentException("Jedna ili više usluga ne postoje");
+            }
+
+            nalog.setUsluge(new HashSet<>(usluge));
+
 
             Serviser serviser = serviserRepository.findById(nalogRecord.serviserId())
                     .orElseThrow(() -> new IllegalArgumentException("Serviser ne postoji"));
@@ -100,9 +108,26 @@ public class NalogService {
         }
     }
 
-    public List<Nalog> getNaloziZaKlijenta(Integer klijentId) {
-        return nalogRepository.findByKlijent_IdKlijent(klijentId);
+    public List<NalogResponse> getNaloziZaKlijentaDTO(Integer klijentId) {
+        return nalogRepository.findByKlijent_IdKlijent(klijentId)
+                .stream()
+                .map(nalog -> new NalogResponse(
+                        nalog.getIdNalog(),
+                        nalog.getDatumVrijemeTermin(),
+                        nalog.getStatus(),
+                        nalog.getNapomena(),
+                        nalog.getVozilo().getRegistracija(),
+                        nalog.getUsluge().stream()
+                                .map(u -> new UslugaResponse(
+                                        u.getIdUsluga(),
+                                        u.getUslugaNaziv()
+                                ))
+                                .toList(),
+                        nalog.getServiser().getImeServiser() + " " + nalog.getServiser().getPrezimeServiser()
+                ))
+                .toList();
     }
+
 
     public List<Nalog> getSviNalozi() {
         return nalogRepository.findAll();
