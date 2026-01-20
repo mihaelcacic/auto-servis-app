@@ -3,6 +3,8 @@ package com.havana.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "nalog")
@@ -39,9 +41,13 @@ public class Nalog {
     @JoinColumn(name = "idklijent", nullable = false)
     private Klijent klijent;
 
-    @ManyToOne
-    @JoinColumn(name = "idusluga", nullable = false)
-    private Usluge usluga;
+    @ManyToMany
+    @JoinTable(
+            name = "nalog_usluga",
+            joinColumns = @JoinColumn(name = "idnalog"),
+            inverseJoinColumns = @JoinColumn(name = "idusluga")
+    )
+    private Set<Usluge> usluge = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "idserviser", nullable = false)

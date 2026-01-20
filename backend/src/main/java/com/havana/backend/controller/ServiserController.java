@@ -1,10 +1,7 @@
 package com.havana.backend.controller;
 
-import com.havana.backend.data.NalogRecord;
 import com.havana.backend.data.UpdateTerminRequestRecord;
 import com.havana.backend.model.Nalog;
-import com.havana.backend.repository.ServiserRepository;
-import com.havana.backend.service.NalogService;
 import com.havana.backend.service.ServiserService;
 import com.havana.backend.service.ZamjenskoVoziloService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

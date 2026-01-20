@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +51,12 @@ public class NalogService {
                     });
             nalog.setVozilo(vozilo);
 
-            Usluge usluga = uslugeRepository.findById(nalogRecord.uslugaId())
-                    .orElseThrow(() -> new IllegalArgumentException("Usluga ne postoji"));
-            nalog.setUsluga(usluga);
+            Set<Usluge> usluge = nalogRecord.uslugeIds().stream()
+                    .map(id -> uslugeRepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("Usluga ne postoji: " + id)))
+                    .collect(Collectors.toSet());
+
+            nalog.setUsluge(usluge);
 
             Serviser serviser = serviserRepository.findById(nalogRecord.serviserId())
                     .orElseThrow(() -> new IllegalArgumentException("Serviser ne postoji"));

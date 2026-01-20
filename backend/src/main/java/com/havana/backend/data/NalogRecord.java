@@ -1,11 +1,12 @@
 package com.havana.backend.data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record NalogRecord(
         Integer klijentId,
         VoziloRecord vozilo,
-        Integer uslugaId,
+        List<Integer> uslugeIds,
         Integer serviserId,
         Integer zamjenskoVoziloId,
         LocalDateTime datumVrijemeTermin,
