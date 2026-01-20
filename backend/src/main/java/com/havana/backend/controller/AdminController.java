@@ -54,7 +54,7 @@ public class AdminController {
 
     @DeleteMapping("/nalog/delete/{id}")
     public ResponseEntity<Void> deleteNalog(@PathVariable Integer id) {
-        nalogService.deleteNalog(id);
+        nalogService.sakrijNalog(id);
         return ResponseEntity.ok().build();
     }
 

@@ -36,4 +36,10 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     SELECT n.datumVrijemeTermin FROM Nalog n WHERE n.status <> 2
     """)
     List<LocalDateTime> findZauzetiTermini();
+
+    // svi vidljivi
+    List<Nalog> findBySakrivenFalse();
+
+    List<Nalog> findByServiser_IdServiserAndSakrivenFalse(Integer idServiser);
+
 }

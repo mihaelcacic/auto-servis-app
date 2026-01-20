@@ -35,8 +35,14 @@ public class ServiserService {
     public List<Nalog> getNaloziByServiserEmail(String email) {
         Serviser serviser = serviserRepository.findByEmail(email);
 
-        return nalogRepository.findByServiser_IdServiser(serviser.getIdServiser());
+        if (serviser == null) {
+            throw new IllegalArgumentException("Serviser ne postoji");
+        }
+
+        return nalogRepository
+                .findByServiser_IdServiserAndSakrivenFalse(serviser.getIdServiser());
     }
+
 
     /**
      * Ažuriranje statusa naloga

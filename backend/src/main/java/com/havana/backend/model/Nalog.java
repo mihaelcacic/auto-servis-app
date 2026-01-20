@@ -56,4 +56,8 @@ public class Nalog {
     @ManyToOne
     @JoinColumn(name = "idzamjvozilo")
     private ZamjenskoVozilo zamjenskoVozilo;
+
+    @Column(name = "sakriven", nullable = false)
+    private Boolean sakriven = false;
+
 }

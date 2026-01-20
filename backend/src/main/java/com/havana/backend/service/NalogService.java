@@ -84,6 +84,8 @@ public class NalogService {
             nalog.setStatus(nalogRecord.status());
             nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
+            nalog.setSakriven(false);
+
             nalogRepository.save(nalog);
 
             emailService.sendMailKlijentu(
@@ -114,15 +116,20 @@ public class NalogService {
     }
 
     public List<Nalog> getSviNalozi() {
-        return nalogRepository.findAll();
+        return nalogRepository.findBySakrivenFalse();
     }
 
-    public void deleteNalog(Integer id) {
-        if (!nalogRepository.existsById(id)) {
-            throw new RuntimeException("Nalog not found");
-        }
-        nalogRepository.deleteById(id);
+
+    public void sakrijNalog(Integer nalogId) {
+        Nalog nalog = nalogRepository.findById(nalogId)
+                .orElseThrow(() -> new RuntimeException("Nalog ne postoji"));
+
+        nalog.setSakriven(true);
+        nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
+
+        nalogRepository.save(nalog);
     }
+
 
     public List<LocalDateTime> getZauzetiTermini() {
         return nalogRepository.findZauzetiTermini();
