@@ -5,6 +5,7 @@ import com.havana.backend.data.StatistikaRecord;
 
 import com.havana.backend.data.ZamjenskoVoziloRecord;
 import com.havana.backend.model.Nalog;
+import com.havana.backend.model.Usluge;
 import org.openpdf.text.*;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
@@ -12,6 +13,7 @@ import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.util.stream.Collectors;
 
 @Service
 public class PDFExportService {
@@ -138,8 +140,9 @@ public class PDFExportService {
             String vozilo =
                     nalog.getVozilo().getModel().getModelNaziv();
 
-            String usluga =
-                    nalog.getUsluga().getUslugaNaziv();
+            String usluge = nalog.getUsluge().stream()
+                    .map(Usluge::getUslugaNaziv)
+                    .collect(Collectors.joining(", "));
 
             String serviser =
                     nalog.getServiser().getImeServiser() + " "
@@ -156,7 +159,7 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
 
             Paragraph p2 = new Paragraph(
-                    "Zatražena usluga na servisu je: " + usluga + ".",
+                    "Zatražene usluge na servisu su: " + usluge + ".",
                     tekstFont
             );
             document.add(p2);

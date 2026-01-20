@@ -76,7 +76,7 @@ export default function MyAppointments(){
                     <TableCell>{formatDatetime(n.datumVrijemeTermin)}</TableCell>
                     <TableCell>{formatStatus(n.status)}</TableCell>
                     <TableCell>{n.vozilo?.registracija ? `${n.vozilo.registracija} — ${n.vozilo?.model?.markaNaziv || ''} ${n.vozilo?.model?.modelNaziv || ''}` : '-'}</TableCell>
-                    <TableCell>{n.usluga?.uslugaNaziv || '-'}</TableCell>
+                      <TableCell>{n.usluge && n.usluge.length > 0 ? n.usluge.map(u => u.uslugaNaziv).join(', ') : '-'}</TableCell>
                     <TableCell>{n.serviser ? `${n.serviser.imeServiser} ${n.serviser.prezimeServiser}` : '-'}</TableCell>
                   </TableRow>
                 ))

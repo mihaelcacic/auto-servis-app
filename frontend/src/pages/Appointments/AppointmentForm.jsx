@@ -17,7 +17,7 @@ export default function AppointmentForm(){
   const [registracija, setRegistracija] = useState('')
   const [godina, setGodina] = useState('')
   const [usluge, setUsluge] = useState([])
-  const [uslugaId, setUslugaId] = useState('')
+  const [uslugaIds, setUslugaIds] = useState([])
   const [serviseri, setServiseri] = useState([])
   const [serviserId, setServiserId] = useState('')
   const [zamjenska, setZamjenska] = useState([])
@@ -65,7 +65,7 @@ export default function AppointmentForm(){
     setError(null)
     setSuccess(null)
     // basic validation
-    if(!registracija || !modelId || !godina || !uslugaId || !serviserId || !datumVrijeme){
+      if(!registracija || !modelId || !godina || uslugaIds.length === 0 || !serviserId || !datumVrijeme){
       setError('Popunite sva obavezna polja')
       return
     }
@@ -85,21 +85,22 @@ export default function AppointmentForm(){
       return
     }
 
-    const payload = {
-      klijentId: 1,
-      vozilo: {
-        registracija: registracija,
-        modelId: Number(modelId),
-        godinaProizv: Number(godina)
-      },
-      uslugaId: Number(uslugaId),
-      serviserId: Number(serviserId),
-      zamjenskoVoziloId: zamjenskoId ? Number(zamjenskoId) : null,
-      datumVrijemeTermin: datumVrijeme,
-      status: 0
-    }
+      const payload = {
+          klijentId: 1,
+          vozilo: {
+              registracija,
+              modelId: Number(modelId),
+              godinaProizv: Number(godina)
+          },
+          uslugeIds: uslugaIds.map(Number), // ⬅️ BITNO
+          serviserId: Number(serviserId),
+          zamjenskoVoziloId: zamjenskoId ? Number(zamjenskoId) : null,
+          datumVrijemeTermin: datumVrijeme,
+          status: 0
+      }
 
-    try{
+
+      try{
       setLoading(true)
       const res = await postNalog(payload)
       setSuccess(res && (res.message || 'Nalog uspješno kreiran'))
@@ -109,7 +110,7 @@ export default function AppointmentForm(){
       setDatumVrijeme('')
       setModelId('')
       setMarka('')
-      setUslugaId('')
+      setUslugaIds([])
       setServiserId('')
       setZamjenskoId('')
     }catch(err){
@@ -157,9 +158,13 @@ export default function AppointmentForm(){
             models={models}
           />
 
-          <ServiceSelector usluge={usluge} uslugaId={uslugaId} setUslugaId={setUslugaId} />
+            <ServiceSelector
+                usluge={usluge}
+                uslugaIds={uslugaIds}
+                setUslugaIds={setUslugaIds}
+            />
 
-          <StaffSelector serviseri={serviseri} serviserId={serviserId} setServiserId={setServiserId} />
+            <StaffSelector serviseri={serviseri} serviserId={serviserId} setServiserId={setServiserId} />
 
           <ReplacementVehicleSelector zamjenska={zamjenska} zamjenskoId={zamjenskoId} setZamjenskoId={setZamjenskoId} />
 

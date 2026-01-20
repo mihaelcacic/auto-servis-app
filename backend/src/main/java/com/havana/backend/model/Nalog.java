@@ -41,7 +41,7 @@ public class Nalog {
     @JoinColumn(name = "idklijent", nullable = false)
     private Klijent klijent;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "nalog_usluga",
             joinColumns = @JoinColumn(name = "idnalog"),
