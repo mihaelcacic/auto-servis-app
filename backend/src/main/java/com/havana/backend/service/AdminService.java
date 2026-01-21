@@ -62,14 +62,7 @@ public class AdminService {
 
         // ================= TERMIN =================
         if (record.datumVrijemeTermin() != null) {
-
-            LocalDateTime trenutniTermin = nalog.getDatumVrijemeTermin();
-
-            if (record.datumVrijemeTermin().isBefore(trenutniTermin)) {
-                throw new IllegalArgumentException(
-                        "Novi termin ne može biti prije postojećeg termina naloga"
-                );
-            }
+            
 
             nalog.setDatumVrijemeTermin(record.datumVrijemeTermin());
         }
