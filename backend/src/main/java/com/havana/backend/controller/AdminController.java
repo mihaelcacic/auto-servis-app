@@ -1,5 +1,6 @@
 package com.havana.backend.controller;
 
+import com.havana.backend.data.NalogRecord;
 import com.havana.backend.model.Admin;
 import com.havana.backend.model.Klijent;
 import com.havana.backend.model.Nalog;
@@ -11,6 +12,8 @@ import com.havana.backend.service.ServiserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +59,15 @@ public class AdminController {
     public ResponseEntity<Void> deleteNalog(@PathVariable Integer id) {
         nalogService.sakrijNalog(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/nalog/update/{id}")
+    public ResponseEntity<Void> updateNalog(
+            @PathVariable Integer id,
+            @RequestBody NalogRecord record
+    ) {
+        adminService.updateNalog(id, record);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/nalozi")
