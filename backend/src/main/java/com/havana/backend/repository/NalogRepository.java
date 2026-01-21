@@ -24,8 +24,9 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     SELECT COUNT(n) > 0
     FROM Nalog n
     WHERE n.serviser.idServiser = :serviserId
-      AND n.datumVrijemeTermin = :termin
-      AND n.status <> 2
+        AND n.datumVrijemeTermin = :termin
+        AND n.status <> 2
+        AND n.sakriven = false
     """)
     boolean existsByServiserAndTermin(
             @Param("serviserId") Integer serviserId,
@@ -33,7 +34,10 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     );
 
     @Query("""
-    SELECT n.datumVrijemeTermin FROM Nalog n WHERE n.status <> 2
+    SELECT n.datumVrijemeTermin
+    FROM Nalog n
+    WHERE n.status <> 2
+        AND n.sakriven = false
     """)
     List<LocalDateTime> findZauzetiTermini();
 
