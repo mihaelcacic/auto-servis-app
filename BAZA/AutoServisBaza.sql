@@ -75,6 +75,7 @@ CREATE TABLE Nalog
     idServiser INT NOT NULL,
     idZamjVozilo INT,
     napomena TEXT,
+    sakriven BOOLEAN NOT NULL DEFAULT false,
     FOREIGN KEY (idVozilo) REFERENCES Vozilo(idVozilo),
     FOREIGN KEY (idKlijent) REFERENCES Klijent(idKlijent),
     FOREIGN KEY (idServiser) REFERENCES Serviser(idServiser),
