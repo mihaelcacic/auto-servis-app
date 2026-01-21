@@ -62,11 +62,18 @@ public class AdminService {
 
         // ================= TERMIN =================
         if (record.datumVrijemeTermin() != null) {
-            if (record.datumVrijemeTermin().isBefore(LocalDateTime.now())) {
-                throw new IllegalArgumentException("Termin ne može biti u prošlosti");
+
+            LocalDateTime trenutniTermin = nalog.getDatumVrijemeTermin();
+
+            if (record.datumVrijemeTermin().isBefore(trenutniTermin)) {
+                throw new IllegalArgumentException(
+                        "Novi termin ne može biti prije postojećeg termina naloga"
+                );
             }
+
             nalog.setDatumVrijemeTermin(record.datumVrijemeTermin());
         }
+
 
         // ================= VOZILO =================
         if (record.vozilo() != null) {
