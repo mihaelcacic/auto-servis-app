@@ -2,11 +2,12 @@ import React from "react";
 
 export default function Contact() {
 
-    // Inventirana lokacija u Hrvatskoj: Ulica Primjera 1, Zagreb
+    // izmisljena lokacija - Ulica Primjera 1, Zagreb
     const lat = 45.8150;
     const lng = 15.9819;
     const mapSrc = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
 
+    // prikaz stranice za kontakt
     return (
         <div style={{ padding: 24, display: "flex", justifyContent: "center" }}>
             <div style={{ maxWidth: 1100, width: "100%" }}>
@@ -26,6 +27,7 @@ export default function Contact() {
                         </div>
                     </div>
 
+                    {/* prikaz Google Maps */}
                     <div style={{ flex: 1, minWidth: 300, height: 420 }}>
                         <div style={{ height: "100%", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
                             <iframe

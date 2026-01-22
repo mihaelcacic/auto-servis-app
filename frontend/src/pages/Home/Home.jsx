@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 export default function Home(){
   const navigate = useNavigate()
 
+  // prikaz stranice za početnu stranicu
   return (
     <Container maxWidth="lg" sx={{ mt: 6, mb: 8 }}>
       <Box
@@ -88,7 +89,7 @@ export default function Home(){
         </Grid>
       </Box>
 
-      {/* CTA strip */}
+      {/* traka za rezervaciju termina */}
       <Box sx={{ mt: 6, py: 4, px: 3, bgcolor: 'primary.light', color: 'primary.contrastText', borderRadius: 2, textAlign: 'center' }}>
         <Typography variant="h5" gutterBottom>Spremni za servis?</Typography>
         <Button variant="contained" color="secondary" size="large" onClick={() => navigate('/appointments')}>Rezerviraj odmah</Button>

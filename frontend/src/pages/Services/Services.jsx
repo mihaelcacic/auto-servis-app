@@ -7,7 +7,7 @@ export default function Services(){
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
+  useEffect(() => { // ucitavanje usluga
     let mounted = true
     setLoading(true)
     getUsluge()
@@ -17,6 +17,7 @@ export default function Services(){
     return () => { mounted = false }
   }, [])
 
+  // prikaz stranice za usluge
   return (
     <Container maxWidth="lg" sx={{ mt: 6, mb: 8 }}>
       <Typography variant="h4" gutterBottom>Usluge</Typography>

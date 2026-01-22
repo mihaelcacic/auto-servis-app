@@ -1,11 +1,15 @@
-// src/api.js
 
-// Use backend URL from environment
-import { BACKEND_URL } from '../config/env'
 
-// Allow using an empty `VITE_BACKEND_URL` so the app can call relative
-// `/api` paths (useful for Vite dev proxy or when served behind a reverse proxy).
-const API_BASE = (BACKEND_URL || '').replace(/\/$/, '');
+// koristiti backend URL iz Vite environment variables
+// VITE_BACKEND_URL može biti postavljen u .env datotekama ili environmentu
+// ako je prazno, koristiti relativne putanje (korisno za Vite dev proxy ili reverse proxy)
+const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '');
+
+// helper funkcija za izgradnju API URL-a
+function apiUrl(path) {
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${API_BASE || ''}${cleanPath}`;
+}
 
 async function handleRes(res) {
     if (!res.ok) {
@@ -20,53 +24,60 @@ async function handleRes(res) {
     return res.text();
 }
 
-// --- API calls ---
-// Always use absolute URLs with BACKEND_URL and include credentials for cookies/session handling
+// --- API funkcije ---
 
+// health check
 export async function getHealth() {
-    const res = await fetch(`${API_BASE || ''}/api/health`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/health'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// marke
 export async function getMarke() {
-    const res = await fetch(`${API_BASE || ''}/api/marke`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/marke'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// modeli po marki
 export async function getModelsByMarka(marka) {
-    const res = await fetch(`${API_BASE || ''}/api/model/${encodeURIComponent(marka)}`, {
+    const res = await fetch(apiUrl(`/api/model/${encodeURIComponent(marka)}`), {
         credentials: 'include',
     });
     return handleRes(res);
 }
 
+// usluge
 export async function getUsluge() {
-    const res = await fetch(`${API_BASE || ''}/api/usluge`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/usluge'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// serviseri
 export async function getServiseri() {
-    const res = await fetch(`${API_BASE || ''}/api/serviseri`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/serviseri'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// zamjenska vozila slobodna
 export async function getZamjenskaSlobodna() {
-    const res = await fetch(`${API_BASE || ''}/api/zamjenska-vozila/slobodna`, {
+    const res = await fetch(apiUrl('/api/zamjenska-vozila/slobodna'), {
         credentials: 'include',
     });
     return handleRes(res);
 }
 
+// zauzeti termini
 export async function getZauzetiTermini() {
-    const res = await fetch(`${API_BASE || ''}/api/zauzeti-termini`, {
+    const res = await fetch(apiUrl('/api/zauzeti-termini'), {
         credentials: 'include',
     });
     return handleRes(res);
 }
 
+// kreiraj nalog
 export async function postNalog(payload) {
-    // backend expects client nalog under /api/klijent/nalog
-    const res = await fetch(`${API_BASE || ''}/api/klijent/nalog`, {
+    // backend ocekuje klijent nalog pod /api/klijent/nalog
+    const res = await fetch(apiUrl('/api/klijent/nalog'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -75,17 +86,19 @@ export async function postNalog(payload) {
     return handleRes(res);
 }
 
+// nalozi po klijentu
 export async function getNaloziByKlijent(klijentId) {
-    // backend endpoint for client nalogs is /api/klijent/nalog/{klijentId}
-    const res = await fetch(`${API_BASE || ''}/api/klijent/nalog/${encodeURIComponent(klijentId)}`, {
+    // backend endpoint za klijent nalog je /api/klijent/nalog/{klijentId}
+    const res = await fetch(apiUrl(`/api/klijent/nalog/${encodeURIComponent(klijentId)}`), {
         credentials: 'include',
     });
     return handleRes(res);
 }
 
-// --- Admin endpoints (require ADMIN role) ---
+// --- Admin funkcije (zahtijevaju ADMIN ulogu) ---
+// kreiraj admina
 export async function postAdmin(payload) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/admin`, {
+    const res = await fetch(apiUrl('/api/admin/admin'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -94,8 +107,9 @@ export async function postAdmin(payload) {
     return handleRes(res);
 }
 
+// kreiraj servisera
 export async function postServiserAdmin(payload) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/serviser`, {
+    const res = await fetch(apiUrl('/api/admin/serviser'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -104,8 +118,9 @@ export async function postServiserAdmin(payload) {
     return handleRes(res);
 }
 
+// azuriraj servisera
 export async function putServiserAdmin(id, payload) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/serviser/${encodeURIComponent(id)}`, {
+    const res = await fetch(apiUrl(`/api/admin/serviser/${encodeURIComponent(id)}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -114,13 +129,15 @@ export async function putServiserAdmin(id, payload) {
     return handleRes(res);
 }
 
+// serviseri admin
 export async function getServiseriAdmin() {
-    const res = await fetch(`${API_BASE || ''}/api/admin/serviser/svi`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/admin/serviser/svi'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// azuriraj klijenta
 export async function putKlijentAdmin(id, payload) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/klijent/${encodeURIComponent(id)}`, {
+    const res = await fetch(apiUrl(`/api/admin/klijent/${encodeURIComponent(id)}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -129,26 +146,30 @@ export async function putKlijentAdmin(id, payload) {
     return handleRes(res);
 }
 
+// klijenti admin
 export async function getKlijentiAdmin() {
-    const res = await fetch(`${API_BASE || ''}/api/admin/klijent/svi`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/admin/klijent/svi'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// nalozi admin
 export async function getNaloziAdmin() {
-    const res = await fetch(`${API_BASE || ''}/api/admin/nalozi`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/admin/nalozi'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// obrisi nalog
 export async function deleteNalogAdmin(id) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/nalog/delete/${encodeURIComponent(id)}`, {
+    const res = await fetch(apiUrl(`/api/admin/nalog/delete/${encodeURIComponent(id)}`), {
         method: 'DELETE',
         credentials: 'include',
     });
     return handleRes(res);
 }
 
+// azuriraj nalog
 export async function putNalogAdmin(id, payload) {
-    const res = await fetch(`${API_BASE || ''}/api/admin/nalog/update/${encodeURIComponent(id)}`, {
+    const res = await fetch(apiUrl(`/api/admin/nalog/update/${encodeURIComponent(id)}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -157,20 +178,23 @@ export async function putNalogAdmin(id, payload) {
     return handleRes(res);
 }
 
-// --- Serviser endpoints (authenticated serviser) ---
+// --- Serviser funkcije (autentikacija servisera) ---
+// moji nalozi
 export async function getMyNalozi() {
-    const res = await fetch(`${API_BASE || ''}/api/serviser/nalozi`, { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/serviser/nalozi'), { credentials: 'include' });
     return handleRes(res);
 }
 
+// azuriraj status naloga
 export async function putNalogStatusServiser(id, status) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/status?status=${encodeURIComponent(status)}`;
+    const url = apiUrl(`/api/serviser/nalog/${encodeURIComponent(id)}/status?status=${encodeURIComponent(status)}`);
     const res = await fetch(url, { method: 'PUT', credentials: 'include' });
     return handleRes(res);
 }
 
+// azuriraj napomenu naloga
 export async function putNalogNapomenaServiser(id, text) {
-    const res = await fetch(`${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/napomena`, {
+    const res = await fetch(apiUrl(`/api/serviser/nalog/${encodeURIComponent(id)}/napomena`), {
         method: 'PUT',
         headers: { 'Content-Type': 'text/plain; charset=utf-8' },
         credentials: 'include',
@@ -179,8 +203,9 @@ export async function putNalogNapomenaServiser(id, text) {
     return handleRes(res);
 }
 
+// azuriraj termin naloga
 export async function putNalogTerminServiser(id, noviTermin) {
-    const res = await fetch(`${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/termin`, {
+    const res = await fetch(apiUrl(`/api/serviser/nalog/${encodeURIComponent(id)}/termin`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -189,7 +214,7 @@ export async function putNalogTerminServiser(id, noviTermin) {
     return handleRes(res);
 }
 
-// --- Download endpoints that return files (PDF / reports) ---
+// blob odgovor za preuzimanje PDF-a
 async function handleBlobRes(res) {
     if (!res.ok) {
         const text = await res.text().catch(() => '');
@@ -206,55 +231,57 @@ async function handleBlobRes(res) {
     return { blob, filename, contentType: res.headers.get('content-type') };
 }
 
-// PDF for preuzimanje vozila sa servisa (lokalno-preuzimanje) - ne mijenja status
+// PDF za preuzimanje vozila sa servisa (lokalno-preuzimanje) - ne mijenja status
 export async function downloadServiserNalogPdf(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const url = apiUrl(`/api/serviser/nalog/preuzimanje/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// PDF for predaja vozila (lokalno-preuzimanje) - ne mijenja status
+// PDF za predaja vozila (lokalno-preuzimanje) - ne mijenja status
 export async function downloadServiserPredajaPdf(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const url = apiUrl(`/api/serviser/nalog/predaja/lokalno-preuzimanje/${encodeURIComponent(id)}/pdf`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// Get PDF with email sent to client - changes status to 1 and sends email with PDF
+// PDF sa emailom poslan klijentu - mijenja status na 1 - salje mail i pdf
 export async function getPotvrdaOPredajiWithEmail(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/predaja/${encodeURIComponent(id)}/pdf`;
+    const url = apiUrl(`/api/serviser/nalog/predaja/${encodeURIComponent(id)}/pdf`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// Trigger sending an email to the client that service is finished (no status change)
+// pokreni slanje maila klijentu da je servis gotov (ne mijenja statusa)
 export async function notifyServisZavrsen(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/${encodeURIComponent(id)}/servis-zavrsen`;
+    const url = apiUrl(`/api/serviser/nalog/${encodeURIComponent(id)}/servis-zavrsen`);
     const res = await fetch(url, { method: 'POST', credentials: 'include' });
     return handleRes(res);
 }
 
-// Get PDF with email sent to client - changes status to 2 and sends email with PDF
+// pdf sa mailom poslan klijentu - mijenja status na 2 - salje mail i pdf
 export async function getPotvrdaOPreuzimanjuWithEmail(id) {
-    const url = `${API_BASE || ''}/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`;
+    const url = apiUrl(`/api/serviser/nalog/preuzimanje/${encodeURIComponent(id)}/pdf`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
+// preuzmi pdf naloga klijenta
 export async function downloadKlijentNalogPdf(id) {
-    const url = `${API_BASE || ''}/api/klijent/nalog/${encodeURIComponent(id)}/pdf`;
+    const url = apiUrl(`/api/klijent/nalog/${encodeURIComponent(id)}/pdf`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
+// preuzmi statistiku
 export async function downloadStatistika(format) {
     const f = String(format || 'pdf');
-    const url = `${API_BASE || ''}/api/statistika/${encodeURIComponent(f)}`;
+    const url = apiUrl(`/api/statistika/${encodeURIComponent(f)}`);
     const res = await fetch(url, { credentials: 'include' });
     return handleBlobRes(res);
 }
 
-// TODO: dodaj uredivanje termina
+// export funkcija za jednostavniji import
 
 export default {
     getHealth,

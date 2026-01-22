@@ -29,6 +29,7 @@ export default function AppointmentForm(){
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
 
+  // ucitavanje podataka
   useEffect(()=>{
     async function load(){
       try{
@@ -46,6 +47,7 @@ export default function AppointmentForm(){
     load()
   },[])
 
+  // ucitavanje modela za marku vozila
   useEffect(()=>{
     if(!marka) return
     let mounted = true
@@ -60,22 +62,23 @@ export default function AppointmentForm(){
     return ()=> mounted = false
   },[marka])
 
+  // slanje naloga
   const handleSubmit = async (e) =>{
     e.preventDefault()
     setError(null)
     setSuccess(null)
-    // basic validation
+
       if(!registracija || !modelId || !godina || uslugaIds.length === 0 || !serviserId || !datumVrijeme){
       setError('Popunite sva obavezna polja')
       return
     }
-    // registration must start with two letters (county code)
-    // allow Unicode letters (š,ž,ć,č,đ etc.) using Unicode property escapes
+    // registracija mora pocinjati sa dva slova (kod države)
+    // dozvoliti slova s kvacicama 
     if (!/^\p{L}{2}/u.test(registracija)){
       setError('Unesite valjanu registraciju vozila')
       return
     }
-    // validate date is not in the past
+    // provjeriti da datum nije u prošlosti
     const selectedDate = new Date(datumVrijeme)
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -92,7 +95,7 @@ export default function AppointmentForm(){
               modelId: Number(modelId),
               godinaProizv: Number(godina)
           },
-          uslugeIds: uslugaIds.map(Number), // ⬅️ BITNO
+          uslugeIds: uslugaIds.map(Number), // bitno za backend
           serviserId: Number(serviserId),
           zamjenskoVoziloId: zamjenskoId ? Number(zamjenskoId) : null,
           datumVrijemeTermin: datumVrijeme,
@@ -104,7 +107,7 @@ export default function AppointmentForm(){
       setLoading(true)
       const res = await postNalog(payload)
       setSuccess(res && (res.message || 'Nalog uspješno kreiran'))
-      // clear
+      // očisti formu
       setRegistracija('')
       setGodina('')
       setDatumVrijeme('')
@@ -121,7 +124,7 @@ export default function AppointmentForm(){
     }
   }
 
-  // Check if user is logged in and has client role
+  // provjeriti da li prijavljeni korisnik ima ROLE_KLIJENT
   if (authLoading) {
     return (
       <Container sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
@@ -130,16 +133,7 @@ export default function AppointmentForm(){
     )
   }
 
-  const roles = user?.roles || (user?.role ? [user.role] : [])
-  const isClient = roles.includes('ROLE_KLIJENT')
-  
-  if (!user || !isClient) {
-    return (
-      <Container sx={{ mt: 6 }}>
-        <Alert severity="error">Samo klijenti mogu rezervirati termine servisa.</Alert>
-      </Container>
-    )
-  }
+  // prikaz forme za rezervaciju termina
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto', mt: 4, mb: 6 }}>
@@ -147,8 +141,9 @@ export default function AppointmentForm(){
         <Typography variant="h5" gutterBottom>Rezerviraj termin servisa</Typography>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
-
+        {/* form za rezervaciju termina */} 
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          {/* selektor za vozilo */}
           <VehicleSelector
             registracija={registracija} setRegistracija={setRegistracija}
             godina={godina} setGodina={setGodina}
@@ -157,19 +152,21 @@ export default function AppointmentForm(){
             modelId={modelId} setModelId={setModelId}
             models={models}
           />
-
+          {/* selektor za usluge */}
             <ServiceSelector
                 usluge={usluge}
                 uslugaIds={uslugaIds}
                 setUslugaIds={setUslugaIds}
             />
-
+            {/* selektor za servisere */}
             <StaffSelector serviseri={serviseri} serviserId={serviserId} setServiserId={setServiserId} />
 
+          {/* selektor za zamjensko vozilo */}
           <ReplacementVehicleSelector zamjenska={zamjenska} zamjenskoId={zamjenskoId} setZamjenskoId={setZamjenskoId} />
-
+          {/* selektor za datum i vrijeme */}     
           <DateTimeField datumVrijeme={datumVrijeme} setDatumVrijeme={setDatumVrijeme} zauzetiTermini={zauzetiTermini} />
 
+          {/* akcije za rezervaciju termina */}
           <Box sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 2, alignItems: 'center' }}>
             {loading ? <CircularProgress size={24} /> : <Button type="submit" variant="contained">Rezerviraj</Button>}
           </Box>

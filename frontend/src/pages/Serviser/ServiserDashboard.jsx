@@ -44,9 +44,9 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Use getPotvrdaOPredaji which changes status to 1, sends email with PDF to client, and returns PDF
+      // dobivanje potvrde o predaji vozila klijenta
       const { blob, filename } = await getPotvrdaOPredajiWithEmail(id)
-      // Download the PDF locally
+      // preuzimanje PDF-a lokalno
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -58,7 +58,7 @@ export default function ServiserDashboard(){
       setAlert({ open:true, message:'Potvrđeno da je klijent predao vozilo - mail s PDF-om poslan klijentu', severity:'success' })
       await load()
     }catch(e){ 
-      console.error('Error in takeVehicleFromClient:', e)
+      console.error('Greška u takeVehicleFromClient:', e)
       setAlert({ open:true, message:e.message||'Greška', severity:'error' }) 
     }
     setProcessingIds(ids=>ids.filter(x=>x!==id))
@@ -68,7 +68,7 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Download PDF - this endpoint does NOT change status
+      // preuzimanje PDF-a - endpoint NE mijenja status
       const { blob, filename } = await downloadServiserPredajaPdf(id)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -89,10 +89,10 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Only send email to client - do NOT change status
-      // Status remains 1 until client pickup is confirmed
+      // samo poslati email klijentu - NE mijenja status
+      // status ostaje 1 dok klijent ne potvrdi preuzimanje vozila
       await notifyServisZavrsen(id)
-      // Add note to napomena
+      // dodati napomenu u nalog
       const nalog = nalozi.find(n => (n.idNalog ?? n.id) === id)
       const currentNapomena = nalog?.napomena || ''
       const newNapomena = currentNapomena 
@@ -109,10 +109,9 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Use getPotvrdaOPreuzimanju which changes status to 2 and sends email with PDF to client
-      // This endpoint requires status to be 0 or 1 (not 2), so it should work when status is 1
+      // dobivanje potvrde o preuzimanju vozila klijenta
       const { blob, filename } = await getPotvrdaOPreuzimanjuWithEmail(id)
-      // Download the PDF locally
+      // preuzimanje PDF-a lokalno
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -134,7 +133,7 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // Download PDF - this endpoint does NOT change status
+      // preuzimanje PDF-a - NE mijenja status
       const { blob, filename } = await downloadServiserNalogPdf(id)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -155,9 +154,9 @@ export default function ServiserDashboard(){
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
-      // first request server to set status = 3
+      // prvo zatražiti server da postavi status = 3
       await putNalogStatusServiser(id, 3)
-      // then download the generated PDF
+      // zatim preuzeti generirani PDF
       const { blob, filename } = await downloadServiserNalogPdf(id)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -173,7 +172,7 @@ export default function ServiserDashboard(){
     setProcessingIds(ids=>ids.filter(x=>x!==id))
   }
 
-  async function predajaAndDownload(id){
+  async function predajaAndDownload(id){ // preuzimanje PDF-a - potvrde o predaji vozila klijenta
     if (processingIds.includes(id)) return
     setProcessingIds(ids=>[...ids, id])
     try{
@@ -193,7 +192,7 @@ export default function ServiserDashboard(){
   }
 
 
-  async function saveNapomena(){
+  async function saveNapomena(){ // ažuriranje napomene u nalogu
     try{
       await putNalogNapomenaServiser(editNapomena.idNalog ?? editNapomena.id, editNapomena.napomena)
       setAlert({ open:true, message:'Napomena ažurirana', severity:'success' })
@@ -202,10 +201,10 @@ export default function ServiserDashboard(){
     }catch(e){ setAlert({ open:true, message:e.message||'Greška', severity:'error' }) }
   }
 
-  async function saveTermin(){
+  async function saveTermin(){ // ažuriranje termina u nalogu
     if(!editTermin || !editTermin.noviTermin) return
     try{
-      // Validate that date is not in the past
+      // provjeriti da datum nije u prošlosti
       const selectedDate = new Date(editTermin.noviTermin)
       const now = new Date()
       if(selectedDate < now){
@@ -213,7 +212,7 @@ export default function ServiserDashboard(){
         return
       }
       
-      // Validate that minutes are 0 or 30
+      // provjeriti da minute su 0 ili 30
       const [datePart, timePart] = editTermin.noviTermin.split('T')
       if(timePart){
         const minutes = parseInt(timePart.split(':')[1])
@@ -230,7 +229,7 @@ export default function ServiserDashboard(){
     }catch(e){ setAlert({ open:true, message:e.message||'Greška', severity:'error' }) }
   }
 
-  function formatStatus(s){
+  function formatStatus(s){ // formatiranje statusa
     switch(s){
       case 0:
       case '0':
@@ -246,6 +245,7 @@ export default function ServiserDashboard(){
     }
   }
 
+  // prikaz stranice za dashboard servisera
   return (
     <Container maxWidth="lg" sx={{ mt:6, mb:8 }}>
       <Typography variant="h4" gutterBottom>Moji nalozi</Typography>
@@ -281,7 +281,7 @@ export default function ServiserDashboard(){
                         </Button>
                       </Box>
 
-                      {/* Akcije - mijenjanje statusa */}
+                      {/* akcije - mijenjanje statusa */}
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
                         { (n.status === 0 || n.status === '0') && (
                           <Button size="small" variant="contained" color="success" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>takeVehicleFromClient(n.idNalog ?? n.id)}>Potvrdi da je klijent predao vozilo</Button>
@@ -299,7 +299,7 @@ export default function ServiserDashboard(){
                         ) }
                       </Box>
 
-                      {/* PDF preuzimanja - odvojeno od akcija */}
+                      {/* pdf preuzimanja - odvojeno od akcija */}
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
                         { ((n.status === 0 || n.status === '0') || (n.status === 1 || n.status === '1') || (n.status === 2 || n.status === '2')) && (
                           <Button size="small" variant="outlined" disabled={processingIds.includes(n.idNalog ?? n.id)} onClick={()=>downloadPredajaPdf(n.idNalog ?? n.id)}>Preuzmi PDF - Potvrda o predaji vozila klijenta</Button>
@@ -335,11 +335,11 @@ export default function ServiserDashboard(){
         <DialogTitle>Promijeni termin</DialogTitle>
         <DialogContent>
           {editTermin && (() => {
-            // Calculate minimum date (today)
+            // izracunati minimum datum (danas)
             const today = new Date()
             const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}T${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`
             
-            // Round time to nearest 30 minutes
+            // zaokruziti vrijeme na 0 ili 30 minuta
             const handleTimeChange = (value) => {
               if (!value) {
                 setEditTermin({...editTermin, noviTermin: ''})
@@ -353,14 +353,13 @@ export default function ServiserDashboard(){
               }
               
               const [hours, minutes] = timePart.split(':').map(Number)
-              // Round minutes to nearest 30 (0 or 30)
               const roundedMinutes = minutes < 30 ? 0 : 30
               const roundedTime = `${String(hours).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`
               
               setEditTermin({...editTermin, noviTermin: `${datePart}T${roundedTime}`})
             }
             
-            return (
+            return (  
               <TextField 
                 fullWidth 
                 type="datetime-local" 
@@ -369,7 +368,7 @@ export default function ServiserDashboard(){
                 onChange={e=>handleTimeChange(e.target.value)}
                 inputProps={{
                   min: minDate,
-                  step: 1800 // 30 minutes in seconds
+                  step: 1800 // 30 minuta u sekundama
                 }}
                 sx={{ mt: 2 }}
                 InputLabelProps={{ shrink: true }}

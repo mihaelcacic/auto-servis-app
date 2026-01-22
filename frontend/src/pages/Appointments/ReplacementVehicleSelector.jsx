@@ -2,6 +2,7 @@ import React from 'react'
 import { TextField, MenuItem } from '@mui/material'
 
 export default function ReplacementVehicleSelector({ zamjenska = [], zamjenskoId, setZamjenskoId }){
+  // prikaz forme za zamjensko vozilo
   return (
     <TextField select label="Zamjensko vozilo (opcionalno)" value={zamjenskoId} onChange={e=>setZamjenskoId(e.target.value)}>
       <MenuItem value="">—</MenuItem>

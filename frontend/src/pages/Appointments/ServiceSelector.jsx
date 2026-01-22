@@ -6,6 +6,7 @@ import {
     ListItemText
 } from '@mui/material'
 
+// prikaz forme za usluge
 export default function ServiceSelector({
                                             usluge = [],
                                             uslugaIds = [],
@@ -18,18 +19,21 @@ export default function ServiceSelector({
             value={uslugaIds}
             onChange={e => setUslugaIds(e.target.value)}
             required
-            SelectProps={{
-                multiple: true,
-                renderValue: (selected) =>
-                    usluge
-                        .filter(u =>
-                            selected.includes(u.idUsluga ?? u.id)
-                        )
-                        .map(u => u.uslugaNaziv)
-                        .join(', ')
+            slotProps={{
+                select: {
+                    multiple: true,
+                    renderValue: (selected) =>
+                        usluge
+                            .filter(u =>
+                                selected.includes(u.idUsluga ?? u.id)
+                            )
+                            .map(u => u.uslugaNaziv)
+                            .join(', ')
+                }
             }}
             fullWidth
         >
+            {/* prikaz usluga */}
             {usluge.map(u => {
                 const id = u.idUsluga ?? u.id
                 return (

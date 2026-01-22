@@ -20,9 +20,8 @@ export default function VehicleSelector({
   for (let y = currentYear + 1; y >= 1980; y--) years.push(String(y))
 
   const cleanAndSetRegistracija = (raw) => {
-    // uppercase and strip unwanted chars
-    // allow any Unicode letter (so ć,č,đ,š,ž are allowed), digits, spaces and dash
-    // use Unicode property escapes (\p{L}) with the 'u' flag
+    // pretvoriti u uppercase i maknuti neželjene znakove
+    // dozvoliti kvacice, brojeve, razmake i crtice
     const upper = raw.toUpperCase()
     const v = upper.replace(/[^\p{L}0-9 \-]/gu, '')
     setRegistracija(v)
@@ -30,10 +29,11 @@ export default function VehicleSelector({
 
   const validateRegistracija = (v) => {
     if (!v) return false
-    // require that first two characters are letters (including Unicode letters)
+    // provjeriti da prva dva slova su slova (uključujući kvacice)
     return /^\p{L}{2}/u.test(v)
   }
 
+  // prikaz forme za vozilo
   return (
     <>
       <TextField

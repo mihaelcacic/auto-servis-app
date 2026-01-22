@@ -1,32 +1,34 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { Box, TextField, MenuItem, FormHelperText } from '@mui/material'
 
+// dodavanje nula na brojeve manje od 10
 function pad(n){ return n.toString().padStart(2,'0') }
 
+// generiranje vremenskih slotova za dan
 function generateTimeSlotsForDate(dateString){
-  // dateString in YYYY-MM-DD
+  // dateString u YYYY-MM-DD
   if(!dateString) return []
   const d = new Date(dateString + 'T00:00')
-  const day = d.getDay() // 0 Sun .. 6 Sat
+  const day = d.getDay() // nedjelja 0, ponedjeljak 1, utorak 2, srijeda 3, četvrtak 4, petak 5, subota 6
 
-  // service hours
+  // radno vrijeme
   let startHour = 8
-  let endHour = 17 // exclusive upper bound for slot end
-  if(day === 0) return [] // Sunday closed
-  if(day === 6) endHour = 13
+  let endHour = 17 // kraj radnog vremena
+  if(day === 0) return [] // nedjelja zatvoreno
+  if(day === 6) endHour = 13 // subota zatvoreno
 
   const slots = []
   for(let h = startHour; h < endHour; h++){
-    // two slots per hour: :00 and :30
+    // dva slota po satu: :00 i :30
     const hh = pad(h)
     slots.push(`${hh}:00`)
-    // compute whether the :30 slot would end before or at endHour
+    // provjeriti da li :30 slot završava prije ili u kraj radnog vremena
     const nextHalf = h + 0.5
     if(nextHalf < endHour || (nextHalf === endHour)){
       slots.push(`${hh}:30`)
     }
   }
-  // filter out any slots that would start at or after endHour (safety)
+  // filtrirati termine koji bi počeli poslije kraja radnog vremena
   return slots.filter(t => {
     const [hh, mm] = t.split(':').map(Number)
     return hh + mm/60 < endHour
@@ -34,8 +36,8 @@ function generateTimeSlotsForDate(dateString){
 }
 
 export default function DateTimeField({ datumVrijeme, setDatumVrijeme, zauzetiTermini = [] }){
-  // datumVrijeme format: "YYYY-MM-DDTHH:MM" or empty
-  // zauzetiTermini: array of ISO date strings (LocalDateTime from backend)
+  // datumVrijeme format: "YYYY-MM-DDTHH:MM" 
+  // zauzetiTermini - lista LocalDateTime iz backenda
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
 
@@ -48,19 +50,14 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme, zauzetiTe
 
   const slots = useMemo(()=> generateTimeSlotsForDate(date), [date])
 
-  // Check if a specific date+time slot is occupied
+  // provjeriti da li je termin zauzet
   const isTerminZauzet = useMemo(() => {
     if (!date) return () => false
     return (timeSlot) => {
-      // timeSlot format: "HH:MM"
-      // Create full datetime string: "YYYY-MM-DDTHH:MM"
       const fullDateTime = `${date}T${timeSlot}`
-      // Backend returns LocalDateTime in ISO format, might have seconds
-      // Compare by checking if any occupied time matches (within same hour, same date)
+      // provjeriti da li je termin zauzet 
       return zauzetiTermini.some(zauzet => {
-        // Convert backend LocalDateTime to string format
         const zauzetStr = typeof zauzet === 'string' ? zauzet : (zauzet.toISOString ? zauzet.toISOString() : String(zauzet))
-        // Remove seconds and milliseconds for comparison: "2025-11-10T10:00:00" -> "2025-11-10T10:00"
         const zauzetNormalized = zauzetStr.replace(/:\d{2}(\.\d+)?$/, '').slice(0, 16)
         return zauzetNormalized === fullDateTime
       })
@@ -69,13 +66,13 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme, zauzetiTe
 
   useEffect(()=>{
     if(date && time){
-      // ensure time is one of allowed slots; if not, clear time
+      // provjeriti da vrijeme pripada dozvoljenim terminima
       if(!slots.includes(time)){
         setTime('')
         setDatumVrijeme('')
         return
       }
-      // Also check if the selected time is occupied
+      // provjeriti da li je izabrani termin zauzet
       if(isTerminZauzet(time)){
         setTime('')
         setDatumVrijeme('')
@@ -85,11 +82,10 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme, zauzetiTe
     } else {
       setDatumVrijeme('')
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[date,time,isTerminZauzet])
 
-  const today = new Date()
-  // Set minimum date to tomorrow (not today)
+  const today = new Date() // danas
+  // minimum datum je sutra (ne danas)
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
   const minDate = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`
@@ -97,6 +93,7 @@ export default function DateTimeField({ datumVrijeme, setDatumVrijeme, zauzetiTe
   maxDateObj.setDate(maxDateObj.getDate() + 365)
   const maxDate = `${maxDateObj.getFullYear()}-${pad(maxDateObj.getMonth()+1)}-${pad(maxDateObj.getDate())}`
 
+  // prikaz forme za datum i vrijeme
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
       <TextField

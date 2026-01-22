@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import { Container, Typography, Box, TextField, Button, Checkbox, FormControlLabel, Table, TableHead, TableRow, TableCell, TableBody, Paper, TableContainer, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Snackbar, MenuItem, Select, FormControl, InputLabel } from '@mui/material'
 import { useAuth } from '../../context/AuthContext'
@@ -11,17 +12,17 @@ export default function Admin(){
   const [nalozi, setNalozi] = useState([])
   const [loadingData, setLoadingData] = useState(false)
 
-  // forms
+  // unosi forme
   const [adminForm, setAdminForm] = useState({ imeAdmin: '', prezimeAdmin: '', email: '' })
   const [serviserForm, setServiserForm] = useState({ imeServiser: '', prezimeServiser: '', email: '', voditeljServisa: false })
 
-  // edit dialogs
+  // forme za uredjivanje servisera, klijenta i naloga
   const [editServiser, setEditServiser] = useState(null)
   const [editKlijent, setEditKlijent] = useState(null)
   const [editNalog, setEditNalog] = useState(null)
   const [originalNalog, setOriginalNalog] = useState(null)
 
-  // data for edit nalog form
+  // podaci za uredjivanje naloga
   const [marke, setMarke] = useState([])
   const [models, setModels] = useState([])
   const [usluge, setUsluge] = useState([])
@@ -32,6 +33,7 @@ export default function Admin(){
 
   useEffect(()=>{ if(!loading) loadAll() },[loading])
 
+  // ucitavanje svih podataka
   async function loadAll(){
     setLoadingData(true)
     try{
@@ -49,6 +51,7 @@ export default function Admin(){
     setLoadingData(false)
   }
 
+  // provjera da li je korisnik ulogiran i da li ima ROLE_ADMIN
   if(loading) return null
   const roles = user?.roles || (user?.role ? [user.role] : [])
   if(!user || !roles.includes('ROLE_ADMIN')) return (
@@ -57,6 +60,7 @@ export default function Admin(){
     </Container>
   )
 
+  // dodavanje administratora
   async function submitAdmin(e){
     e.preventDefault()
     try{
@@ -66,6 +70,7 @@ export default function Admin(){
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
 
+  // dodavanje servisera
   async function submitServiser(e){
     e.preventDefault()
     try{
@@ -76,6 +81,7 @@ export default function Admin(){
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
 
+  // spremanje uredjivanja servisera
   async function saveServiserEdit(){
     try{
       await putServiserAdmin(editServiser.idServiser ?? editServiser.id, editServiser)
@@ -84,7 +90,8 @@ export default function Admin(){
       loadAll()
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
-
+  
+  // spremanje uredjivanja klijenta
   async function saveKlijentEdit(){
     try{
       await putKlijentAdmin(editKlijent.idKlijent ?? editKlijent.id, editKlijent)
@@ -93,7 +100,8 @@ export default function Admin(){
       loadAll()
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
-
+  
+  // brisanje naloga
   async function handleDeleteNalog(id){
     if(!confirm('Trajno obrisati nalog?')) return
     try{
@@ -103,10 +111,11 @@ export default function Admin(){
     }catch(err){ setAlert({ open:true, message:err.message||'Greška', severity:'error' }) }
   }
 
+  // ucitavanje podataka za uredjivanje naloga
   async function handleEditNalog(nalog){
     setOriginalNalog(nalog)
     
-    // Load form data
+    // ucitavanje podataka za uredjivanje naloga
     try{
       const [m, u, s, z] = await Promise.all([
         getMarke(),
@@ -125,10 +134,10 @@ export default function Admin(){
       setServiseriForNalog(serviseriArray)
       setZamjenskaVozila(zamjenskaArray)
 
-      // Get marka from nalog - try multiple possible field names
+      // hvatanje marki iz naloga - pokusaj sa svih mogućih naziva polja
       const marka = nalog.vozilo?.model?.markaNaziv || nalog.vozilo?.model?.marka || ''
       
-      // Load models for the vehicle's marka
+      // ucitavanje modela za marku vozila
       let modelsArray = []
       if(marka){
         try {
@@ -140,11 +149,12 @@ export default function Admin(){
       }
       setModels(modelsArray)
 
-      // Initialize edit form
+      // inicijalizacija forme za uredjivanje naloga
       const terminStr = nalog.datumVrijemeTermin 
         ? new Date(nalog.datumVrijemeTermin).toISOString().slice(0, 16)
         : ''
       
+      // postavljanje podataka za uredjivanje naloga
       setEditNalog({
         datumVrijemeTermin: terminStr,
         vozilo: {
@@ -165,6 +175,7 @@ export default function Admin(){
     }
   }
 
+  // ucitavanje modela za marku vozila
   useEffect(() => {
     if(editNalog?.marka){
       let mounted = true
@@ -176,15 +187,16 @@ export default function Admin(){
     }
   }, [editNalog?.marka])
 
+  // spremanje uredjivanja naloga
   async function saveNalogEdit(){
     if(!editNalog || !originalNalog) return
 
     try{
-      // Build payload with ONLY changed fields
+      // kreiranje payloada sa samo promjenjenim poljima
       const payload = {}
       const original = originalNalog
 
-      // Termin - only send if changed
+      // termin - samo poslati ako je promjenjen
       if(editNalog.datumVrijemeTermin){
         try {
           const newTermin = new Date(editNalog.datumVrijemeTermin)
@@ -193,7 +205,7 @@ export default function Admin(){
           }
           const originalTermin = original.datumVrijemeTermin ? new Date(original.datumVrijemeTermin) : null
           if(originalTermin && newTermin.getTime() === originalTermin.getTime()){
-            // Not changed, skip
+            // nije promjenjen, preskoci
           } else {
             payload.datumVrijemeTermin = newTermin.toISOString()
           }
@@ -202,7 +214,7 @@ export default function Admin(){
         }
       }
 
-      // Vozilo - only send if ANY field changed
+      // vozilo - samo poslati ako je promjenjen
       const origVozilo = original.vozilo
       const origRegistracija = origVozilo?.registracija || ''
       const origModelId = origVozilo?.model?.idModel || origVozilo?.model?.id || null
@@ -217,7 +229,7 @@ export default function Admin(){
                            origGodina !== newGodina
       
       if(voziloChanged){
-        // Only include fields that are actually set
+        // samo ukljuciti polja koja su postavljena
         const voziloObj = {}
         if(newRegistracija) {
           voziloObj.registracija = newRegistracija
@@ -229,51 +241,51 @@ export default function Admin(){
           voziloObj.godinaProizv = newGodina
         }
         
-        // Only send vozilo if it has at least one field
+        // samo poslati vozilo ako ima barem jedno polje
         if(Object.keys(voziloObj).length > 0){
           payload.vozilo = voziloObj
         }
       }
 
-      // Usluge - only send if changed
+      // usluge - samo poslati ako je promjenjen
       const origUslugeIds = (original.usluge || []).map(u => u.idUsluga || u.id).sort()
       const newUslugeIds = (editNalog.uslugeIds || []).slice().sort()
       const uslugeChanged = JSON.stringify(origUslugeIds) !== JSON.stringify(newUslugeIds)
       
       if(uslugeChanged){
-        // Send null if empty, otherwise send the array
+        // poslati null ako je prazno, inace saljemo array
         payload.uslugeIds = newUslugeIds.length > 0 ? newUslugeIds : null
       }
 
-      // Serviser - only send if changed
+      // serviser - samo poslati ako je promjenjen
       const origServiserId = original.serviser?.idServiser || original.serviser?.id || null
       const newServiserId = editNalog.serviserId || null
       if(origServiserId !== newServiserId){
         payload.serviserId = newServiserId
       }
 
-      // Zamjensko vozilo - only send if changed
+      // zamjensko vozilo - samo poslati ako je promjenjeno
       const origZamjId = original.zamjenskoVozilo?.idZamjVozilo || original.zamjenskoVozilo?.id || null
       const newZamjId = editNalog.zamjenskoVoziloId === '' || editNalog.zamjenskoVoziloId === null ? null : editNalog.zamjenskoVoziloId
       if(origZamjId !== newZamjId){
         payload.zamjenskoVoziloId = newZamjId
       }
 
-      // Status - only send if changed
+      // status - samo poslati ako je promjenjen
       const origStatus = original.status || 0
       const newStatus = editNalog.status || 0
       if(origStatus !== newStatus){
         payload.status = newStatus
       }
 
-      // Napomena - only send if changed
+      // napomena - samo poslati ako je promjenjena
       const origNapomena = original.napomena || ''
       const newNapomena = editNalog.napomena || ''
       if(origNapomena !== newNapomena){
         payload.napomena = newNapomena || null
       }
 
-      // Only send if there are changes
+      // samo poslati ako ima promjena
       if(Object.keys(payload).length === 0){
         setAlert({ open:true, message:'Nema promjena za spremanje', severity:'info' })
         setEditNalog(null)
@@ -293,13 +305,14 @@ export default function Admin(){
     }
   }
 
+  // preuzimanje statistike
   async function handleDownloadStats(format){
     try{
       const { blob, filename, contentType } = await downloadStatistika(format)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      // choose sensible default filename if backend doesn't provide one
+      // odaberi smislen default naziv file-a
       const ext = (format === 'xlsx') ? 'xlsx' : (format === 'xml' ? 'xml' : 'pdf')
       a.download = filename || `statistika.${ext}`
       document.body.appendChild(a)
@@ -310,6 +323,7 @@ export default function Admin(){
     }catch(err){ setAlert({ open:true, message:err.message||'Greška pri preuzimanju statistike', severity:'error' }) }
   }
 
+  // prikaz stranice - admin dashboard
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom sx={{ mb: 4, fontWeight: 600, textAlign: 'center' }}>
@@ -317,7 +331,7 @@ export default function Admin(){
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-        {/* Statistika sekcija */}
+        {/* sekcija za statistiku */}
         <Paper elevation={2} sx={{ p: 3, borderRadius: 2, width: '100%', maxWidth: 900 }}>
           <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
             Preuzmi statistiku
@@ -335,7 +349,7 @@ export default function Admin(){
           </Box>
         </Paper>
 
-        {/* Kreiraj administratora */}
+        {/* dodavanje administratora */}
         <Paper elevation={2} sx={{ p: 3, borderRadius: 2, width: '100%', maxWidth: 900 }}>
           <Typography variant="h6" gutterBottom sx={{ mb: 3, fontWeight: 500 }}>
             Kreiraj administratora
@@ -372,7 +386,7 @@ export default function Admin(){
           </Box>
         </Paper>
 
-        {/* Dodaj servisera */}
+        {/* dodavanje servisera */}
         <Paper elevation={2} sx={{ p: 3, borderRadius: 2, width: '100%', maxWidth: 900 }}>
           <Typography variant="h6" gutterBottom sx={{ mb: 3, fontWeight: 500 }}>
             Dodaj servisera
@@ -419,7 +433,7 @@ export default function Admin(){
           </Box>
         </Paper>
 
-        {/* Serviseri tablica */}
+        {/* tablica za servisere */}
         <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden', width: '100%', maxWidth: 900 }}>
           <Box sx={{ p: 2, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
             <Typography variant="h6" sx={{ fontWeight: 500 }}>
@@ -472,7 +486,7 @@ export default function Admin(){
             )}
         </Paper>
 
-        {/* Klijenti tablica */}
+        {/* tablica za klijente */}
         <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden', width: '100%', maxWidth: 900 }}>
           <Box sx={{ p: 2, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
             <Typography variant="h6" sx={{ fontWeight: 500 }}>
@@ -523,7 +537,7 @@ export default function Admin(){
             )}
         </Paper>
 
-        {/* Nalozi tablica */}
+        {/* tablica za naloge */}
         <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden', width: '100%', maxWidth: 900 }}>
           <Box sx={{ p: 2, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
             <Typography variant="h6" sx={{ fontWeight: 500 }}>
@@ -580,6 +594,7 @@ export default function Admin(){
         </Paper>
       </Box>
 
+      {/* dijalog za uredjivanje servisera */}
       <Dialog open={!!editServiser} onClose={()=>setEditServiser(null)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ pb: 1, fontWeight: 600 }}>Uredi servisera</DialogTitle>
         <DialogContent>
@@ -622,12 +637,14 @@ export default function Admin(){
             </Box>
           )}
         </DialogContent>
+        {/* akcije za uredjivanje servisera */}
         <DialogActions sx={{ p: 2, pt: 1 }}>
           <Button onClick={()=>setEditServiser(null)}>Zatvori</Button>
           <Button onClick={saveServiserEdit} variant="contained">Spremi</Button>
         </DialogActions>
       </Dialog>
 
+      {/* dijalog za uredjivanje klijenta */}
       <Dialog open={!!editKlijent} onClose={()=>setEditKlijent(null)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ pb: 1, fontWeight: 600 }}>Uredi klijenta</DialogTitle>
         <DialogContent>
@@ -668,12 +685,13 @@ export default function Admin(){
             </Box>
           )}
         </DialogContent>
+        {/* akcije za uredjivanje klijenta */}
         <DialogActions sx={{ p: 2, pt: 1 }}>
           <Button onClick={()=>setEditKlijent(null)}>Zatvori</Button>
           <Button onClick={saveKlijentEdit} variant="contained">Spremi</Button>
         </DialogActions>
       </Dialog>
-
+      {/* uredjivanje naloga */}
       <Dialog open={!!editNalog} onClose={()=>{setEditNalog(null); setOriginalNalog(null)}} fullWidth maxWidth="md">
         <DialogTitle sx={{ pb: 1, fontWeight: 600 }}>Uredi nalog</DialogTitle>
         <DialogContent>
@@ -688,7 +706,7 @@ export default function Admin(){
                 InputLabelProps={{ shrink: true }}
                 variant="outlined"
               />
-
+              {/* marka vozila */}
               <FormControl fullWidth>
                 <InputLabel>Marka</InputLabel>
                 <Select
@@ -726,7 +744,7 @@ export default function Admin(){
                   ))}
                 </Select>
               </FormControl>
-
+              {/* registracija vozila */}
               <TextField
                 fullWidth
                 label="Registracija"
@@ -737,7 +755,7 @@ export default function Admin(){
                 })}
                 variant="outlined"
               />
-
+              {/* godina proizvodnje vozila */}
               <TextField
                 fullWidth
                 label="Godina proizvodnje"
@@ -749,7 +767,7 @@ export default function Admin(){
                 })}
                 variant="outlined"
               />
-
+              {/* usluge */}
               <FormControl fullWidth>
                 <InputLabel>Usluge</InputLabel>
                 <Select
@@ -769,7 +787,7 @@ export default function Admin(){
                   ))}
                 </Select>
               </FormControl>
-
+              {/* serviser */}
               <FormControl fullWidth>
                 <InputLabel>Serviser</InputLabel>
                 <Select
@@ -784,7 +802,7 @@ export default function Admin(){
                   ))}
                 </Select>
               </FormControl>
-
+              {/* zamjensko vozilo */}
               <FormControl fullWidth>
                 <InputLabel>Zamjensko vozilo (opcionalno)</InputLabel>
                 <Select
@@ -809,7 +827,7 @@ export default function Admin(){
                   })}
                 </Select>
               </FormControl>
-
+              {/* status */}
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -822,7 +840,7 @@ export default function Admin(){
                   <MenuItem value={2}>Servis završen</MenuItem>
                 </Select>
               </FormControl>
-
+              {/* napomena */}
               <TextField
                 fullWidth
                 label="Napomena"
@@ -846,6 +864,7 @@ export default function Admin(){
   )
 }
 
+// formatiranje statusa
 function formatStatus(s){
   switch(s){
     case 0:

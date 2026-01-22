@@ -1,8 +1,9 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { BACKEND_URL } from '../config/env';
 
-const API_BASE = (BACKEND_URL || '').replace(/\/$/, '');
+// Use Vite environment variable for backend URL
+const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '');
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 const AuthContext = createContext();
 
