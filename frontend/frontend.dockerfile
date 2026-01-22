@@ -19,8 +19,18 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # SPA routing: fallback to index.html for unknown routes
-COPY nginx.conf /etc/nginx/conf.d/default.template
+COPY nginx.dev.conf /etc/nginx/nginx.dev.conf
+COPY nginx.prod.conf /etc/nginx/nginx.prod.conf
+
 EXPOSE 80
-ENTRYPOINT ["/bin/sh", "-c", \
-  "envsubst '${BACKEND_URL}' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && \
-   exec nginx -g 'daemon off;'"]
+
+# Check DOCKER_ENV at startup and move the correct file to default.conf
+CMD ["/bin/sh", "-c", " \
+    if [ \"$DOCKER_ENV\" = \"true\" ]; then \
+    echo 'Using Development Configuration'; \
+    cp /etc/nginx/nginx.dev.conf /etc/nginx/conf.d/default.conf; \
+    else \
+    echo 'Using Production Configuration'; \
+    cp /etc/nginx/nginx.prod.conf /etc/nginx/conf.d/default.conf; \
+    fi && \
+    exec nginx -g 'daemon off;'"]
