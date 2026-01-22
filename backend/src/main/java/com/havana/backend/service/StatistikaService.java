@@ -51,6 +51,7 @@ public class StatistikaService {
         return new StatistikaRecord(aktivniNalozi, zauzeta, slobodna);
     }
 
+    // pretvaramo sami nalog u record, da ga mozemo kasnije koristiti
     private AktivniNalogRecord mapToAktivniNalog(Nalog n) {
 
         LocalDateTime pocetak = n.getDatumVrijemeTermin();
@@ -63,10 +64,10 @@ public class StatistikaService {
         } else if (sada.isAfter(pocetak)) {
             kraj = sada;
         } else {
-            // termin je u budućnosti
             kraj = pocetak;
         }
 
+        // racunanje trajanja servisa u minutama
         long trajanje = Duration.between(pocetak, kraj).toMinutes();
 
         return new AktivniNalogRecord(
@@ -78,7 +79,7 @@ public class StatistikaService {
         );
     }
 
-
+    // pretvaramo zamjensko vozilo u record za kasnije koristenje
     private ZamjenskoVoziloRecord mapZamjensko(ZamjenskoVozilo z, String status) {
         return new ZamjenskoVoziloRecord(
                 z.getIdZamjVozilo(),

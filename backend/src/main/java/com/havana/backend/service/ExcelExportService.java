@@ -12,10 +12,12 @@ import java.io.ByteArrayOutputStream;
 @Service
 public class ExcelExportService {
 
+    // kreiranje tablica u excelu
     public byte[] exportStatistikaTablicno(StatistikaRecord statistika) {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
+            // kreiraju se "stranice" excela ovisno o potrebnoj tablici
             createAktivniNaloziSheet(workbook, statistika.aktivniNalozi());
             createZamjenskaSheet(workbook, "Zauzeta zamjenska vozila",
                     statistika.zauzetaZamjenskaVozila());
@@ -30,8 +32,7 @@ public class ExcelExportService {
         }
     }
 
-    // ---------- SHEETOVI ----------
-
+    // kreiranje tablice za aktivne naloge
     private void createAktivniNaloziSheet(Workbook workbook, java.util.List<AktivniNalogRecord> nalozi) {
         Sheet sheet = workbook.createSheet("Aktivni nalozi");
 
@@ -51,6 +52,7 @@ public class ExcelExportService {
         autosize(sheet, 5);
     }
 
+    // kreiranje tablice za zamjenska vozila
     private void createZamjenskaSheet(
             Workbook workbook,
             String name,
@@ -78,12 +80,14 @@ public class ExcelExportService {
         autosize(sheet, 5);
     }
 
+    // radimo naslove stupaca
     private void createHeader(Row row, String... titles) {
         for (int i = 0; i < titles.length; i++) {
             row.createCell(i).setCellValue(titles[i]);
         }
     }
 
+    // prilagodavanje sirine stupaca
     private void autosize(Sheet sheet, int columns) {
         for (int i = 0; i < columns; i++) {
             sheet.autoSizeColumn(i);

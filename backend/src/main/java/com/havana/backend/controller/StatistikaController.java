@@ -46,12 +46,14 @@ public class StatistikaController {
                 statistikaService.getSveukupnaStatistika()
         );
 
+        // statistika se skida lokalno
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=statistika.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
 
+    // generiranje statistike putem excel datoteke
     @GetMapping("/xlsx")
     public ResponseEntity<byte[]> exportXlsx() {
         byte[] xlsx = excelExportService.exportStatistikaTablicno(
