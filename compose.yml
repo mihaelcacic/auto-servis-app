@@ -7,6 +7,7 @@ services:
       - HOST_BACKEND=${HOST_BACKEND}
       - PORT_BACKEND=${PORT_BACKEND}
       - BACKEND_URL=${BACKEND_URL}
+      - PROD_DEPLOY=${PROD_DEPLOY}
     build:
       context: ./frontend
       dockerfile: frontend.dockerfile

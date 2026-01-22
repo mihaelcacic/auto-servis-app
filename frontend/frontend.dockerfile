@@ -26,11 +26,11 @@ EXPOSE 80
 
 # Check DOCKER_ENV at startup and move the correct file to default.conf
 CMD ["/bin/sh", "-c", " \
-    if [ \"$DOCKER_ENV\" = \"true\" ]; then \
-    echo 'Using Development Configuration'; \
-    cp /etc/nginx/nginx.dev.conf /etc/nginx/conf.d/default.conf; \
-    else \
+    if [ \"$PROD_DEPLOY\" = \"true\" ]; then \
     echo 'Using Production Configuration'; \
     cp /etc/nginx/nginx.prod.conf /etc/nginx/conf.d/default.conf; \
+    else \
+    echo 'Using Development Configuration'; \
+    cp /etc/nginx/nginx.dev.conf /etc/nginx/conf.d/default.conf; \
     fi && \
     exec nginx -g 'daemon off;'"]
