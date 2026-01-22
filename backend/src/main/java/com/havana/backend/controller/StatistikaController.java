@@ -33,11 +33,13 @@ public class StatistikaController {
     }
 
 
+    // generiranje statistike putem xml datoteke
     @GetMapping(value = "/xml", produces = MediaType.APPLICATION_XML_VALUE)
     public StatistikaRecord exportXml() {
         return statistikaService.getSveukupnaStatistika();
     }
 
+    // generiranje statistike putem pdf datoteke
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> exportPdf() {
         byte[] pdf = pdfExportService.exportStatistikaTablicno(

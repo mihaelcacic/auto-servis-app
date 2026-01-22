@@ -26,26 +26,28 @@ public class StatistikaService {
 
     public StatistikaRecord getSveukupnaStatistika() {
 
-        // -------- AKTIVNI NALOZI --------
+        // dohvacanje aktivnih naloga
         List<AktivniNalogRecord> aktivniNalozi =
                 nalogRepository.findAllAktivni()
                         .stream()
                         .map(this::mapToAktivniNalog)
                         .toList();
 
-        // -------- ZAMJENSKA VOZILA --------
+        // dohvacanje zauzetih zamjenskih vozila
         List<ZamjenskoVoziloRecord> zauzeta =
                 zamjenskoVoziloRepository.findZauzeta()
                         .stream()
                         .map(z -> mapZamjensko(z, "ZAUZETO"))
                         .toList();
 
+        // dohvacanje slobodnih zamjenskih vozila
         List<ZamjenskoVoziloRecord> slobodna =
                 zamjenskoVoziloRepository.findSlobodna()
                         .stream()
                         .map(z -> mapZamjensko(z, "SLOBODNO"))
                         .toList();
 
+        // stavljanje podataka u record
         return new StatistikaRecord(aktivniNalozi, zauzeta, slobodna);
     }
 

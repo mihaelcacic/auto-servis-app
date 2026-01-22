@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class PDFExportService {
 
-    //------------- GENERIRANJE STATISTIKE-------------
-
+    // izrada tablica za pdf o statistici
     public byte[] exportStatistikaTablicno(StatistikaRecord statistika) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -28,16 +27,19 @@ public class PDFExportService {
 
             document.open();
 
+            // na prvoj stranici dodajemo aktivne naloge tablicno
             addTitle(document, "Statistika servisa – aktivni nalozi");
             addAktivniNaloziTable(document, statistika.aktivniNalozi());
 
             document.newPage();
 
+            // na drugoj stranici dodajemo zauzeta zam vozila tablicno
             addTitle(document, "Zauzeta zamjenska vozila");
             addZamjenskaVozilaTable(document, statistika.zauzetaZamjenskaVozila());
 
             document.newPage();
 
+            // na trecoj stranici dodajemo slobodna zam vozila tablicno
             addTitle(document, "Slobodna zamjenska vozila");
             addZamjenskaVozilaTable(document, statistika.slobodnaZamjenskaVozila());
 
@@ -50,9 +52,7 @@ public class PDFExportService {
     }
 
 
-
-    // ---------- POMOĆNE METODE ZA STATISTIKU----------
-
+    // dodavanje naslova na svaku stranicu
     private void addTitle(Document document, String text) throws DocumentException {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
         Paragraph title = new Paragraph(text, font);
@@ -60,6 +60,7 @@ public class PDFExportService {
         document.add(title);
     }
 
+    // kreiranje tablice koja ima podatke o nalozima
     private void addAktivniNaloziTable(Document document, java.util.List<AktivniNalogRecord> nalozi)
             throws DocumentException {
 
@@ -69,6 +70,7 @@ public class PDFExportService {
 
         addHeader(table, "Nalog ID", "Termin", "Vozilo", "Serviser", "Trajanje (min)");
 
+        // idemo kroz naloge i kreiramo tablicu
         for (AktivniNalogRecord n : nalozi) {
             table.addCell(n.nalogId().toString());
             table.addCell(n.termin().toString());
@@ -80,6 +82,7 @@ public class PDFExportService {
         document.add(table);
     }
 
+    // kreiranje tablice koja ima podatke o zamjenskim vozilima
     private void addZamjenskaVozilaTable(
             Document document,
             java.util.List<ZamjenskoVoziloRecord> vozila
@@ -102,6 +105,7 @@ public class PDFExportService {
         document.add(table);
     }
 
+    // za stupce u tablicama
     private void addHeader(PdfPTable table, String... headers) {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         for (String h : headers) {

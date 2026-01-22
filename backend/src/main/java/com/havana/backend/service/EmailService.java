@@ -17,6 +17,7 @@ public class EmailService {
     private final String sendGridApiKey;
     private final String fromEmail;
 
+    // dohvacanje vrijednosti koje su potrebne za slanje putem sendgrida
     public EmailService(
             @Value("${sendgrid.api.key}") String sendGridApiKey,
             @Value("${sendgrid.from.email}") String fromEmail
