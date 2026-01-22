@@ -25,33 +25,33 @@ public class ServiserService {
     public final PDFExportService pdfExportService;
     public final ZamjenskoVoziloRepository  zamjenskoVoziloRepository;
 
+    // vrati listu svih servisera
     public List<Serviser> findAllServisere() {
         return serviserRepository.findAllServisere();
     }
 
-    /**
-     * Dohvat naloga za trenutno prijavljenog servisera (po emailu)
-     */
+    // dohvati sve naloge za koje je serviser zaduzen
     public List<Nalog> getNaloziByServiserEmail(String email) {
         Serviser serviser = serviserRepository.findByEmail(email);
 
+        // provjera je li validan serviser
         if (serviser == null) {
             throw new IllegalArgumentException("Serviser ne postoji");
         }
 
+        // vrati listu naloga za koje je serviser zaduzen
         return nalogRepository
                 .findByServiser_IdServiserAndSakrivenFalse(serviser.getIdServiser());
     }
 
 
-    /**
-     * Ažuriranje statusa naloga
-     */
+    // azuriranje statusa naloga
     public void updateNalogStatus(Integer nalogId, Integer status, String email) throws Exception {
+        // dohvati nalog i servisera
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
-
         Serviser serviser = serviserRepository.findByEmail(email);
+        // azurirat status moze samo serviser za kojeg vrijedi nalog
         if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
             throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
         }
@@ -59,17 +59,15 @@ public class ServiserService {
         nalog.setStatus(status);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
-        // ako je završen
-        if (status == 2) { // npr. 2 = ZAVRŠEN
+        // ako je zavrsen, azuriraj vrijeme zavrsenog popravka
+        if (status == 2) {
             nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
         }
 
         nalogRepository.save(nalog);
     }
 
-    /**
-     * Dodavanje / izmjena napomene servisera
-     */
+    // azuriraj napomenu naloga
     public void updateNapomena(Integer nalogId, String napomena, String email) throws AccessDeniedException {
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
@@ -84,7 +82,7 @@ public class ServiserService {
 
         nalogRepository.save(nalog);
     }
-
+    
     public byte[] getPotvrdaOPreuzimanju(Integer nalogId, String email) throws AccessDeniedException{
 
         Nalog nalog = nalogRepository.findById(nalogId)

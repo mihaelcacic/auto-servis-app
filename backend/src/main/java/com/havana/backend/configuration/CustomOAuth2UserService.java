@@ -32,6 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest)
             throws OAuth2AuthenticationException {
 
+        // ucitaj korisnika i dohvati podatke o korisniku sa googla
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String email = oAuth2User.getAttribute("email");
@@ -47,9 +48,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String slikaUrl = oAuth2User.getAttribute("picture");
 
-        // ---------- ODREĐIVANJE ROLE ----------
+        // odredi ulogu korisnika ovisno u kojoj tablici u bazi se nalazi (prioriteti: admin, serviser, klijent)
         Role role;
-
         if (adminRepository.findByEmail(email) != null) {
             role = Role.ROLE_ADMIN;
 
@@ -67,9 +67,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
         }
 
+        // dodaj ulogu korisnkiu
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role.name()));
-
+        // spremi ulogu uz principal
         return new DefaultOAuth2User(
                 authorities,
                 oAuth2User.getAttributes(),

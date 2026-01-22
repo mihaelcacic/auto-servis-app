@@ -25,6 +25,8 @@ public class MetaDataController {
     private final ZamjenskoVoziloService zamjenskoVoziloService;
     private final NalogService nalogService;
 
+    // svi endpointovi sluze za dohvacanje javno dostupnih inforamcija o servisu
+
     @GetMapping("/marke")
     public List<String> getMarke() {
         return modelService.findAllMarke();
@@ -49,7 +51,7 @@ public class MetaDataController {
     public List<ZamjenskoVozilo> getSlobodnaZamjenskaVozila(){
         return zamjenskoVoziloService.findAllZamjenskaSlobodnaVozila();
     }
-
+    
     @GetMapping("/zauzeti-termini")
     public List<LocalDateTime> dohvatiZauzeteTermini(){
         return nalogService.getZauzetiTermini();

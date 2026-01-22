@@ -17,10 +17,11 @@ public class ZamjenskoVoziloService {
     private final ZamjenskoVoziloRepository zamjenskoVoziloRepository;
     private final NalogRepository  nalogRepository;
 
+    // vrati sva slobodna zamjenska vozila (ako nije niti pokupljeno, niti je ostavljeno ili ako je pokupljeno i vraceno)
     public List<ZamjenskoVozilo> findAllZamjenskaSlobodnaVozila() {
         return zamjenskoVoziloRepository.findSlobodna();
     }
-
+    // azuriraj povratak zamjenskog vozila u servis pri zavrsetku servisa
     public void azurirajPovratak(Integer nalogId) {
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new IllegalArgumentException("Nalog ne postoji"));;

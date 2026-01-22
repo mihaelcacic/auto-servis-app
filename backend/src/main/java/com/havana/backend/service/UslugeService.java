@@ -13,6 +13,7 @@ public class UslugeService {
 
     private final UslugeRepository uslugeRepository;
 
+    // dohvati sve usluge servisa
     public List<Usluge> findAllUsluge() {
         return uslugeRepository.findAllUsluge();
     }

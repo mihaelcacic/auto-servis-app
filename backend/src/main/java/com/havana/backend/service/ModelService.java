@@ -13,10 +13,12 @@ public class ModelService {
 
     private final ModelRepository modelRepository;
 
+    // iz baze dohvati sve marke
     public List<String> findAllMarke() {
         return modelRepository.findAllMarke();
     }
 
+    // dohvati sve modele
     public List<Model> findModeleZaMarku(String markaNaziv) {
         return modelRepository.findByMarkaNazivIgnoreCase(markaNaziv);
     }

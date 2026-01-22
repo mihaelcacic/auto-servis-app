@@ -29,11 +29,13 @@ public class AdminController {
     private final KlijentService klijentService;
     private final ServiserService serviserService;
 
+    // kreiraj servisera
     @PostMapping("/serviser")
     public ResponseEntity<Serviser> createServiser(@RequestBody Serviser serviser) {
         return ResponseEntity.ok(adminService.createServiser(serviser));
     }
 
+    // azuriraj servisera koji ima taj id
     @PutMapping("/serviser/{id}")
     public ResponseEntity<Serviser> updateServiser(
             @PathVariable Integer id,
@@ -42,6 +44,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateServiser(id, serviser));
     }
 
+    // azuriraj klijenta koji ima taj id
     @PutMapping("/klijent/{id}")
     public ResponseEntity<Klijent> updateKlijent(
             @PathVariable Integer id,
@@ -50,17 +53,20 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateKlijent(id, klijent));
     }
 
+    // kreiraj novog admina
     @PostMapping("/admin")
     public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
         return ResponseEntity.ok(adminService.createAdmin(admin));
     }
 
+    // soft delete nalog, preko id u url
     @DeleteMapping("/nalog/delete/{id}")
     public ResponseEntity<Void> deleteNalog(@PathVariable Integer id) {
         nalogService.sakrijNalog(id);
         return ResponseEntity.ok().build();
     }
 
+    // azuriraj nalog, u body zahtjeva detalji naloga, u url id naloga
     @PutMapping("/nalog/update/{id}")
     public ResponseEntity<Void> updateNalog(
             @PathVariable Integer id,
@@ -70,6 +76,7 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    // dohvati sve naloge
     @GetMapping("/nalozi")
     public ResponseEntity<?> getSviNalozi() {
         List<Nalog> sviNalozi = nalogService.getSviNalozi();
@@ -82,11 +89,13 @@ public class AdminController {
         return ResponseEntity.ok(sviNalozi);
     }
 
+    // dohvati sve klijente
     @GetMapping("/klijent/svi")
     public ResponseEntity<List<Klijent>> getSviKlijent() {
         return ResponseEntity.ok(klijentService.findAll());
     }
 
+    // dohvati sve servisere
     @GetMapping("/serviser/svi")
     public ResponseEntity<List<Serviser>> getSviServiser() {
         return ResponseEntity.ok(serviserService.findAllServisere());

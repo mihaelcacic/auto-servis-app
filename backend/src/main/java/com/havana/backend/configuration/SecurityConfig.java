@@ -29,16 +29,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // ---- CORS ----
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // ---- CSRF ----
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // ---- AUTHORIZATION ----
                 .authorizeHttpRequests(auth -> auth
 
-                        // javni endpointi
+                        // javni endpointovi, dozvoli svima
                         .requestMatchers(
                                 "/health",
                                 "/oauth2/**",
@@ -50,31 +46,30 @@ public class SecurityConfig {
                                 "/api/zamjenska-vozila/slobodna"
                         ).permitAll()
 
-                        // ADMIN
+                        // admin enpointovi, dozvoli samo adminu
                         .requestMatchers("/api/admin/**","/api/statistika/**")
                         .hasRole("ADMIN")
 
-                        // SERVISER (i ADMIN)
+                        // serviser endpointovi, dozvoli samo serviseru
                         .requestMatchers("/api/serviser/**")
                         .hasAnyRole("SERVISER", "ADMIN")
 
-                        // KLIJENT
+                        // klijent enpointovi, dozvoli samo klijentu
                         .requestMatchers("/api/klijent/**")
                         .hasRole("KLIJENT")
 
-                        // sve ostalo → mora biti prijavljen
+                        // sve ostalo, mora biti prijavljen
                         .anyRequest().authenticated()
                 )
 
-                // ---- OAUTH2 LOGIN ----
+                // omoguci prijavu sa OAuth2.0
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo ->
                                 userInfo.userService(customOAuth2UserService)
                         )
-                        .defaultSuccessUrl(frontendUrl, true)
+                        .defaultSuccessUrl(frontendUrl, true) //nakon uspjesne prijave, redirect na frontend
                 )
-
-                // ---- UNAUTHORIZED HANDLING ----
+                //prijavi gresku
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, authEx) -> {
                             res.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -82,7 +77,7 @@ public class SecurityConfig {
                         })
                 )
 
-                // ---- LOGOUT ----
+                // obrisis session kada se korisnik zeli odlogirati
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl(frontendUrl)
@@ -93,6 +88,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // CORS postavke za pristupanje izmedu razlitih domeni, radi browsera
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -27,6 +27,7 @@ public class KorisnikController {
     private final ServiserRepository serviserRepository;
     private final AdminRepository adminRepository;
 
+    // endpoint za dohvacanje podataka o prijevljenom korisniku na frontendu
     @GetMapping("/user")
     public ResponseEntity<?> getCurrentUser(
             @AuthenticationPrincipal OAuth2User principal
@@ -44,7 +45,7 @@ public class KorisnikController {
                 .map(GrantedAuthority::getAuthority)
                 .orElse("ROLE_KLIJENT");
 
-        // ---- ADMIN ----
+        // response za admina
         if ("ROLE_ADMIN".equals(role)) {
             Admin admin = adminRepository.findByEmail(email);
             return ResponseEntity.ok(
@@ -59,7 +60,7 @@ public class KorisnikController {
             );
         }
 
-        // ---- SERVISER ----
+        // response za servisera
         if ("ROLE_SERVISER".equals(role)) {
             Serviser serviser = serviserRepository.findByEmail(email);
             return ResponseEntity.ok(
@@ -74,7 +75,7 @@ public class KorisnikController {
             );
         }
 
-        // ---- KLIJENT (default) ----
+        // response za klijenta (ako nije niti admin niti serviser)
         Klijent klijent = klijentRepository.findByEmail(email);
         return ResponseEntity.ok(
                 new KorisnikRecord(

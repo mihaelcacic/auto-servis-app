@@ -15,10 +15,11 @@ public class KlijentService {
 
     private final KlijentRepository klijentRepository;
 
+    // dohvati klijenta preko emaila
     public Klijent findByEmail(String email) {
         return klijentRepository.findByEmail(email);
     }
-
+    // dohvati sve klijente u bazi
     public List<Klijent> findAll() {
         return klijentRepository.findAll();
     }
