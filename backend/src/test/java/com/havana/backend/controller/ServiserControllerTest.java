@@ -27,7 +27,7 @@ class ServiserControllerTest {
     @Mock
     private ServiserService serviserService;
 
-    //dohvat naloga
+    //Redovni slučaj - dohvat svih naloga servisera
     @Test
     void getMyNalozi_shouldReturnList() {
         OAuth2User principal = mock(OAuth2User.class);
@@ -42,7 +42,7 @@ class ServiserControllerTest {
         assertEquals(1, response.getBody().size());
     }
 
-    //principal null
+    //Rubni slučaj - ne dopušta unauthorized korisniku pristup nalozima
     @Test
     void getMyNalozi_shouldReturnUnauthorized_whenPrincipalNull() {
         ResponseEntity<List<Nalog>> response = serviserController.getMyNalozi(null);
@@ -50,7 +50,7 @@ class ServiserControllerTest {
         assertNull(response.getBody());
     }
 
-    //update status
+    //Redovni slučaj - ažuriranje statusa korisnika
     @Test
     void updateStatus_shouldCallServiceAndReturnOk() throws Exception {
         OAuth2User principal = mock(OAuth2User.class);
@@ -61,7 +61,7 @@ class ServiserControllerTest {
         verify(serviserService, times(1)).updateNalogStatus(1, 2, "serviser@test.com");
     }
 
-    // update status with service throwing
+    // Rubni slučaj - ažuriranje statusa kad nalog ne postoji baca iznimku
     @Test
     void updateStatus_shouldPropagateException() throws Exception {
         OAuth2User principal = mock(OAuth2User.class);
@@ -76,7 +76,7 @@ class ServiserControllerTest {
         assertEquals("Nalog nije pronađen", exception.getMessage());
     }
 
-    //download PDF preuzimanje
+    //Redovni slučaj - preuzimanje pdf potvrde o preuzimanju
     @Test
     void downloadPotvrdaOPreuzimanju_shouldReturnPdf() throws Exception {
         OAuth2User principal = mock(OAuth2User.class);
@@ -91,7 +91,7 @@ class ServiserControllerTest {
         assertTrue(response.getHeaders().getContentDisposition().getFilename().contains("potvrda_preuzimanje"));
     }
 
-    // notify servis završen s null principal
+    // Rubni slučaj - korisnik je unauthorized i salje notification
     @Test
     void notifyServisZavrsen_shouldReturnUnauthorized_whenPrincipalNull() throws Exception {
         ResponseEntity<Void> response = serviserController.notifyServisZavrsen(1, null);

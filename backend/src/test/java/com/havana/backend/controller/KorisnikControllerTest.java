@@ -38,12 +38,16 @@ class KorisnikControllerTest {
     @Mock
     private KlijentRepository klijentRepository;
 
+
+    //Rubni slučaj - dohvat korisnika kada ga nema
     @Test
     void getCurrentUser_shouldReturnUnauthorized_whenPrincipalIsNull() {
         ResponseEntity<?> response = korisnikController.getCurrentUser(null);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
+
+    //Redovni slučaj - dohvat trenutnog korisnika koji je admin
     @Test
     void getCurrentUser_shouldReturnAdmin_whenRoleAdmin() {
         OAuth2User principal = mock(OAuth2User.class);
@@ -75,6 +79,8 @@ class KorisnikControllerTest {
         assertEquals("ROLE_ADMIN", record.role());
     }
 
+
+    //Redovni slučaj - dohvat trenutnog korisnika koji je serviser
     @Test
     void getCurrentUser_shouldReturnServiser_whenRoleServiser() {
         OAuth2User principal = mock(OAuth2User.class);
@@ -105,6 +111,8 @@ class KorisnikControllerTest {
         assertEquals("ROLE_SERVISER", record.role());
     }
 
+
+    //Redovni slučaj - dohvat trenutnog korisnika koji je klijent po defaultu
     @Test
     void getCurrentUser_shouldReturnKlijent_whenDefaultRole() {
         OAuth2User principal = mock(OAuth2User.class);
@@ -130,6 +138,7 @@ class KorisnikControllerTest {
         assertEquals("ROLE_KLIJENT", record.role());
     }
 
+    //Rubni slučaj - dohvat korisnika koji ima unknown role te ga tretira kao klijenta
     @Test
     void getCurrentUser_shouldHandleUnknownRole_asKlijent() {
         OAuth2User principal = mock(OAuth2User.class);
@@ -158,5 +167,4 @@ class KorisnikControllerTest {
         assertEquals("Luka", record.ime());
         assertEquals("ROLE_UNKNOWN", record.role());
     }
-
 }
