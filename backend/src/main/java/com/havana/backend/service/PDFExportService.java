@@ -223,8 +223,6 @@ public class PDFExportService {
         }
     }
 
-    //------------- GENERIRANJE POTVRDE O PREUZIMANJU ---------
-
     public byte[] generatePotvrdaOPreuzimanjuVozila(Nalog nalog) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -237,7 +235,7 @@ public class PDFExportService {
             Font naslovFont = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font tekstFont = new Font(Font.HELVETICA, 11, Font.NORMAL);
 
-            // NASLOV
+            // dodajemo naslov dokumenta
             Paragraph naslov = new Paragraph("Potvrda o preuzimanju vozila", naslovFont);
             naslov.setAlignment(Element.ALIGN_CENTER);
             document.add(naslov);
@@ -245,12 +243,12 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
-            // PODACI IZ BAZE
+            // dohvacanje imena i prezimena klijenta
             String klijent =
                     nalog.getKlijent().getImeKlijent() + " " +
                             nalog.getKlijent().getPrezimeKlijent();
 
-            // SADRŽAJ DOKUMENTA
+            // logika rucnog kreiranja pdfa
             Paragraph p1 = new Paragraph(
                     "Ovom izjavom se potvrđuje da je " + klijent +
                             " preuzeo svoje vozilo sa servisa.",
@@ -281,7 +279,7 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
-            // POTPISI
+            // dodane crte za klijenta i ovlastenu osobu da se potpisu
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(100);
 
@@ -310,7 +308,6 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
-            // FOOTER
             Paragraph footer = new Paragraph("Bregmotors", tekstFont);
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);

@@ -56,7 +56,6 @@ public class EmailService {
         );
     }
 
-    // ---------- PDF KLIJENTU ----------
     @Async
     public void sendPdfPreuzimanjeKlijentu(
             String to,
@@ -64,6 +63,7 @@ public class EmailService {
             String subject,
             String text
     ) {
+        // dobili smo sve podatke nuzne za mail u pozivamo lokalnu funkciju za njeno slanje
         sendMailWithAttachment(
                 to,
                 subject,
@@ -73,7 +73,6 @@ public class EmailService {
         );
     }
 
-    // ---------- CORE SENDGRID LOGIKA ----------
 
     private void sendMailWithAttachment(
             String to,
@@ -83,6 +82,7 @@ public class EmailService {
             String filename
     ) {
 
+        // namjestavamo strukturu maila te dodajemo attachment na mail
         Email from = new Email(fromEmail);
         Email toEmail = new Email(to);
         Content content = new Content("text/plain", text);
@@ -96,8 +96,10 @@ public class EmailService {
         attachments.setFilename(filename);
         attachments.setDisposition("attachment");
 
+        // dodajemo pdf u mail
         mail.addAttachments(attachments);
 
+        // koristenje generic funkcije za slanje
         send(mail);
     }
 

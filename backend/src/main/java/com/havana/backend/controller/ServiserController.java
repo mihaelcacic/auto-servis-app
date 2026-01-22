@@ -79,15 +79,18 @@ public class ServiserController {
         return ResponseEntity.ok().build();
     }
 
+    // skidanje pdfa lokalno o preuzimanju vozila, te slanje tog maila klijentu
     @GetMapping("/nalog/preuzimanje/{id}/pdf")
     public ResponseEntity<byte[]> downloadPotvrdaOPreuzimanju(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception  {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        // u byt polje se sprema cijeli pdf koji se kreira u funkciji
         byte[] pdf =
                 serviserService.getPotvrdaOPreuzimanju(id,principal.getAttribute("email"));
 
+        // skidanje pdfa lokalno
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,

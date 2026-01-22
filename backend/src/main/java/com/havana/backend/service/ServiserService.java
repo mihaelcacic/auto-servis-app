@@ -85,7 +85,8 @@ public class ServiserService {
 
         nalogRepository.save(nalog);
     }
-    
+
+    // slanje tog maila s pdfom i promjena statusa servisa na gotov servis (2)
     public byte[] getPotvrdaOPreuzimanju(Integer nalogId, String email) throws AccessDeniedException{
 
         Nalog nalog = nalogRepository.findById(nalogId)
@@ -100,8 +101,10 @@ public class ServiserService {
             throw new IllegalStateException("Servis je već završen");
         }
 
+        // kreiranje pdfa
         byte[] pdf = pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
 
+        // slanje pdfa i poruke
         try {
             emailService.sendPdfPreuzimanjeKlijentu(
                     nalog.getKlijent().getEmail(),
@@ -113,6 +116,7 @@ public class ServiserService {
             e.printStackTrace();
         }
 
+        // azuriranje naloga
         nalog.setStatus(2);
         nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
