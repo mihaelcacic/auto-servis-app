@@ -102,7 +102,6 @@ public class ServiserService {
 
         byte[] pdf = pdfExportService.generatePotvrdaOPreuzimanjuVozila(nalog);
 
-        // MAIL NE SMIJE RUŠITI PDF
         try {
             emailService.sendPdfPreuzimanjeKlijentu(
                     nalog.getKlijent().getEmail(),
@@ -198,12 +197,14 @@ public class ServiserService {
             throw new AccessDeniedException("Nemaš pravo mijenjati termin ovog naloga");
         }
 
+        // ako je status vec gotov, ne mozemo mu mijenjati termin
         if (nalog.getStatus() == 2) {
             throw new IllegalStateException("Servis je već završen");
         }
 
         LocalDateTime stariTermin = nalog.getDatumVrijemeTermin();
 
+        // provjere valjanosti novog termina
         if (noviTermin.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Termin ne može biti u prošlosti");
         }
@@ -222,9 +223,11 @@ public class ServiserService {
             throw new IllegalStateException("Već postoji nalog u tom terminu");
         }
 
+        // racunanje razlike u danima da ako je veca od 3, da se klijentu posalje mail podsjetnik
         long razlikaUDanima =
                 Math.abs(ChronoUnit.DAYS.between(stariTermin, noviTermin));
 
+        // u funkciji su argumenti: mail klijenta, subject maila, text maila
         if (razlikaUDanima >= 3) {
             emailService.sendMailKlijentu(
                     nalog.getKlijent().getEmail(),
@@ -237,11 +240,13 @@ public class ServiserService {
             );
         }
 
+        // azuriranje naloga
         nalog.setDatumVrijemeTermin(noviTermin);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
         nalogRepository.save(nalog);
 
+        // u slucaju da se promjeni pocetak termina, mijenja se i vrijeme preuzamanja zam. vozila
         if (nalog.getZamjenskoVozilo() != null) {
             ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
             zv.setDatumPreuzimanja(noviTermin.toLocalDate());

@@ -25,15 +25,17 @@ public class EmailService {
         this.fromEmail = fromEmail;
     }
 
-    // ---------- OBIČAN MAIL ----------
+    // obican generic template funkcija u koju se salju svi podatci o mailu te se koriste ostale generic metode za daljnje slanje
     @Async
     public void sendMailKlijentu(String to, String subject, String text) {
 
+        // pridodavanje contenta i maila varijablama koje ce se koristiti u generic send
         Email from = new Email(fromEmail);
         Email toEmail = new Email(to);
         Content content = new Content("text/plain", text);
         Mail mail = new Mail(from, subject, toEmail, content);
 
+        // poziv generic funk send
         send(mail);
     }
 
@@ -102,6 +104,8 @@ public class EmailService {
 
     private void send(Mail mail) {
         try {
+
+            // koristimo sendgrid kako bi napravili post req te poslali mail preko njega
             SendGrid sg = new SendGrid(sendGridApiKey);
             Request request = new Request();
 
