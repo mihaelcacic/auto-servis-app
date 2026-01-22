@@ -104,7 +104,12 @@ INSERT INTO Model (modelNaziv, markaNaziv) VALUES
 
 INSERT INTO Serviser (imeServiser, prezimeServiser, email, voditeljServisa)
 VALUES
-('Serviser', 'Progi', 'havana.serviser@gmail.com', TRUE);
+('Serviser', 'Progi', 'havana.serviser@gmail.com', TRUE),
+('Antonio', 'Valec', 'antonio.valec88@gmail.com', TRUE);
+
+INSERT INTO admin (imeadmin, prezimeadmin, email)
+VALUES
+    ('Admin', 'Progi', 'havana.voditelj@gmail.com');
 
 INSERT INTO Usluge (uslugaNaziv) VALUES
 ('Zamjena ulja'),

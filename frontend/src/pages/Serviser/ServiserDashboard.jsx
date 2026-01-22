@@ -248,7 +248,7 @@ export default function ServiserDashboard(){
 
   // prikaz stranice za servisera
   return (
-    <Container maxWidth="lg" sx={{ mt:6, mb:8 }}>
+    <Container maxWidth="xl" sx={{ mt:6, mb:8 }}>
       <Typography variant="h4" gutterBottom>Moji nalozi</Typography>
       {loadingData ? <CircularProgress /> : (
         <TableContainer component={Paper}>
@@ -320,7 +320,7 @@ export default function ServiserDashboard(){
                 <TableRow>
                   <TableCell colSpan={5} sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}>
                     <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-                      <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
+                      <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 400 }}>
                         Detalji naloga #{nalogId}
                       </Typography>
                       <Grid container spacing={2}>
@@ -398,11 +398,6 @@ export default function ServiserDashboard(){
                                   {n.zamjenskoVozilo.model && (
                                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                                       {n.zamjenskoVozilo.model.markaNaziv || n.zamjenskoVozilo.model.marka || ''} {n.zamjenskoVozilo.model.modelNaziv || n.zamjenskoVozilo.model.nazivModela || ''}
-                                    </Typography>
-                                  )}
-                                  {n.zamjenskoVozilo.datumPreuzimanja && (
-                                    <Typography variant="body2" color="text.secondary">
-                                      Preuzeto: {new Date(n.zamjenskoVozilo.datumPreuzimanja).toLocaleDateString('hr-HR')}
                                     </Typography>
                                   )}
                                 </>
