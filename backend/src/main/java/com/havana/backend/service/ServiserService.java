@@ -69,14 +69,17 @@ public class ServiserService {
 
     // azuriraj napomenu naloga
     public void updateNapomena(Integer nalogId, String napomena, String email) throws AccessDeniedException {
+        // dohvati nalog i servisera
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new RuntimeException("Nalog nije pronađen"));
 
         Serviser serviser = serviserRepository.findByEmail(email);
+        // dodavati napomenu moze samo nadlezni serviser
         if (!serviser.getIdServiser().equals(nalog.getServiser().getIdServiser())) {
             throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
         }
 
+        // dodavanje napomene uz nalog se njegovo azuriranje
         nalog.setNapomena(napomena);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 

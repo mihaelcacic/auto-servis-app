@@ -22,8 +22,10 @@ public class ServiserController {
     private final ServiserService serviserService;
     private final ZamjenskoVoziloService zamjenskoVoziloService;
 
+    // dohvati naloge koji pripadaju serviseru
     @GetMapping("/nalozi")
     public ResponseEntity<List<Nalog>> getMyNalozi(@AuthenticationPrincipal OAuth2User principal) {
+        // provjera je li prijavljen
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -33,10 +35,7 @@ public class ServiserController {
         return ResponseEntity.ok(nalozi);
     }
 
-    /**
-     * Ažuriranje statusa naloga
-     * PUT /api/serviser/nalog/2/status?status=3
-     */
+    // promjena statusa odredenog naloga
     @PutMapping("/nalog/{id}/status")
     public ResponseEntity<Void> updateStatus(@PathVariable Integer id, @RequestParam Integer status, @AuthenticationPrincipal OAuth2User principal) throws Exception {
         if (principal == null) {
@@ -49,9 +48,7 @@ public class ServiserController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * Dodavanje / izmjena napomene servisera
-     */
+    // dodavanje napomene uz zeljeni nalog
     @PutMapping("/nalog/{id}/napomena")
     public ResponseEntity<Void> updateNapomena(@PathVariable Integer id, @RequestBody String napomena, @AuthenticationPrincipal OAuth2User principal) throws Exception {
         if (principal == null) {
@@ -64,6 +61,7 @@ public class ServiserController {
         return ResponseEntity.ok().build();
     }
 
+    // promjena termina za zeljeni nalog
     @PutMapping("/nalog/{id}/termin")
     public ResponseEntity<Void> updateTermin(@PathVariable Integer id, @RequestBody UpdateTerminRequestRecord request, @AuthenticationPrincipal OAuth2User principal
     ) throws  Exception {
