@@ -104,16 +104,16 @@ export default function Admin(){
   // brisanje naloga
   async function handleDeleteNalog(id){
     if(!confirm('Trajno obrisati nalog?')) return
-    // optimistički update - odmah ukloni iz liste
+    // update - odmah ukloni iz liste
     const originalNalozi = [...nalozi]
     setNalozi(nalozi.filter(n => (n.idNalog ?? n.id) !== id))
     try{
       await deleteNalogAdmin(id)
       setAlert({ open:true, message:'Nalog obrisan', severity:'success' })
-      // osvježi listu sa servera da se osiguramo da je sve sinkronizirano
+      // osvjezi listu sa servera da je sve sinkronizirano
       loadAll()
     }catch(err){ 
-      // ako brisanje ne uspije, vrati nalog natrag
+      // ako brisanje ne uspije, vrati nalog nazad
       setNalozi(originalNalozi)
       setAlert({ open:true, message:err.message||'Greška', severity:'error' }) 
     }
