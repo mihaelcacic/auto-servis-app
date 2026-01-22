@@ -147,6 +147,16 @@ export async function deleteNalogAdmin(id) {
     return handleRes(res);
 }
 
+export async function putNalogAdmin(id, payload) {
+    const res = await fetch(`${API_BASE || ''}/api/admin/nalog/update/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+}
+
 // --- Serviser endpoints (authenticated serviser) ---
 export async function getMyNalozi() {
     const res = await fetch(`${API_BASE || ''}/api/serviser/nalozi`, { credentials: 'include' });
@@ -264,6 +274,7 @@ export default {
     getKlijentiAdmin,
     getNaloziAdmin,
     deleteNalogAdmin,
+    putNalogAdmin,
     // serviser
     getMyNalozi,
     putNalogStatusServiser,

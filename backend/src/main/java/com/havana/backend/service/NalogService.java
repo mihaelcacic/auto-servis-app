@@ -124,6 +124,12 @@ public class NalogService {
         Nalog nalog = nalogRepository.findById(nalogId)
                 .orElseThrow(() -> new RuntimeException("Nalog ne postoji"));
 
+        ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
+        if (zv != null) {
+            zv.setDatumVracanja(LocalDate.now());
+            nalog.setZamjenskoVozilo(null);
+        }
+
         nalog.setSakriven(true);
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
