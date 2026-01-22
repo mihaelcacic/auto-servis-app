@@ -39,7 +39,7 @@ public class EmailService {
         send(mail);
     }
 
-    // ---------- PDF SERVISERU ----------
+    // saljemo isto pdf klijentu ali je typo
     @Async
     public void sendPdfPredajeServiseru(
             String to,

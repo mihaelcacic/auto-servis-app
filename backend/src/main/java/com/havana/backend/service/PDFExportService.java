@@ -111,8 +111,7 @@ public class PDFExportService {
         }
     }
 
-    //----------- GENERIRANJE POTVRDE O PREDAJI ------------
-
+    // generiranje potvrde o predaji vozila
     public byte[] generatePotvrdaOPredajiVozila(Nalog nalog) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -125,7 +124,7 @@ public class PDFExportService {
             Font naslovFont = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font tekstFont = new Font(Font.HELVETICA, 11, Font.NORMAL);
 
-            // NASLOV
+            // naslov pdfa
             Paragraph naslov = new Paragraph("Potvrda o predaji vozila", naslovFont);
             naslov.setAlignment(Element.ALIGN_CENTER);
             document.add(naslov);
@@ -133,7 +132,7 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
-            // SADRŽAJ
+            // dohvacanje iz baze podataka potrebne podatke za sadrzaj pdfa
             String klijent =
                     nalog.getKlijent().getImeKlijent() + " " + nalog.getKlijent().getPrezimeKlijent();
 
@@ -185,7 +184,7 @@ public class PDFExportService {
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
-            // POTPISI
+            // dio s potpisima
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(100);
 
