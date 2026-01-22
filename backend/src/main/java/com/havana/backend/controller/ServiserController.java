@@ -120,6 +120,7 @@ public class ServiserController {
                 .body(pdf);
     }
 
+    // slanje maila klijentu kada se servis zavrsi
     @PostMapping("/nalog/{id}/servis-zavrsen")
     public ResponseEntity<Void> notifyServisZavrsen(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws Exception {
         if (principal == null) {
@@ -136,6 +137,7 @@ public class ServiserController {
         return ResponseEntity.ok().build();
     }
 
+    // lokalno preuzimanje pdfa o preuzimanju vozila
     @GetMapping("/nalog/predaja/lokalno-preuzimanje/{id}/pdf")
     public ResponseEntity<byte[]> downloadPredajaPdf(
             @PathVariable Integer id,
@@ -146,6 +148,7 @@ public class ServiserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        // funkcija koja kreira pdf za lokalno preuzimanje
         byte[] pdf = serviserService.lokalnaPotvrdaOPredaji(
                 id,
                 principal.getAttribute("email")
@@ -160,6 +163,7 @@ public class ServiserController {
                 .body(pdf);
     }
 
+    // lokalno preuzimanje pdfa o predaji vozila
     @GetMapping("/nalog/preuzimanje/lokalno-preuzimanje/{id}/pdf")
     public ResponseEntity<byte[]> downloadPreuzimanjePdf(
             @PathVariable Integer id,

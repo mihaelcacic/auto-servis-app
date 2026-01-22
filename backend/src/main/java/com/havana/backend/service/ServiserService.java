@@ -168,6 +168,7 @@ public class ServiserService {
 
     }
 
+    // slanje maila da je servis zavrsen
     public void notifyKlijentServisZavrsen(Integer nalogId, String email) throws AccessDeniedException {
 
         Nalog nalog = nalogRepository.findById(nalogId)
@@ -177,10 +178,12 @@ public class ServiserService {
             throw new AccessDeniedException("Nemaš pravo na ovaj nalog");
         }
 
-        if (nalog.getStatus() != 1) {//nalog mora biti aktivan
+        // nalog mora biti aktivan
+        if (nalog.getStatus() != 1) {
             throw new IllegalStateException("Servis nije u aktivnom stanju");
         }
 
+        // slanje poruke o gotovom servisu
         emailService.sendMailKlijentu(
                 nalog.getKlijent().getEmail(),
                 "Servis vozila je završen",
@@ -260,6 +263,7 @@ public class ServiserService {
         }
     }
 
+    // funkcija za lokalno preuzimanje dokumenta o predaji
     public byte[] lokalnaPotvrdaOPredaji(Integer nalogId, String email)
             throws AccessDeniedException {
 
@@ -271,9 +275,11 @@ public class ServiserService {
             throw new AccessDeniedException("Nalog nije pridruzen tom serviseru.");
         }
 
+        // generiranje pdfa o predaji vozila
         return pdfExportService.generatePotvrdaOPredajiVozila(nalog);
     }
 
+    // funkcija za lokalno preuzimanje dokumenta o preuzimanju
     public byte[] lokalnaPotvrdaOPreuzimanju(Integer nalogId, String email)
             throws AccessDeniedException {
 
