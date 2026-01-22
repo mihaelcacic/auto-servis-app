@@ -1,10 +1,6 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-// Use Vite environment variable for backend URL
-const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '');
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
-
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -13,7 +9,7 @@ export function AuthProvider({ children }) {
 
 
     useEffect(() => {
-        fetch(`${API_BASE || ''}/api/user`, {
+        fetch(`/api/user`, {
             credentials: "include"
         })
             .then(res => {
@@ -46,12 +42,11 @@ export function AuthProvider({ children }) {
 
     const login = () => {
         // redirect to OAuth endpoint; prefer absolute BACKEND_URL when provided
-        const oauthBase = BACKEND_URL || '';
-        window.location.href = `${oauthBase}/oauth2/authorization/google`;
+        window.location.href = `/oauth2/authorization/google`;
     };
 
     const logout = () => {
-        fetch(`${API_BASE || ''}/logout`, {
+        fetch(`/logout`, {
             method: "POST",
             credentials: "include"
         }).finally(() => {
