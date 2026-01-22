@@ -33,7 +33,7 @@ class AdminServiceTest {
     private AdminService adminService;
 
 
-    // createServiser
+    //Redovni slučaj - createServiser
     @Test
     void createServiser_shouldSaveAndReturnServiser() {
         Serviser serviser = new Serviser();
@@ -48,7 +48,7 @@ class AdminServiceTest {
         verify(serviserRepository, times(1)).save(serviser);
     }
 
-    // updateServiser
+    // Redovni slučaj - updateServiser
     @Test
     void updateServiser_shouldUpdateAndReturnServiser_whenExists() {
         Serviser existing = new Serviser();
@@ -70,6 +70,7 @@ class AdminServiceTest {
         assertTrue(result.isVoditeljServisa());
     }
 
+    //Rubni slučaj - updateServiser kada serviser ne postoji
     @Test
     void updateServiser_shouldThrowException_whenServiserNotFound() {
         when(serviserRepository.findById(1)).thenReturn(Optional.empty());
@@ -78,7 +79,7 @@ class AdminServiceTest {
                 () -> adminService.updateServiser(1, new Serviser()));
     }
 
-    // updateKlijent
+    //Redovni slučaj - updateKlijent
     @Test
     void updateKlijent_shouldUpdateAndReturnKlijent_whenExists() {
         Klijent existing = new Klijent();
@@ -99,6 +100,7 @@ class AdminServiceTest {
         assertEquals("ivan@test.com", result.getEmail());
     }
 
+    //Rubni slučaj - updateKlijent kada klijent ne postoji
     @Test
     void updateKlijent_shouldThrowException_whenKlijentNotFound() {
         when(klijentRepository.findById(2)).thenReturn(Optional.empty());
@@ -107,7 +109,7 @@ class AdminServiceTest {
                 () -> adminService.updateKlijent(2, new Klijent()));
     }
 
-    // createAdmin
+    // Redovni slučaj - createAdmin
     @Test
     void createAdmin_shouldSaveAndReturnAdmin() {
         Admin admin = new Admin();

@@ -35,7 +35,7 @@ class ServiserServiceTest {
     @InjectMocks
     private ServiserService serviserService;
 
-    //findAllServisere – redovni
+    //Redovni slučaj - vraća sve servisere
     @Test
     void findAllServisere_shouldReturnList() {
         when(serviserRepository.findAllServisere())
@@ -46,7 +46,7 @@ class ServiserServiceTest {
         assertEquals(2, result.size());
     }
 
-    //getNaloziByServiserEmail – redovni
+    //Redovni slučaj - serviser dobiva sve svoje naloge
     @Test
     void getNaloziByServiserEmail_shouldReturnNalozi() {
         Serviser serviser = new Serviser();
@@ -63,7 +63,7 @@ class ServiserServiceTest {
         assertEquals(1, result.size());
     }
 
-    //updateNalogStatus – access denied
+    //Rubni slučaj - serviser nije voditelj i pokušava updateat nalog
     @Test
     void updateNalogStatus_shouldThrowAccessDenied_whenWrongServiser() {
         Serviser drugi = new Serviser();
@@ -83,7 +83,7 @@ class ServiserServiceTest {
                 () -> serviserService.updateNalogStatus(1, 1, "serv@test.com"));
     }
 
-    //updateNapomena – redovni
+    //Redovni slučaj - ažuriranje napomene
     @Test
     void updateNapomena_shouldUpdate_whenAuthorized() throws Exception {
         Serviser serviser = new Serviser();
@@ -103,7 +103,7 @@ class ServiserServiceTest {
     }
 
 
-    //getPotvrdaOPreuzimanju – servis završen (exception)
+    //Rubni slučaj - pokušaj dobivanja potvrde o preuzimanju kad je servis već gotov
     @Test
     void getPotvrdaOPreuzimanju_shouldThrow_whenServiceFinished() {
         Serviser serviser = new Serviser();
@@ -122,7 +122,7 @@ class ServiserServiceTest {
     }
 
 
-    //updateTerminServisa – termin u prošlosti
+    //Rubni slučaj - ažuriranje termina servisa u prošlosti
     @Test
     void updateTerminServisa_shouldThrow_whenInPast() {
         Serviser serviser = new Serviser();

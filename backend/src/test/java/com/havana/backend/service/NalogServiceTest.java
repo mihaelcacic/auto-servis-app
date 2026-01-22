@@ -33,9 +33,7 @@ class NalogServiceTest {
     @Mock private ZamjenskoVoziloRepository zamjenskoVoziloRepository;
     @Mock private EmailService emailService;
 
-    // ---------------------------
-    // Redovni slučaj
-    // ---------------------------
+    // Redovni slučaj - kreiran nalog sa svim parametrima ispunjenim
     @Test
     void createNewNalog_shouldReturnTrue_whenAllDataValid() {
 
@@ -45,6 +43,8 @@ class NalogServiceTest {
         Vozilo vozilo = new Vozilo();
         vozilo.setRegistracija("ZG1234");
 
+        ZamjenskoVozilo zv = new ZamjenskoVozilo();
+
         when(klijentRepository.findById(1)).thenReturn(Optional.of(klijent));
         when(voziloRepository.findByRegistracija("ZG1234"))
                 .thenReturn(Optional.of(vozilo));
@@ -52,13 +52,15 @@ class NalogServiceTest {
                 .thenReturn(Optional.of(new Usluge()));
         when(serviserRepository.findById(1))
                 .thenReturn(Optional.of(new Serviser()));
+        when(zamjenskoVoziloRepository.findById(5))
+                .thenReturn(Optional.of(zv));
 
         NalogRecord record = new NalogRecord(
                 1,
                 new VoziloRecord("ZG1234", 2020, 1),
                 List.of(1),
                 1,
-                null,
+                5,
                 LocalDateTime.now().plusDays(1),
                 1,
                 "Napomena"
@@ -72,9 +74,7 @@ class NalogServiceTest {
                 .sendMailKlijentu(anyString(), anyString(), anyString());
     }
 
-    // ---------------------------
-    // Zamjensko vozilo = null
-    // ---------------------------
+    // Redovni slučaj- nalog gdje zamjensko vozilo = null
     @Test
     void createNewNalog_shouldWork_whenNoZamjenskoVozilo() {
 
@@ -101,9 +101,8 @@ class NalogServiceTest {
         assertTrue(nalogService.createNewNalog(record));
     }
 
-    // ---------------------------
-    // Klijent ne postoji
-    // ---------------------------
+
+    // Rubni slučaj - klijent ne postoji
     @Test
     void createNewNalog_shouldReturnFalse_whenKlijentNotFound() {
 
@@ -126,9 +125,7 @@ class NalogServiceTest {
         assertFalse(result);
     }
 
-    // ---------------------------
-    // Model ne postoji (novo vozilo)
-    // ---------------------------
+    // Rubni slučaj - model ne postoji (novo vozilo)
     @Test
     void createNewNalog_shouldReturnFalse_whenModelNotFound() {
 
@@ -152,9 +149,8 @@ class NalogServiceTest {
 
         assertFalse(nalogService.createNewNalog(record));
     }
-    // ---------------------------
-    // Termin u prošlosti
-    // ---------------------------
+
+    // Rubni slučaj - termin u prošlosti
     @Test
     void createNewNalog_shouldReturnFalse_whenTerminInPast() {
 
@@ -174,9 +170,8 @@ class NalogServiceTest {
         assertFalse(result);
     }
 
-    // ---------------------------
-    // sakrijNalog – nepostojeći ID
-    // ---------------------------
+
+    //Rubni slučaj - sakrijNalog kad je nepostojeći ID
     @Test
     void sakrijNalog_shouldThrowException_whenNalogDoesNotExist() {
 
@@ -187,11 +182,9 @@ class NalogServiceTest {
                 () -> nalogService.sakrijNalog(1));
     }
 
-    // ---------------------------
-    // sakrijNalog – redovni slučaj bez zamjenskog vozila
-    // ---------------------------
+    // Redovni slučaj - sakrij nalog bez
     @Test
-    void sakrijNalog_shouldHideNalog_whenNoZamjenskoVozilo() {
+    void sakrijNalog_shouldHideNalog() {
 
         Nalog nalog = new Nalog();
         nalog.setSakriven(false);
