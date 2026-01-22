@@ -100,6 +100,7 @@ public class ServiserController {
                 .body(pdf);
     }
 
+    // skidanje pdfa lokalno o predaji vozila, te slanje tog maila klijentu
     @GetMapping("/nalog/predaja/{id}/pdf")
     public ResponseEntity<byte[]> downloadPotvrdaOPredaji(@PathVariable Integer id, @AuthenticationPrincipal OAuth2User principal) throws  Exception  {
         if (principal == null) {

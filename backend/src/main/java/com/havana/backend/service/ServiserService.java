@@ -121,11 +121,18 @@ public class ServiserService {
         nalog.setDatumVrijemeZavrsenPopravak(LocalDateTime.now());
         nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
 
+        // kad servis zavrsi, zamjensko se vozilo oslobada
+        if (nalog.getZamjenskoVozilo() != null) {
+            ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
+            zv.setDatumVracanja(LocalDate.now());
+            zamjenskoVoziloRepository.save(zv);
+        }
+
         nalogRepository.save(nalog);
         return pdf;
     }
 
-
+    // slanje tog maila s pdfom i promjena statusa servisa na gotov servis (1)
     public byte[] getPotvrdaOPredaji(Integer nalogId, String email) throws AccessDeniedException {
 
         Nalog nalog = nalogRepository.findById(nalogId)
@@ -149,18 +156,13 @@ public class ServiserService {
                 "Poštovani,\n\nu privitku se nalazi potvrda o predaji vozila.\n\nLijep pozdrav,\nBregmotors"
         );
 
+        // promjena statusa na aktivan status
         if(nalog.getStatus() != 2) {
-            nalog.setStatus(1); // 1 = AKTIVAN SERVIS
+            nalog.setStatus(1);
             nalog.setDatumVrijemeAzuriranja(LocalDateTime.now());
         }
 
         nalogRepository.save(nalog);
-
-        if (nalog.getZamjenskoVozilo() != null) {
-            ZamjenskoVozilo zv = nalog.getZamjenskoVozilo();
-            zv.setDatumVracanja(LocalDate.now());
-            zamjenskoVoziloRepository.save(zv);
-        }
 
         return pdf;
 
