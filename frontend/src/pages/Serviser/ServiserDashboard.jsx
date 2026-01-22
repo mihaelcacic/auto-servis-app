@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, CircularProgress, Alert, Snackbar, Box } from '@mui/material'
+import { Container, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, CircularProgress, Alert, Snackbar, Box, Grid } from '@mui/material'
 import { useAuth } from '../../context/AuthContext'
 import { getMyNalozi, putNalogStatusServiser, putNalogNapomenaServiser, putNalogTerminServiser, downloadServiserNalogPdf, downloadServiserPredajaPdf, notifyServisZavrsen, getPotvrdaOPreuzimanjuWithEmail, getPotvrdaOPredajiWithEmail } from '../../services/api'
 import { formatDatetime } from '../../utils/date'
@@ -12,6 +12,7 @@ export default function ServiserDashboard(){
   const [editNapomena, setEditNapomena] = useState(null)
   const [editTermin, setEditTermin] = useState(null)
   const [alert, setAlert] = useState({ open:false, message:'', severity:'success' })
+  const [expandedRows, setExpandedRows] = useState(new Set())
 
   useEffect(()=>{ if(!loading) load() },[loading])
 
@@ -245,7 +246,7 @@ export default function ServiserDashboard(){
     }
   }
 
-  // prikaz stranice za dashboard servisera
+  // prikaz stranice za servisera
   return (
     <Container maxWidth="lg" sx={{ mt:6, mb:8 }}>
       <Typography variant="h4" gutterBottom>Moji nalozi</Typography>
@@ -262,12 +263,15 @@ export default function ServiserDashboard(){
               </TableRow>
             </TableHead>
             <TableBody>
-              {nalozi.map(n=> (
-                <TableRow key={n.idNalog ?? n.id} hover>
-                  <TableCell>{n.idNalog ?? n.id}</TableCell>
+              {nalozi.map(n=> {
+                const nalogId = n.idNalog ?? n.id
+                return (
+                <React.Fragment key={nalogId}>
+                <TableRow hover>
+                  <TableCell>{nalogId}</TableCell>
                   <TableCell>{formatDatetime(n.datumVrijemeTermin)}</TableCell>
                   <TableCell>{formatStatus(n.status)}</TableCell>
-                  <TableCell>{n.napomena}</TableCell>
+                  <TableCell>{n.napomena || '-'}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -312,7 +316,149 @@ export default function ServiserDashboard(){
                     </Box>
                   </TableCell>
                 </TableRow>
-              ))}
+                {/* detalji naloga - uvijek prikazani */}
+                <TableRow>
+                  <TableCell colSpan={5} sx={{ py: 2, borderBottom: 1, borderColor: 'divider' }}>
+                    <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+                      <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
+                        Detalji naloga #{nalogId}
+                      </Typography>
+                      <Grid container spacing={2}>
+                          {/* Vozilo */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Vozilo
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {n.vozilo?.registracija || '-'}
+                              </Typography>
+                              {n.vozilo?.model && (
+                                <>
+                                  <Typography variant="body2" color="text.secondary">
+                                    {n.vozilo.model.markaNaziv || n.vozilo.model.marka || ''} {n.vozilo.model.modelNaziv || n.vozilo.model.nazivModela || ''}
+                                  </Typography>
+                                  {n.vozilo.godinaProizv && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      Godina: {n.vozilo.godinaProizv}
+                                    </Typography>
+                                  )}
+                                </>
+                              )}
+                            </Paper>
+                          </Grid>
+
+                          {/* Klijent */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Klijent
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {n.klijent ? `${n.klijent.imeKlijent || ''} ${n.klijent.prezimeKlijent || ''}`.trim() : '-'}
+                              </Typography>
+                              {n.klijent?.email && (
+                                <Typography variant="body2" color="text.secondary">
+                                  {n.klijent.email}
+                                </Typography>
+                              )}
+                            </Paper>
+                          </Grid>
+
+                          {/* Usluge */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Usluge
+                              </Typography>
+                              {n.usluge && n.usluge.length > 0 ? (
+                                <Box>
+                                  {Array.from(n.usluge).map((usluga, idx) => (
+                                    <Typography key={idx} variant="body2">
+                                      • {usluga.uslugaNaziv || usluga.nazivUsluga || usluga.naziv || 'N/A'}
+                                    </Typography>
+                                  ))}
+                                </Box>
+                              ) : (
+                                <Typography variant="body2" color="text.secondary">
+                                  Nema usluga
+                                </Typography>
+                              )}
+                            </Paper>
+                          </Grid>
+
+                          {/* Zamjensko vozilo */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Zamjensko vozilo
+                              </Typography>
+                              {n.zamjenskoVozilo ? (
+                                <>
+                                  {n.zamjenskoVozilo.model && (
+                                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                      {n.zamjenskoVozilo.model.markaNaziv || n.zamjenskoVozilo.model.marka || ''} {n.zamjenskoVozilo.model.modelNaziv || n.zamjenskoVozilo.model.nazivModela || ''}
+                                    </Typography>
+                                  )}
+                                  {n.zamjenskoVozilo.datumPreuzimanja && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      Preuzeto: {new Date(n.zamjenskoVozilo.datumPreuzimanja).toLocaleDateString('hr-HR')}
+                                    </Typography>
+                                  )}
+                                </>
+                              ) : (
+                                <Typography variant="body2" color="text.secondary">
+                                  Nema zamjenskog vozila
+                                </Typography>
+                              )}
+                            </Paper>
+                          </Grid>
+
+                          {/* Datumi */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Datumi
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Termin:</strong> {formatDatetime(n.datumVrijemeTermin)}
+                              </Typography>
+                              {n.datumVrijemeZavrsenPopravak && (
+                                <Typography variant="body2">
+                                  <strong>Završetak popravka:</strong> {formatDatetime(n.datumVrijemeZavrsenPopravak)}
+                                </Typography>
+                              )}
+                              {n.datumVrijemeAzuriranja && (
+                                <Typography variant="body2" color="text.secondary">
+                                  <strong>Ažurirano:</strong> {formatDatetime(n.datumVrijemeAzuriranja)}
+                                </Typography>
+                              )}
+                            </Paper>
+                          </Grid>
+
+                          {/* Status i napomena */}
+                          <Grid item xs={12} md={6}>
+                            <Paper elevation={1} sx={{ p: 2 }}>
+                              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                                Status i napomena
+                              </Typography>
+                              <Typography variant="body2" sx={{ mb: 1 }}>
+                                <strong>Status:</strong> {formatStatus(n.status)}
+                              </Typography>
+                              {n.napomena && (
+                                <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
+                                  <strong>Napomena:</strong><br />
+                                  {n.napomena}
+                                </Typography>
+                              )}
+                            </Paper>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                  </TableCell>
+                </TableRow>
+                </React.Fragment>
+              )})}
             </TableBody>
           </Table>
         </TableContainer>
