@@ -36,18 +36,18 @@ export default function Navbar() {
   };
   const { user, login, logout } = useAuth();
 
-  // base navigation links
+  // linkovi
   const baseLinks = [
     { label: 'Početna', to: '/' },
     { label: 'Usluge', to: '/services' },
     { label: 'Kontakt', to: '/contact' },
   ];
 
-  // role-protected links
+  // linkovi za korisnike sa ulogama
   const roleLinks = []
   if(user){
     const roles = user.roles || (user.role ? [user.role] : [])
-    // Only clients can see "Novi termin" and "Moji termini"
+    // samo klijenti mogu vidjeti "Novi termin" i "Moji termini"
     if(roles.includes('ROLE_KLIJENT')){
       roleLinks.push({ label: 'Novi termin', to: '/appointments' })
       roleLinks.push({ label: 'Moji termini', to: '/my-termini' })
@@ -189,6 +189,7 @@ export default function Navbar() {
   );
 }
 
+// custom MUI Google button za prijavu
 function GoogleSignInButton() {
   const { login } = useAuth();
   return (
