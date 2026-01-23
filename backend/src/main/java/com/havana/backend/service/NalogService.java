@@ -119,7 +119,7 @@ public class NalogService {
 
     // dohvati sve klijentove naloge
     public List<Nalog> getNaloziZaKlijenta(Integer klijentId) {
-        return nalogRepository.findByKlijent_IdKlijentAndSakrivenFalse(klijentId);
+        return nalogRepository.findByKlijent_IdKlijentAndSakrivenFalseOrderByIdNalogAsc(klijentId);
     }
 
     // dohvati sve (ne obrisane) naloge

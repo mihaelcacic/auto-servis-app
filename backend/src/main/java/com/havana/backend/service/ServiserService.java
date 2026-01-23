@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class ServiserService {
 
         // vrati listu naloga za koje je serviser zaduzen
         return nalogRepository
-                .findByServiser_IdServiserAndSakrivenFalse(serviser.getIdServiser());
+                .findByServiser_IdServiserAndSakrivenFalseOrderByIdNalogAsc(serviser.getIdServiser());
     }
 
 

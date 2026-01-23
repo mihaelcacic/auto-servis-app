@@ -54,7 +54,7 @@ class ServiserServiceTest {
 
         when(serviserRepository.findByEmail("test@test.com"))
                 .thenReturn(serviser);
-        when(nalogRepository.findByServiser_IdServiserAndSakrivenFalse(1))
+        when(nalogRepository.findByServiser_IdServiserAndSakrivenFalseOrderByIdNalogAsc(1))
                 .thenReturn(List.of(new Nalog()));
 
         List<Nalog> result =

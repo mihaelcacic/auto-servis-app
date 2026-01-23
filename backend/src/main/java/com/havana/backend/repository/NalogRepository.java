@@ -44,7 +44,7 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     // svi vidljivi
     List<Nalog> findBySakrivenFalse();
 
-    List<Nalog> findByServiser_IdServiserAndSakrivenFalse(Integer idServiser);
+    List<Nalog> findByServiser_IdServiserAndSakrivenFalseOrderByIdNalogAsc(Integer idServiser);
 
-    List<Nalog> findByKlijent_IdKlijentAndSakrivenFalse(Integer klijentId);
+    List<Nalog> findByKlijent_IdKlijentAndSakrivenFalseOrderByIdNalogAsc(Integer klijentId);
 }
