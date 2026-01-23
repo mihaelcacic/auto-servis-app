@@ -13,6 +13,7 @@ public interface ZamjenskoVoziloRepository extends JpaRepository<ZamjenskoVozilo
         SELECT z FROM ZamjenskoVozilo z
         WHERE z.datumPreuzimanja IS NOT NULL
         AND z.datumVracanja IS NULL
+        ORDER BY z.idZamjVozilo ASC
     """)
     List<ZamjenskoVozilo> findZauzeta();
 
@@ -20,6 +21,7 @@ public interface ZamjenskoVoziloRepository extends JpaRepository<ZamjenskoVozilo
         SELECT z FROM ZamjenskoVozilo z
         WHERE (z.datumPreuzimanja IS NULL AND z.datumVracanja IS NULL)
         OR (z.datumPreuzimanja IS NOT NULL AND z.datumVracanja IS NOT NULL)
+        ORDER BY z.idZamjVozilo ASC
     """)
     List<ZamjenskoVozilo> findSlobodna();
 }

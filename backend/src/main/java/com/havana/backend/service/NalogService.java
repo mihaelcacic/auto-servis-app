@@ -124,7 +124,7 @@ public class NalogService {
 
     // dohvati sve (ne obrisane) naloge
     public List<Nalog> getSviNalozi() {
-        return nalogRepository.findBySakrivenFalse();
+        return nalogRepository.findBySakrivenFalseOrderByIdNalogAsc();
     }
 
 

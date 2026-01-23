@@ -42,7 +42,7 @@ public interface NalogRepository extends JpaRepository<Nalog, Integer> {
     List<LocalDateTime> findZauzetiTermini();
 
     // svi vidljivi
-    List<Nalog> findBySakrivenFalse();
+    List<Nalog> findBySakrivenFalseOrderByIdNalogAsc();
 
     List<Nalog> findByServiser_IdServiserAndSakrivenFalseOrderByIdNalogAsc(Integer idServiser);
 

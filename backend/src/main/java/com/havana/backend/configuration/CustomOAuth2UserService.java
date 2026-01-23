@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             role = Role.ROLE_KLIJENT;
 
             // ako klijent ne postoji, kreiraj ga
-            Klijent klijent = klijentRepository.findByEmail(email);
+            Klijent klijent = klijentRepository.findByEmailOrderByIdKlijentAsc(email);
             if (klijent == null) {
                 klijent = new Klijent(ime, prezime, email, slikaUrl);
                 klijentRepository.save(klijent);

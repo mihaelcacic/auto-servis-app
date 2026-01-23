@@ -1,9 +1,7 @@
 package com.havana.backend.service;
 
 import com.havana.backend.model.Klijent;
-import com.havana.backend.model.Nalog;
 import com.havana.backend.repository.KlijentRepository;
-import com.havana.backend.repository.NalogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,7 @@ public class KlijentService {
 
     // dohvati klijenta preko emaila
     public Klijent findByEmail(String email) {
-        return klijentRepository.findByEmail(email);
+        return klijentRepository.findByEmailOrderByIdKlijentAsc(email);
     }
     // dohvati sve klijente u bazi
     public List<Klijent> findAll() {

@@ -128,7 +128,7 @@ class KorisnikControllerTest {
         klijent.setPrezimeKlijent("Anić");
         klijent.setEmail("klijent@test.com");
 
-        when(klijentRepository.findByEmail("klijent@test.com")).thenReturn(klijent);
+        when(klijentRepository.findByEmailOrderByIdKlijentAsc("klijent@test.com")).thenReturn(klijent);
 
         ResponseEntity<?> response = korisnikController.getCurrentUser(principal);
 
@@ -159,7 +159,7 @@ class KorisnikControllerTest {
         klijent.setPrezimeKlijent("Lukić");
         klijent.setEmail("klijent2@test.com");
 
-        when(klijentRepository.findByEmail("klijent2@test.com")).thenReturn(klijent);
+        when(klijentRepository.findByEmailOrderByIdKlijentAsc("klijent2@test.com")).thenReturn(klijent);
 
         ResponseEntity<?> response = korisnikController.getCurrentUser(principal);
         KorisnikRecord record = (KorisnikRecord) response.getBody();

@@ -7,7 +7,6 @@ import com.havana.backend.model.Serviser;
 import com.havana.backend.repository.AdminRepository;
 import com.havana.backend.repository.KlijentRepository;
 import com.havana.backend.repository.ServiserRepository;
-import com.havana.backend.service.KlijentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +75,7 @@ public class KorisnikController {
         }
 
         // response za klijenta (ako nije niti admin niti serviser)
-        Klijent klijent = klijentRepository.findByEmail(email);
+        Klijent klijent = klijentRepository.findByEmailOrderByIdKlijentAsc(email);
         return ResponseEntity.ok(
                 new KorisnikRecord(
                         klijent.getIdKlijent(),

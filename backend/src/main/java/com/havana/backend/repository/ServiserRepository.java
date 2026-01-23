@@ -11,6 +11,6 @@ import java.util.List;
 public interface ServiserRepository extends JpaRepository<Serviser, Integer> {
     Serviser findByEmail(String email);
 
-    @Query("SELECT s FROM Serviser s")
+    @Query("SELECT s FROM Serviser s ORDER BY s.idServiser ASC")
     List<Serviser> findAllServisere();
 }
